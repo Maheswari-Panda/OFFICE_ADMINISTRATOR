@@ -1,5 +1,10 @@
 const sql = require('mssql');
 const db = require('../config/db'); // Database connection module
+require('dotenv').config({ path: '../Backend/.env.local' });
+var jwt = require('jsonwebtoken');
+
+const JWT_ACCESS_SECRET_KEY=process.env.JWT_ACCESS_SECRET_KEY;
+const JWT_ACCESS_TOKEN_EXPIRE_TIME=process.env.JWT_ACCESS_TOKEN_EXPIRE_TIME;
 
 exports.isUserEmailExists = async (userEmail) => {
     const pool = await db.getPool();
@@ -105,3 +110,8 @@ exports.deleteUser = async (userId) => {
         throw new Error('Failed to delete user');
     }
 };
+
+exports.generateAccessToken= (data)=>{
+    const accessToken= jwt.sign(data, JWT_ACCESS_SECRET_KEY,{expiresIn: JWT_ACCESS_TOKEN_EXPIRE_TIME});
+    return accessToken;
+}

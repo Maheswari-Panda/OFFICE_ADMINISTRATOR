@@ -4,37 +4,59 @@ import Content from "./Content";
 function Sidebar() {
   return (
     <>
-      <div className="drawer lg:drawer-open">
+      <div className="drawer lg:drawer-open flex-1">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+        {/* Main Content Area */}
         <div className="drawer-content flex flex-col items-center justify-center">
-          {/* Page content here */}
-         <Content/>
-        </div>
-        <div className="drawer-side border-r">
+          {/* Navigation Button for Small Screens */}
           <label
             htmlFor="my-drawer-2"
-            aria-label="close sidebar"
-            className="drawer-overlay"
+            className="btn btn-primary drawer-button lg:hidden m-4"
+          >
+            <i className="fa-solid fa-bars"></i>
+          </label>
+
+          {/* Page Content */}
+          <Content />
+        </div>
+
+        {/* Sidebar */}
+        <div className="drawer-side h-screen lg:w-2/3">
+          <label
+            htmlFor="my-drawer-2"
+            className="drawer-overlay w-screen"
           ></label>
-          <ul className="menu bg-light-200 text-base-content min-h-full w-80 p-4">
-            {/* Sidebar content here */}
+          <ul className="menu bg-white text-base-content min-h-full w-80 p-4 border-r">
+            {/* Sidebar Links */}
             <li>
-              <a className="text-lg hover:bg-blue-200"><i className="fa-solid fa-gauge"></i> Dashboard</a>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-solid fa-gauge"></i> Dashboard
+              </label>
             </li>
             <li>
-              <a className="text-lg hover:bg-blue-200"><i className="fa-regular fa-folder"></i> Inward Documents</a>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-regular fa-folder"></i> Inward Documents
+              </label>
             </li>
             <li>
-              <a className="text-lg hover:bg-blue-200"><i className="fa-solid fa-folder"></i> Outward Documents</a>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-solid fa-folder"></i> Outward Documents
+              </label>
             </li>
             <li>
-              <a className="text-lg hover:bg-blue-200"><i className="fa-solid fa-clock-rotate-left"></i> Activity</a>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-solid fa-clock-rotate-left"></i> Activity
+              </label>
             </li>
             <li>
-              <a className="text-lg hover:bg-blue-200"><i className="fa-solid fa-file-lines"></i> Reports</a>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-solid fa-file-lines"></i> Reports
+              </label>
             </li>
             <li>
-              <a className="text-lg hover:bg-blue-200"><i className="fa-solid fa-user-plus"></i> Create User</a>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-solid fa-user-plus"></i> Create User
+              </label>
             </li>
           </ul>
         </div>

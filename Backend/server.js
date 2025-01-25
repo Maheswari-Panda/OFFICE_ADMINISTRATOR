@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const config = require('./config/db');
+require('dotenv').config({ path: '../Backend/.env.local' });
 
 const app = express();
 app.use(cors());
@@ -16,3 +17,13 @@ app.get('/',(req,res)=>{
 app.listen(3000,()=>{
     console.log("The server has started");
 })
+
+// GENERATE SECRETE KEY
+// const crypto = require('crypto');
+
+// function generateSecretKey() {
+//   return crypto.randomBytes(32).toString('hex'); 
+// }
+
+// const secretKey = generateSecretKey(); 
+// console.log('Generated Secret Key:', secretKey); 

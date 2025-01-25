@@ -4,7 +4,8 @@ import Login from './Pages/Login'
 import {
   BrowserRouter as Router,
   Routes,
-  Route
+  Route,
+  Navigate
 } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -24,8 +25,16 @@ function App() {
     <>
     <Router>
       <Routes>
-        <Route exact path="/" element={user===null && <Login/>}/>
-        <Route exact path="/dashboard" element={user && <Dashboard/>}/>
+      <Route
+      path="/"
+      element={user === null ? <Login /> : <Navigate to="/dashboard" />}
+    />
+    
+    {/* Redirect to Login if the user is not logged in */}
+    <Route
+      path="/dashboard"
+      element={user !== null ? <Dashboard /> : <Navigate to="/" />}
+    />
       </Routes>
     </Router>
     </>

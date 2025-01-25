@@ -4,116 +4,295 @@ function Content() {
   return (
     <>
 <section className="text-gray-600 body-font">
-<div className="container px-5 py-10 mx-auto">
-    <div className="flex flex-col text-center w-full mb-20">
-      
-      <div className="flex items-center p-6 space-x-6 mx-auto bg-white rounded-xl shadow-lg hover:shadow-xl">
-      <div className="flex bg-gray-100 p-4 w-72 space-x-4 rounded-lg">
+<div className="container px-5 py-10 sm:py-1 mx-auto">
+<div className="flex flex-col text-center w-full mb-20">
+  <div className="flex flex-wrap items-center justify-center p-6 space-y-4 lg:space-y-0 lg:space-x-6 bg-white rounded-xl shadow-lg hover:shadow-xl">
+    {/* Search Bar */}
+    <div className="flex bg-gray-100 p-4 w-full max-w-md space-x-4 rounded-lg">
       <i className="fa-solid fa-magnifying-glass"></i>
-        <input className="bg-gray-100 outline-none" type="text" placeholder="Search Documents..." />
-      </div>
-      <div className="flex py-3 px-4 rounded-lg text-gray-500 font-semibold cursor-pointer">
+      <input
+        className="bg-gray-100 outline-none flex-grow"
+        type="text"
+        placeholder="Search Documents..."
+      />
+    </div>
+
+    {/* Filters Dropdown */}
+    <div className="flex py-3 px-4 rounded-lg text-gray-500 font-semibold cursor-pointer">
       <details className="dropdown">
-        <summary tabIndex={0} role="button" className="btn m-1 "><i className="fa-solid fa-sliders"></i> Filters
+        <summary
+          tabIndex={0}
+          role="button"
+          className="btn m-1 flex items-center space-x-2"
+        >
+          <i className="fa-solid fa-sliders"></i> <span>Filters</span>
         </summary>
-        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-          <li><a>Inward</a></li>
-          <li><a>Outward</a></li>
-          <li><a>Latter</a></li>
-          <li><a>Circular</a></li>
-          <li><a>Notice</a></li>
-          <li><a>Bills</a></li>
+        <ul
+          tabIndex={0}
+          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+        >
+          <li>
+            <a>Inward</a>
+          </li>
+          <li>
+            <a>Outward</a>
+          </li>
+          <li>
+            <a>Letter</a>
+          </li>
+          <li>
+            <a>Circular</a>
+          </li>
+          <li>
+            <a>Notice</a>
+          </li>
+          <li>
+            <a>Bills</a>
+          </li>
         </ul>
       </details>
+    </div>
 
-      </div>
-      <div className="bg-indigo-600 py-3 px-5 text-white font-semibold rounded-lg hover:shadow-lg transition duration-3000 cursor-pointer">
-        <span>Search</span>
-      </div>
+    {/* Search Button */}
+    <div className="bg-indigo-600 py-3 px-5 text-white font-semibold rounded-lg hover:shadow-lg transition duration-300 cursor-pointer">
+      <span>Search</span>
     </div>
-    </div>
+  </div>
+</div>
+
 
     <div className="flex flex-wrap -m-4">
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/420x260"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">The Catalyzer</h2>
-          <p className="mt-1">$16.00</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/421x261"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">Shooting Stars</h2>
-          <p className="mt-1">$21.15</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/422x262"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">Neptune</h2>
-          <p className="mt-1">$12.00</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/423x263"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">The 400 Blows</h2>
-          <p className="mt-1">$18.40</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/424x264"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">The Catalyzer</h2>
-          <p className="mt-1">$16.00</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/425x265"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">Shooting Stars</h2>
-          <p className="mt-1">$21.15</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/427x267"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">Neptune</h2>
-          <p className="mt-1">$12.00</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
-      <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
         <a className="block relative h-48 rounded overflow-hidden">
-          <img alt="ecommerce" className="object-cover object-center w-full h-full block" src="https://dummyimage.com/428x268"/>
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
         </a>
-        <div className="mt-4">
-          <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">CATEGORY</h3>
-          <h2 className="text-gray-900 title-font text-lg font-medium">The 400 Blows</h2>
-          <p className="mt-1">$18.40</p>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
         </div>
       </div>
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
+        <a className="block relative h-48 rounded overflow-hidden">
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
+        </a>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
+        </div>
+      </div>
+      <div className="lg:w-1/4 md:w-1/2 p-4 w-full border-2 hover:border-blue-300 rounded">
+        <a className="block relative h-48 rounded overflow-hidden">
+          <img alt="ecommerce" className="object-cover border-2 rounded object-center w-full h-full block" src="../src/assets/Default_Doc.png"/>
+        </a>
+        <div className="flex items-center justify-between">
+          <div className="mt-4">
+            <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">TAG : Letter </h3>
+            <h2 className="text-gray-900 title-font text-lg font-medium">Project Report Formate</h2>
+            <p className="mt-1">recieved by xyz_user</p>
+          </div>
+          <div className="mt-4">
+          <div className="dropdown dropdown-end dropdown-hover">
+            <div tabIndex={0} role="button" className="btn m-1">
+            <i className="fa-solid fa-ellipsis-vertical"></i></div>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2">
+              <li><a>View Details</a></li>
+              <li><a>Add Comment</a></li>
+            </ul>
+          </div>
+
+          </div>
+        </div>
+      </div>
+      
     </div>
   </div>
 </section>

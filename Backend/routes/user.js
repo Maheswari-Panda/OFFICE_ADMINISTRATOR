@@ -3,10 +3,9 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const userModel = require('../models/userModel'); // Import the user model
 const bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
-var fetchUser = require('../middleware/fetchUser') // Middleware for fetching logged-in user
-
-const JWT_SECRET=process.env.JWT_SECRET;
+var fetchUser = require('../middleware/fetchUser'); // Middleware for fetching logged-in user
+const authorizeRole = require('../middleware/roleMiddleware');
+require('dotenv').config({ path: '../Backend/.env.local' });
 
 // Route 1 : to create a new user : POST "/api/user/create" .No login required
 router.post('/create', [
@@ -27,7 +26,6 @@ router.post('/create', [
         }
 
         // If user with the same email already exists, return bad request
-        console.log("THIS IS EMAIL == "+req.body.email);
         let user = await userModel.isUserEmailExists(req.body.email);
         if (user) {
             return res.status(400).json({ error: "Sorry, a user with this email already exists" });
@@ -45,11 +43,14 @@ router.post('/create', [
 
         const data = {
             user: {
-                userId: userId
+                userId: userId,
+                userEmail:email,
+                role:role,
             }
         };
-        const authToken = jwt.sign(data, JWT_SECRET);
-        res.status(201).json({ authToken });
+        const accessToken = await userModel.generateAccessToken(data);
+
+        res.status(201).json({ accessToken });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to create user' });
@@ -76,20 +77,22 @@ router.post('/login', [
         if (!user) {
             return res.status(400).json({ error: "Please try to login with correct credentials" });
         }
-
         // Compare entered password with hashed stored password in the database
         const passwordCompare = await bcrypt.compare(password, user.Password);
         if (!passwordCompare) {
             return res.status(400).json({ error: "Please try to login with correct credentials" });
         }
-
+        
         const data = {
             user: {
-                userId: user.UserId
+                userId: user.UserId,
+                userEmail:user.Email,
+                role:user.Role,
             }
         };
-        const authToken = jwt.sign(data, JWT_SECRET);
-        res.json({ authToken });
+        
+        const accessToken = await userModel.generateAccessToken(data);
+        res.status(201).json({ accessToken});
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -97,7 +100,7 @@ router.post('/login', [
 });
 
 // Route 3 : to get logged-in user details by : POST "/api/user/getuser" Login required
-router.post('/getuser', fetchUser, async (req, res) => {
+router.post('/getuser', fetchUser,authorizeRole("Admin","User"), async (req, res) => {
     try {
         // Get the logged-in user id from the token
         const userId = req.user.userId;
@@ -125,7 +128,7 @@ router.put('/update/:userId', [
     body("email").isEmail(),
     body("password").isLength({ min: 5 }),
     body("officeId").isLength({min:1,max:9})
-], fetchUser, async (req, res) => {
+], fetchUser,authorizeRole("User"), async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -144,13 +147,16 @@ router.put('/update/:userId', [
 
         const data = {
             user: {
-                userId: userId
+                userId: userId,
+                userEmail: email,
+                role:role,
             }
         };
-        const authToken = jwt.sign(data, JWT_SECRET);
+        // set new access token 
+        const accessToken = await userModel.generateAccessToken(data);
         
         // Return success response
-        res.status(200).json({ message });
+        res.status(200).json({ accessToken });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to update user' });
@@ -160,8 +166,6 @@ router.put('/update/:userId', [
 
 // Route 4: to update user details by : PUT '/api/user/delete/:userId' . Login required
 router.delete('/delete/:userId',fetchUser, async (req, res) => {
-    const userId = req.params.userId;
-    
     try {
             // Get the logged-in user id from the token
             const userId = req.user.userId;
@@ -181,5 +185,6 @@ router.delete('/delete/:userId',fetchUser, async (req, res) => {
         res.status(500).json({ message: 'Failed to delete user' });
     }
 });
+
 
 module.exports = router; // Export the router
