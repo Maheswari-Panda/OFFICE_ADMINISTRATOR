@@ -13,10 +13,10 @@ function Sidebar() {
   // console.log(user.Role);
   return (
     <>
-      <div className="drawer lg:drawer-open flex-1">
+      <div className="drawer lg:drawer-open flex-1 items-start">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         {/* Main Content Area */}
-        <div className="drawer-content flex flex-col items-center justify-center">
+        <div className="drawer-content flex flex-col items-start justify-center">
           {/* Navigation Button for Small Screens */}
           <label
             htmlFor="my-drawer-2"

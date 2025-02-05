@@ -3,10 +3,10 @@ import Button from "./Button";
 import DocumentContext from "../context/document/documentContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function AddDocument() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
   const {
     documents,
@@ -32,7 +32,7 @@ export default function AddDocument() {
       DocumentName: "",
       DocumentTypeId: "",
       LetterSerialNumber: "",
-      InwardOutwardReferenceDocumentId: "",
+      InwardOutwardReferenceDocumentId: null,
       EndUserId: "",
       DocumentDescription: "",
       DocumentPath: "",
@@ -51,7 +51,7 @@ export default function AddDocument() {
       DocumentDescription: Yup.string().required(
         "Document Description is required"
       ),
-      DocumentType: Yup.string().required("Document Type is required"),
+      DocumentTypeId: Yup.string().required("Document Type is required"),
       SenderId: Yup.string().required("SenderId is required"),
       ReceiverId: Yup.string().required("ReceiverId is required"),
     }),
@@ -79,7 +79,7 @@ export default function AddDocument() {
           console.log(response);
           if (response != null) {
             alert("Document added successfully!");
-            navigate('/dashboard/content');
+            navigate("/dashboard/content");
           } else {
             alert("error in document adding");
           }
@@ -133,7 +133,11 @@ export default function AddDocument() {
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
       <form
         className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full"
-        onSubmit={formik.handleSubmit}
+        onSubmit={(e)=>{
+          e.preventDefault();
+          console.log(formik.errors);
+          formik.handleSubmit();
+        }}
       >
         {/* Drag-and-Drop Container */}
         {file === null ? (
@@ -303,13 +307,13 @@ export default function AddDocument() {
               value={formik.values.DocumentTypeId}
               className="input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
             >
-              {documentTypes.map((DocumentType, index) => {
+              {documentTypes.map((doctype, index) => {
                 return (
                   <option
-                    value={DocumentType.DocumnetTypeId}
-                    key={`${DocumentType.DocumnetTypeId}-${index}`}
+                    value={doctype.DocumentTypeId}
+                    key={`${doctype.DocumentTypeId}-${index}`}
                   >
-                    {DocumentType.DocumentTypeName}
+                    {doctype.DocumentTypeName}
                   </option>
                 );
               })}
@@ -357,16 +361,19 @@ export default function AddDocument() {
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
             >
-              {documents.map((document, index) => {
-                return(
+              <option value={null}>Choose Reference</option>
+              {documents && documents.length > 0 ? (
+                documents.map((document, index) => (
                   <option
                     value={document.DocumentId}
-                    key={`${document.DocumnetId}-${index}`}
+                    key={`${document.DocumentId}-${index}`}
                   >
                     {document.DocumentName}
                   </option>
-                );
-              })}
+                ))
+              ) : (
+                <option value={null}>No reference document</option>
+              )}
             </select>
 
             {formik.errors.InwardOutwardReferenceDocumentId &&

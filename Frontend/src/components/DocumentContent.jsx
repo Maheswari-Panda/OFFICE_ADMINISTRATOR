@@ -36,19 +36,7 @@ function DocumentContent() {
         {documents.map((document)=>{
                   return( <DocumentItem key={document.DocumentId} document={document} viewType={viewType}/>);
               })}
-          {/* <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem />
-          <DocumentItem /> */}
+
         </div>
       </div>
     </section>
