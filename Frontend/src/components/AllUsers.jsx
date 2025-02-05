@@ -1,22 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
-import userContext from "../context/user/userContext";
 import DataTable from "react-data-table-component";
-import { data } from "react-router-dom";
+import userContext from "../context/user/userContext";
 
 function AllUsers() {
   const context = useContext(userContext);
   const { users, getAllUsers } = context;
-  const [loading, setLoading] = useState(true); // New loading state
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
+useEffect(() => {
+  let isMounted = true;
+  
+  const fetchData = async () => {
+    try {
       setLoading(true);
+      // console.log("Fetching users...");
       await getAllUsers();
-      setLoading(false);
-    };
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+    if (isMounted) setLoading(false);
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+  
+  return () => { isMounted = false; }; // Cleanup function to prevent memory leaks
+}, []);
+
 
   const columns = [
     { name: "ERN", selector: (row) => row?.ERN || "N/A", sortable: true },
@@ -42,24 +51,24 @@ function AllUsers() {
         </div>
       ),
     },
-
   ];
 
   return (
     <div className="w-full flex justify-center bg-blue-100 min-h-screen">
       <div className="w-full bg-white p-6 m-2 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">All Users</h2>
-        
-        {/* Show Loading Spinner */}
+
         {loading ? (
           <div className="text-center text-blue-600 font-bold text-xl">Loading...</div>
+        ) : users.length === 0 ? (
+          <div className="text-center text-gray-500 font-bold text-xl">No Users Found</div>
         ) : (
           <DataTable
             columns={columns}
             data={users}
-            pagination
             fixedHeader
-            className="border border-gray-300 rounded-lg"
+            // pagination
+            highlightOnHover
           />
         )}
       </div>

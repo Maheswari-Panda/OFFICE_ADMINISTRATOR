@@ -17,12 +17,14 @@ import Dashboard from './pages/Dashboard';
 import userContext from "../src/context/user/userContext";
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
+import DocumentViewer from './components/DocumentViewer';
 
 function App() {
   const context = useContext(userContext);
   const {user}=context;
   return (
     <>
+    {/* <DocumentViewer/> */}
     {/* <Sidebar/> */}
     <Router>
       <Routes>

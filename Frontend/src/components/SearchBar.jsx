@@ -1,6 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-function SearchBar() {
+function SearchBar({onSearch,onFilter}) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState(null); // Store the selected filter
+
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchClick = () => {
+    onSearch(searchTerm, selectedFilter); // Call the onSearch function with the search term
+  };
+
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter);
+    onSearch(searchTerm, filter); // Call onSearch with updated filter
+  };
+
   return (
     <div className="flex flex-col text-center w-full mb-8 border-b-2 border-dashed pb-3">
   <div className="flex flex-wrap items-center justify-center p-4 space-y-2 lg:space-y-0 lg:space-x-4 bg-white rounded-lg w-full max-w-6xl mx-auto">
@@ -11,11 +28,15 @@ function SearchBar() {
     className="bg-gray-100 outline-none flex-grow ml-2 text-sm text-gray-600 hover:bg-white"
     type="text"
     placeholder="Search Documents..."
+    value={searchTerm}
+    onChange={handleSearchChange}
+    onChangeCapture={handleSearchClick}
   />
 </div>
 
     {/* Search Button */}
-    <div className="bg-blue-500 py-2 px-6 text-white font-medium rounded-md text-sm hover:bg-blue-600 transition duration-300 cursor-pointer sm:mx-2">
+    <div className="bg-blue-500 py-2 px-6 text-white font-medium rounded-md text-sm hover:bg-blue-600 transition duration-300 cursor-pointer sm:mx-2" 
+    onClick={handleSearchClick}>
       <span>Search</span>
     </div>
 
@@ -32,25 +53,54 @@ function SearchBar() {
       <ul
         tabIndex={0}
         className="dropdown-content menu bg-white shadow-md rounded-md w-40 p-2 text-sm text-gray-600 z-10"
+      ><li>
+      <a
+        className={`hover:bg-blue-100 px-2 py-1 rounded ${selectedFilter === 'inward' ? 'bg-blue-100' : ''}`}
+        onClick={() => handleFilterChange('inward')}
       >
-        <li>
-          <a className="hover:bg-blue-100 px-2 py-1 rounded">Inward</a>
-        </li>
-        <li>
-          <a className="hover:bg-blue-100 px-2 py-1 rounded">Outward</a>
-        </li>
-        <li>
-          <a className="hover:bg-blue-100 px-2 py-1 rounded">Letter</a>
-        </li>
-        <li>
-          <a className="hover:bg-blue-100 px-2 py-1 rounded">Circular</a>
-        </li>
-        <li>
-          <a className="hover:bg-blue-100 px-2 py-1 rounded">Notice</a>
-        </li>
-        <li>
-          <a className="hover:bg-blue-100 px-2 py-1 rounded">Bills</a>
-        </li>
+        Inward
+      </a>
+    </li>
+    <li>
+      <a
+        className={`hover:bg-blue-100 px-2 py-1 rounded ${selectedFilter === 'outward' ? 'bg-blue-100' : ''}`}
+        onClick={() => handleFilterChange('outward')}
+      >
+        Outward
+      </a>
+    </li>
+    <li>
+      <a
+        className={`hover:bg-blue-100 px-2 py-1 rounded ${selectedFilter === 'letter' ? 'bg-blue-100' : ''}`}
+        onClick={() => handleFilterChange('letter')}
+      >
+        Letter
+      </a>
+    </li>
+    <li>
+              <a
+                className={`hover:bg-blue-100 px-2 py-1 rounded ${selectedFilter === 'circular' ? 'bg-blue-100' : ''}`}
+                onClick={() => handleFilterChange('inward')}
+              >
+                Circular
+              </a>
+            </li>
+            <li>
+              <a
+                className={`hover:bg-blue-100 px-2 py-1 rounded ${selectedFilter === 'notice' ? 'bg-blue-100' : ''}`}
+                onClick={() => handleFilterChange('notice')}
+              >
+                Notice
+              </a>
+            </li>
+            <li>
+              <a
+                className={`hover:bg-blue-100 px-2 py-1 rounded ${selectedFilter === 'bill' ? 'bg-blue-100' : ''}`}
+                onClick={() => handleFilterChange('bill')}
+              >
+                Bill
+              </a>
+            </li>
       </ul>
     </details>
 
