@@ -3,7 +3,7 @@ const router = express.Router();
 const officeModel = require('../models/officeModel');  // Assuming the Office model is in the models folder
 
 // Route to add an office by POST "/api/office/addOffice" No login required
-router.post('/addOffice', async (req, res) => {
+router.post('/add', async (req, res) => {
     try {
         const { officeName, officeLocation, officeContact } = req.body;
         const officeId = await officeModel.addOffice(officeName, officeLocation, officeContact);
@@ -21,7 +21,7 @@ router.post('/addOffice', async (req, res) => {
 });
 
 // Route to get office by ID
-router.get('/:officeId', async (req, res) => {
+router.get('/get/:officeId', async (req, res) => {
     try {
         const officeId = req.params.officeId;
         const office = await officeModel.getOfficeById(officeId);
@@ -40,7 +40,7 @@ router.get('/:officeId', async (req, res) => {
 });
 
 // Route to update office details
-router.put('/:officeId', async (req, res) => {
+router.put('/update/:officeId', async (req, res) => {
     try {
         const officeId = req.params.officeId;
         const { officeName, officeLocation, officeContact } = req.body;
@@ -55,12 +55,31 @@ router.put('/:officeId', async (req, res) => {
     }
 });
 
+// Get all Office Details
+router.get('/getall', async (req, res) => {
+    try {
+        const allOffice = await officeModel.getAllOfficeDetails();
+        res.status(200).json(allOffice);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Failed to update office',
+            error: error.message
+        });
+    }
+});
+
 // Route to delete office
-router.delete('/:officeId', async (req, res) => {
+router.delete('/delete/:officeId', async (req, res) => {
     try {
         const officeId = req.params.officeId;
-        await officeModel.deleteOffice(officeId);
-        res.status(200).json({ message: 'Office deleted successfully' });
+        const result = await officeModel.deleteOffice(officeId);
+        if(result==1){
+            res.status(200).json({message:result });
+        }
+        else{
+            res.status(404).json({message: result});
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({

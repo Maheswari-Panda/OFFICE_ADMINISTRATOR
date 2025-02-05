@@ -5,7 +5,9 @@ import { jwtDecode } from "jwt-decode";
 
 const UserAuth = ({ children }) => {
   const host = "http://localhost:3000";
+  const initialUsers=[];
   const [user, setUser] = useState(null);
+  const [users,setUsers]=useState(initialUsers);
   
   // Login function
 
@@ -94,34 +96,73 @@ const UserAuth = ({ children }) => {
     }
   };
 
-  // const checkTokenExpiration = () => {
-  //   const token = localStorage.getItem("accessToken");
-  //   if (!token) return false;
+  // Get the logged-in user details
+  const getUserById = async (userId) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
 
-  //   try {
-  //     const decodedToken = jwt.decode(token); // Decode the JWT token
-  //     if (decodedToken.exp * 1000 < Date.now()) {
-  //       // Token expired
-  //       return true;
-  //     }
-  //     return false;
-  //   } catch (error) {
-  //     return true; // If decoding fails, consider token expired
-  //   }
-  // };
+      const response = await axios.post(
+        `${host}/api/user/get/${userId}`,
+        {}, // Empty request body
+        {
+          headers: {
+            accessToken: `${accessToken}`,
+          },
+        }
+      );
+      // Return the user details
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user details:", error.response?.data || error.message);
+    }
+  };
 
-  //   // useEffect to monitor token expiration
-  //   useEffect(() => {
-  //     const tokenExpired = checkTokenExpiration();
-  //     if (tokenExpired) {
-  //       // console.log("Sesssion expired");
-  //       // logout(); // Log out if the token is expired
-  //       alert("Session expired, please log in again");
-  //     }
-  //   }, []);
+  const createUser= async(email, password,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl)=>{
+    try {
+      const response =  await axios.post(`${host}/api/user/create`,
+        {email, password,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl}
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating user", error.response?.data || error.message);
+    }
+  }
+
+  
+  const uploadProfileImage =async(formData)=>{
+    try {
+      const response = await axios.post(`${host}/api/user/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error Uploading user profile", error.response?.data || error.message);
+      
+    }
+}
+
+const getAllUsers=async()=>{
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.post(`${host}/api/user/getall`,
+      {}, // Empty request body
+      {
+        headers: {
+          accessToken: `${accessToken}`,
+        },
+      }
+    );
+    const json = await response.data;
+    setUsers(json);
+   return json;
+  } catch (error) {
+    console.error("Error Getting all user details", error.response?.data || error.message);
+  }
+}
+
 
   return (
-    <UserContext.Provider value={{ user, setUser, login, logout, getUser }}>
+    <UserContext.Provider value={{ user,users, setUser, login, logout, getUser,getUserById, createUser ,uploadProfileImage,getAllUsers}}>
       {children}
     </UserContext.Provider>
   );

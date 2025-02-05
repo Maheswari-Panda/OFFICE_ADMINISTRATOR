@@ -32,10 +32,30 @@ exports.updateOffice = async (officeId, officeName, officeLocation, officeContac
         .execute('UpdateOffice');  // Assuming this stored procedure exists in the DB
 };
 
+// Model for getting all office details
+exports.getAllOfficeDetails=async()=>{
+    try {
+        const pool = await db.getPool();  // Get the pool from the db connection
+        const result = await pool.request()
+          .execute('GetAllOfficeDetails');  // Execute the stored procedure to fetch all offices
+    
+        return result.recordset;  // Return the list of offices
+      } catch (err) {
+        console.error('Error getting office details:', err);
+        throw err;  // Re-throw error for handling at a higher level
+      }
+}
+
 // Model for deleting an office
 exports.deleteOffice = async (officeId) => {
-    const pool = await db.getPool();
-    await pool.request()
-        .input('OfficeId', sql.Int, officeId)
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+        .input('OfficeId', sql.SmallInt, officeId)
         .execute('DeleteOffice');  // Assuming this stored procedure exists in the DB
+        return result.recordset[0];
+    } catch (error) {
+        console.error('Error deleting office details:', error);
+        throw err; 
+    }
 };

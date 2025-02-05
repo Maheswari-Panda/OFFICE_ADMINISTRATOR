@@ -7,6 +7,20 @@ var fetchUser = require('../middleware/fetchUser'); // Middleware for fetching l
 const authorizeRole = require('../middleware/roleMiddleware');
 require('dotenv').config({ path: '../Backend/.env.local' });
 
+const multer = require('multer');
+const path = require('path');
+
+
+const storage = multer.diskStorage({
+    destination: './uploads/UserProfiles', // Folder to store uploaded files
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Rename file
+    },
+});
+  
+  
+const upload = multer({ storage });
+
 // Route 1 : to create a new user : POST "/api/user/create" .No login required
 router.post('/create', [
     body("firstName").isLength({ min: 3 }),
@@ -32,14 +46,14 @@ router.post('/create', [
         }
 
         // Destructure the user details from the request body
-        const { email, password,ERN, firstName, middleName, lastName, role,officeId } = req.body;
+        const { email, password,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl } = req.body;
 
         // Make password secure with salt & pepper
         const salt = await bcrypt.genSalt(10);
         const securedPassword = await bcrypt.hash(password, salt);
 
         // Call the createUser function from the model
-        let userId = await userModel.createUser(email, securedPassword,ERN, firstName, middleName, lastName, role,officeId);
+        let userId = await userModel.createUser(email, securedPassword,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl);
 
         const data = {
             user: {
@@ -50,7 +64,7 @@ router.post('/create', [
         };
         const accessToken = await userModel.generateAccessToken(data);
 
-        res.status(201).json({ accessToken });
+        res.status(201).json({ accessToken});
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to create user' });
@@ -100,7 +114,7 @@ router.post('/login', [
 });
 
 // Route 3 : to get logged-in user details by : POST "/api/user/getuser" Login required
-router.post('/getuser', fetchUser,authorizeRole("Admin","User"), async (req, res) => {
+router.post('/getuser', fetchUser,authorizeRole("Admin","User","user"), async (req, res) => {
     try {
         // Get the logged-in user id from the token
         const userId = req.user.userId;
@@ -128,14 +142,14 @@ router.put('/update/:userId', [
     body("email").isEmail(),
     body("password").isLength({ min: 5 }),
     body("officeId").isLength({min:1,max:9})
-], fetchUser,authorizeRole("User"), async (req, res) => {
+], fetchUser,authorizeRole("User","Admin"), async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
     const userId = req.user.userId;
-    const { email, password, ERN,firstName, middleName, lastName, role,officeId } = req.body;
+    const { email, password, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl } = req.body;
 
     try {
         // Make password secure with salt & pepper
@@ -143,7 +157,7 @@ router.put('/update/:userId', [
         const securedPassword = await bcrypt.hash(password, salt);
 
         // Call the updateUser function from the model
-        const message = await userModel.updateUser(userId, email, securedPassword, ERN,firstName, middleName, lastName, role,officeId);
+        const message = await userModel.updateUser(userId, email, securedPassword, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl);
 
         const data = {
             user: {
@@ -152,11 +166,17 @@ router.put('/update/:userId', [
                 role:role,
             }
         };
-        // set new access token 
-        const accessToken = await userModel.generateAccessToken(data);
-        
-        // Return success response
-        res.status(200).json({ accessToken });
+        if(message===1){
+            // set new access token 
+            const accessToken = await userModel.generateAccessToken(data);
+            
+            // Return success response
+            res.status(200).json({ accessToken });
+
+        }
+        else{
+            res.status(400).json({message:'failed to update user database procedure error!'})
+        }
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to update user' });
@@ -186,5 +206,51 @@ router.delete('/delete/:userId',fetchUser, async (req, res) => {
     }
 });
 
+
+// Route 6 : to get any user details by user id : POST "/api/user/getuser/:id" Login required
+router.post('/getall',fetchUser,authorizeRole("Admin","User"), async (req, res) => {
+    try {
+        const user = await userModel.getAllUsers();
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user details
+        res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to fetch user' });
+    }
+});
+
+// Route 7 : to get username by user id : POST "/api/user/getusername/:id" Login required
+router.post('/get/:id', fetchUser,authorizeRole("Admin","User","user"), async (req, res) => {
+    try {
+        // authetication
+        // Get the logged-in user id from the token
+        // const userId = req.user.userId;
+        
+        const requestedUserId=req.params.id;
+        const user = await userModel.getUserById(requestedUserId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Return the user details
+        res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to fetch user' });
+    }
+});
+
+// Route to handle profile image upload
+router.post('/upload', upload.single('profileImg'), (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    res.json({ imageUrl: `/uploads/UserProfiles/${req.file.filename}` }); // Send image URL back
+  });
 
 module.exports = router; // Export the router

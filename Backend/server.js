@@ -2,13 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config/db');
 require('dotenv').config({ path: '../Backend/.env.local' });
-
 const app = express();
 app.use(cors());
 app.use(express.json());
+const path = require('path');
 
 app.use('/api/user',require('./routes/user'))
 app.use('/api/office',require('./routes/office'))
+app.use('/api/documentType',require('./routes/documentType'))
+app.use('/api/document',require('./routes/document'))
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/',(req,res)=>{
     return res.json("Hi i am backend");

@@ -24,7 +24,7 @@ function Navbar() {
 
   {/* Title Section */}
   <div className="flex-1">
-    <a className="lg:text-2xl md:text-lg font-bold">Computer Center</a>
+    <a className="lg:text-2xl md:text-lg font-serif">Computer Center</a>
   </div>
 
   {/* User Info and Menu */}
@@ -45,7 +45,7 @@ function Navbar() {
         <div className="w-10 rounded-full">
           <img
             alt="User Avatar"
-            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+            src={user.ProfileImageUrl}
           />
         </div>
       </div>

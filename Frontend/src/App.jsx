@@ -12,7 +12,7 @@ import Sidebar from './components/Sidebar';
 import Content from './components/Content';
 import Footer from './components/Footer';
 import UserAuth from './context/user/UserAuth';
-import Dashboard from './Pages/Dashboard';
+import Dashboard from './pages/Dashboard';
 
 import userContext from "../src/context/user/userContext";
 import { useNavigate } from "react-router-dom";
@@ -23,16 +23,18 @@ function App() {
   const {user}=context;
   return (
     <>
+    {/* <Sidebar/> */}
     <Router>
       <Routes>
+      <Route exactpath="/dashboard/content" element={<Sidebar />} />
       <Route
-      path="/"
+      exact path="/"
       element={user === null ? <Login /> : <Navigate to="/dashboard" />}
     />
     
     {/* Redirect to Login if the user is not logged in */}
     <Route
-      path="/dashboard"
+      exact path="/dashboard/*"
       element={user !== null ? <Dashboard /> : <Navigate to="/" />}
     />
       </Routes>

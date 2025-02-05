@@ -16,7 +16,7 @@ exports.isUserEmailExists = async (userEmail) => {
 }
 
 // Function to add a new user
-exports.createUser = async (userEmail, userPassword, userERN,userFirstName, userMiddleName, userLastName, userRole,officeId) => {
+exports.createUser = async (userEmail, userPassword, userERN,userFirstName, userMiddleName, userLastName, userRole,officeId,profileImgUrl) => {
     const pool = await db.getPool();
     try {
         const result = await pool.request()
@@ -28,6 +28,7 @@ exports.createUser = async (userEmail, userPassword, userERN,userFirstName, user
             .input('Role',  sql.NVarChar(20), userRole)
             .input('ERN', sql.Char(10), userERN)
             .input('OfficeId', sql.Int(10), officeId)
+            .input('ProfileImageUrl',sql.NVarChar(255),profileImgUrl)
             .execute('CreateUser'); // Assuming stored procedure is named CreateUser
 
         // Return the UserId that was created
@@ -54,6 +55,18 @@ exports.getUserById = async (userId) => {
     }
 };
 
+// Function to get all user details without password admin login required
+exports.getAllUsers = async()=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request().execute('GetAllUsersWithoutPassword');
+        return result.recordsets[0];
+    } catch (error) {
+        console.error('Error in getting Users:', error);
+        throw new Error('Failed to fetch all users');
+    }
+}
+
 // Function to get user details by UserEmail
 exports.getUserByEmail = async (userEmail) => {
     const pool = await db.getPool();
@@ -71,9 +84,9 @@ exports.getUserByEmail = async (userEmail) => {
 };
 
 // Function to update user details by UserId
-exports.updateUser = async (userId, userEmail,userPassword, userERN, userFirstName, userMiddleName, userLastName, userRole,officeId) => {
+exports.updateUser = async (userId, userEmail,userPassword, userERN, userFirstName, userMiddleName, userLastName, userRole,officeId,profileImgUrl) => {
     const pool = await db.getPool();
-
+console.log(profileImgUrl);
     try {
         const result = await pool.request()
             .input('UserId', sql.Int, userId)
@@ -85,9 +98,9 @@ exports.updateUser = async (userId, userEmail,userPassword, userERN, userFirstNa
             .input('Role',  sql.NVarChar(20), userRole)
             .input('ERN', sql.Char(10), userERN)
             .input('OfficeId', sql.Int(10), officeId)
+            .input('ProfileImageUrl',sql.NVarChar(255),profileImgUrl)
             .execute('UpdateUser'); // Assuming the stored procedure is named UpdateUser
 
-        // Return the status for further use
         return result.recordset[0]?.UPDATE_STATUS;
     } catch (err) {
         console.error('Error executing UpdateUser:', err);
