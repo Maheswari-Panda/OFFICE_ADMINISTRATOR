@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import DocumentContext from "../context/document/documentContext";
 import userContext from "../context/user/userContext";
+import DocumentPreview from "./DocumentPreview";
 
 function DocumentItem(props) {
   const {document,viewType} = props;
@@ -13,8 +14,6 @@ function DocumentItem(props) {
    const [sender, setSender] = useState(null);
    const [receiver, setReceiver] = useState(null);
    const [documentTypeText, setDocumentTypeText] = useState("");
-
-   
  
    useEffect(() => {
      const fetchUsers = async () => {
@@ -60,9 +59,10 @@ function DocumentItem(props) {
           <img
             alt="Document Preview"
             className={` ${viewType!=='list'?'object-cover  border-b-2  rounded-t-lg w-full border-blue-400':'hidden'} `}
-            // src="../src/assets/Default_Doc.png"
             src={document?.DocumentPath ||"http://localhost:3000/uploads/UserProfiles/1738161944885.png"}
           />
+
+          {/* <DocumentPreview docpath={document.DocumentPath}/> */}
           <i className="fas fa-file text-blue-500 text-xl p-1"></i>
         </a>
         <div className={`${viewType!=='list'?'p-4 flex justify-between items-center border-t-2 group-hover:bg-blue-500':'w-full group-hover:text-blue-500'}  transition duration-300 `}>

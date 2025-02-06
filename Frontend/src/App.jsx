@@ -18,13 +18,14 @@ import userContext from "../src/context/user/userContext";
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import DocumentViewer from './components/DocumentViewer';
+import DocumentPreview from './components/DocumentPreview';
 
 function App() {
   const context = useContext(userContext);
   const {user}=context;
   return (
     <>
-    {/* <DocumentViewer/> */}
+    {/* <DocumentPreview/> */}
     {/* <Sidebar/> */}
     <Router>
       <Routes>
