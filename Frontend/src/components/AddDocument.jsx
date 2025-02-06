@@ -4,6 +4,7 @@ import DocumentContext from "../context/document/documentContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import DocumentViewer from "./DocumentViewer";
 
 export default function AddDocument() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function AddDocument() {
       DocumentName: "",
       DocumentTypeId: "",
       LetterSerialNumber: "",
-      InwardOutwardReferenceDocumentId: null,
+      InwardOutwardReferenceDocumentId: "",
       EndUserId: "",
       DocumentDescription: "",
       DocumentPath: "",
@@ -133,7 +134,7 @@ export default function AddDocument() {
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
       <form
         className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full"
-        onSubmit={(e)=>{
+        onSubmit={(e) => {
           e.preventDefault();
           console.log(formik.errors);
           formik.handleSubmit();
@@ -175,28 +176,26 @@ export default function AddDocument() {
               dragActive ? "border-blue-500" : "border-gray-300"
             }`}
           >
-            <div className="text-center">
+            <div className={`${uploadState === 0 ? "text-center" : "hidden"}`}>
               <span>{file.name}</span>
-              {uploadState === 0 ? (
-                <div>
-                  <button
-                    className="btn btn-sm bg-red-500 text-white"
-                    onClick={() => setFile(null)}
-                  >
-                    Cencel
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-sm bg-blue-500 text-white"
-                    onClick={handleUpload}
-                  >
-                    Upload
-                  </button>
-                </div>
-              ) : (
-                <p>Uploaded {file}</p>
-              )}
+              <div>
+                <button
+                  className="btn btn-sm bg-red-500 text-white"
+                  onClick={() => setFile(null)}
+                >
+                  Cencel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm bg-blue-500 text-white"
+                  onClick={handleUpload}
+                >
+                  Upload
+                </button>
+              </div>
             </div>
+
+            {uploadState === 1 && <DocumentViewer DocPath={file} />}
           </div>
         )}
 
@@ -361,19 +360,14 @@ export default function AddDocument() {
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
             >
-              <option value={null}>Choose Reference</option>
-              {documents && documents.length > 0 ? (
-                documents.map((document, index) => (
-                  <option
-                    value={document.DocumentId}
-                    key={`${document.DocumentId}-${index}`}
-                  >
-                    {document.DocumentName}
-                  </option>
-                ))
-              ) : (
-                <option value={null}>No reference document</option>
-              )}
+              {documents.map((document, index) => (
+                <option
+                  value={document.DocumentId}
+                  key={`${document.DocumentId}-${index}`}
+                >
+                  {document.DocumentName}
+                </option>
+              ))}
             </select>
 
             {formik.errors.InwardOutwardReferenceDocumentId &&

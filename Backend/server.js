@@ -3,7 +3,12 @@ const cors = require('cors');
 const config = require('./config/db');
 require('dotenv').config({ path: '../Backend/.env.local' });
 const app = express();
-app.use(cors());
+app.use(cors(
+    {
+        origin: "http://localhost:5173", // Change to your frontend URL
+        methods: "GET,POST,PUT,DELETE",
+    }
+));
 app.use(express.json());
 const path = require('path');
 

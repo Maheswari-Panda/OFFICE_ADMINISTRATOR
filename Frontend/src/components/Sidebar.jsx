@@ -48,7 +48,7 @@ function Sidebar() {
           <ul className="menu bg-white text-base-content min-h-full lg:w-full p-4 border-r md:w-1/3">
             {/* Button to add document */}
             <Link to="/dashboard/addDocument">
-              <Button icon="+" color="blue" text="Add Document" />
+              <Button icon="+" color="blue" text="Add Document" size="base" />
             </Link>
 
             {/* Sidebar Links */}

@@ -5,7 +5,7 @@ import DocumentContext from "../context/document/documentContext";
 
 function DocumentContent() {
   const documentContext = useContext(DocumentContext);
-  const { documents, getDocuments, getAllDocumentType } = documentContext;
+  const { documents, getDocuments,documentTypes, getAllDocumentType } = documentContext;
   useEffect(() => {
     getDocuments();
     getAllDocumentType();
@@ -32,16 +32,7 @@ function DocumentContent() {
     }
 
     if (selectedFilter) {
-      // Filter by selected filter (e.g., "inward", "outward", "letter")
-      // Replace with your actual filtering logic based on the selectedFilter
-      if (selectedFilter === "inward") {
-        filtered = filtered.filter((document) => document.isInward === 0);
-      } else if (selectedFilter === "outward") {
-        filtered = filtered.filter((document) => document.isInward === 1);
-      } else if (selectedFilter === "letter") {
-        // Apply filtering logic for "letter" documents
-      }
-      // Add more filter conditions based on your document types
+        filtered = filtered.filter((document) => document.DocumentTypeId === selectedFilter);
     }
 
     setFilteredDocuments(filtered);

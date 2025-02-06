@@ -1,20 +1,19 @@
-import React from 'react'
+import React,{memo} from 'react'
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 
 import 'react-pdf/dist/Page/AnnotationLayer.css'; 
 import 'react-pdf/dist/Page/TextLayer.css';
 
-function DocumentViewer(props) {
-    
+
+
+const DocumentViewer=(props)=> {
+    console.log("The pdf is rendering again");
     const docs = [
         {uri: props.DocPath},
-        // { uri: "http://localhost:3000/uploads/UserProfiles/1738165682318.png"},
-        // { uri: "https://pdfobject.com/pdf/sample.pdf"}
       ];
       return (
         <>
-      
-            <DocViewer
+           <DocViewer
             pluginRenderers={DocViewerRenderers}
             documents={docs}
             />
@@ -22,4 +21,5 @@ function DocumentViewer(props) {
       );
 }
 
-export default DocumentViewer
+export default memo(DocumentViewer);
+
