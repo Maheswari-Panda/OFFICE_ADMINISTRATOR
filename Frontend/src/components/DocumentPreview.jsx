@@ -1,23 +1,22 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import '../style/DocumentPreview.css';
 
 import 'react-pdf/dist/Page/AnnotationLayer.css'; 
 import 'react-pdf/dist/Page/TextLayer.css';
 
-const DocumentPreview = (props) => {
+const DocumentPreview = ({ docpath }) => {
     console.log("The pdf is rendering again");
-    const docs = [
-        {uri: props.docpath},
-    ];
-    
+
+    const docs = useMemo(() => [{ uri: docpath }], [docpath]);
+
     return (
-        <>
+        <div className="document-preview">
             <DocViewer
-                pluginRenderers={DocViewerRenderers}
-                documents={docs}
-            />
-        </>
+            pluginRenderers={DocViewerRenderers}
+            documents={docs}
+        />
+        </div>
     );
 };
 

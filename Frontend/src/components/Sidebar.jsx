@@ -6,6 +6,7 @@ import { Routes, Route, Navigate, Link } from "react-router-dom";
 import userContext from "../context/user/userContext";
 import CreateUserForm from "./CreateUserForm";
 import AllUsers from "./AllUsers";
+import UserProfile from "./UserProfile";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -32,6 +33,7 @@ function Sidebar() {
             <Route path="content" element={<Content />} />
             <Route path="allUsers" element={<AllUsers />} />
             <Route path="createUser" element={<CreateUserForm />} />
+            <Route path="myprofile" element={<UserProfile user={user}/>} />
             <Route path="/" element={<Navigate to="content" />} />
           </Routes>
 
@@ -112,6 +114,13 @@ function Sidebar() {
               <label htmlFor="my-drawer-2" className="cursor-pointer">
                 <Link to="">
                   <i className="fa-solid fa-file-lines"></i> Reports
+                </Link>
+              </label>
+            </li>
+            <li>
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <Link to="/dashboard/myprofile">
+                  <i className="fa-solid fa-user"></i> My Profile
                 </Link>
               </label>
             </li>

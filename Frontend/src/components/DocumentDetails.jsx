@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import DocumentViewer from "./DocumentViewer";
 
-export default function AddDocument() {
+function DocumentDetails({ document }) {
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
   const {
@@ -24,22 +24,23 @@ export default function AddDocument() {
   }, []);
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
-  const [uploadState, setUploadState] = useState(0);
+  const [uploadState, setUploadState] = useState(1);
   const inputRef = useRef();
+  const [formEditable,setFormEditable]= useState(0);
 
   const formik = useFormik({
     initialValues: {
-      IsInward: "",
-      DocumentName: "",
-      DocumentTypeId: "",
-      LetterSerialNumber: "",
-      InwardOutwardReferenceDocumentId: "",
-      EndUserId: "",
-      DocumentDescription: "",
-      DocumentPath: "",
-      SenderId: "",
-      ReceiverId: "",
-      BillingInfo: "",
+      IsInward: document.IsInward,
+      DocumentName: document.DocumentName,
+      DocumentTypeId: document.DocumentTypeId,
+      LetterSerialNumber: document.LetterSerialNumber,
+      InwardOutwardReferenceDocumentId: document.InwardOutwardReferenceDocumentId,
+      EndUserId: document.EndUserId,
+      DocumentDescription: document.DocumentDescription,
+      DocumentPath: document.DocumentPath,
+      SenderId: document.SenderId,
+      ReceiverId: document.ReceiverId,
+      BillingInfo: document.BillingInfo,
       Feedback: "",
       AttachedDocumentPath: "",
     },
@@ -110,95 +111,42 @@ export default function AddDocument() {
       }
     }
   };
-
-  const handleDragEnter = (event) => {
-    event.preventDefault();
-    if (event.type === "dragenter" || event.type === "dragover") {
-      setDragActive(true);
-    } else if (event.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    setFile(event.dataTransfer.files[0]);
-    // console.log(event.dataTransfer.files[0]);
-  };
-
   return (
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
-      <form
-        className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full"
+      
+        <div
+          className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
+        >
+          {/* <div className={`${uploadState === 0 ? "text-center" : "hidden"}`}>
+            <span>{file.name}</span>
+            <div>
+              <button
+                className="btn btn-sm bg-red-500 text-white"
+                onClick={() => setFile(null)}
+              >
+                Cencel
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm bg-blue-500 text-white"
+                onClick={handleUpload}
+              >
+                Upload
+              </button>
+            </div>
+          </div> */}
+
+          {<DocumentViewer DocPath={document.DocumentPath} />}
+        </div>
+
+        <form
+        className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-1/4"
         onSubmit={(e) => {
           e.preventDefault();
           console.log(formik.errors);
           formik.handleSubmit();
         }}
       >
-        {/* Drag-and-Drop Container */}
-        {file === null ? (
-          <div
-            className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white ${
-              dragActive ? "border-blue-500" : "border-gray-300"
-            }`}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragEnter}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          >
-            <div className="text-center">
-              <p className="text-gray-500 text-center">
-                Drag and drop files here or click to upload.
-              </p>
-              <button
-                type="button"
-                className="btn bg-blue-500 text-white"
-                onClick={() => inputRef.current.click()}
-                onChange={handleDrop}
-              >
-                Select file
-              </button>
-            </div>
-            {formik.errors.DocumentPath && formik.touched.DocumentPath && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.DocumentPath}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div
-            className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white ${
-              dragActive ? "border-blue-500" : "border-gray-300"
-            }`}
-          >
-            <div className={`${uploadState === 0 ? "text-center" : "hidden"}`}>
-              <span>{file.name}</span>
-              <div>
-                <button
-                  className="btn btn-sm bg-red-500 text-white"
-                  onClick={() => setFile(null)}
-                >
-                  Cencel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm bg-blue-500 text-white"
-                  onClick={handleUpload}
-                >
-                  Upload
-                </button>
-              </div>
-            </div>
-
-            {uploadState === 1 && <DocumentViewer DocPath={file} />}
-          </div>
-        )}
-
         <div className="flex-1 bg-white rounded-2xl p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-6">
             Document Details
@@ -212,9 +160,10 @@ export default function AddDocument() {
                   name="IsInward"
                   value="0"
                   className="radio checked:bg-blue-500"
-                  checked={formik.values.IsInward === "0"} // ✅ Correctly bind checked state
+                  checked={formik.values.IsInward} // ✅ Correctly bind checked state
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
+                  disabled
                 />
               </label>
             </div>
@@ -226,9 +175,10 @@ export default function AddDocument() {
                   name="IsInward"
                   value="1"
                   className="radio checked:bg-blue-500"
-                  checked={formik.values.IsInward === "1"} // ✅ Correctly bind checked state
+                  checked={formik.values.IsInward} // ✅ Correctly bind checked state
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
+                  disabled
                 />
               </label>
             </div>
@@ -240,15 +190,22 @@ export default function AddDocument() {
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Update Document
+            </label>
             <input
               type="file"
               multiple
               name="DocumentPath"
               id="DocumentPath"
-              ref={inputRef}
               onChange={(event) => setFile(event.currentTarget.files[0])}
-              hidden
+              disabled
             />
+            {formik.errors.DocumentPath && formik.touched.DocumentPath && (
+              <div className="text-red-500 text-xs mt-1">
+                {formik.errors.DocumentPath}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -262,6 +219,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentName}
+              readOnly
             />
 
             {formik.errors.DocumentName && formik.touched.DocumentName && (
@@ -276,13 +234,14 @@ export default function AddDocument() {
               Document Description
             </label>
             <textarea
-              rows="3"
+              rows="5"
               name="DocumentDescription"
               id="DocumentDescription"
               className="w-full input-sm rounded-md border border-gray-300 bg-gray-50 p-1 resize-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentDescription}
+              readOnly
             ></textarea>
 
             {formik.errors.DocumentDescription &&
@@ -305,6 +264,8 @@ export default function AddDocument() {
               onBlur={formik.handleBlur}
               value={formik.values.DocumentTypeId}
               className="input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              readOnly
+              disabled
             >
               {documentTypes.map((doctype, index) => {
                 return (
@@ -337,6 +298,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.LetterSerialNumber}
+              readOnly
             />
 
             {formik.errors.LetterSerialNumber &&
@@ -359,6 +321,8 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
+              disabled
+              readOnly
             >
               {documents.map((document, index) => (
                 <option
@@ -390,6 +354,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.SenderId}
+              disabled
             >
               {users.map((user, index) => {
                 return (
@@ -419,6 +384,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.ReceiverId}
+              disabled
             >
               {users.map((user, index) => {
                 return (
@@ -447,6 +413,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.EndUserId}
+              disabled
             >
               {users.map((user, index) => {
                 return (
@@ -476,6 +443,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.BillingInfo}
+              readOnly
             />
 
             {formik.errors.BillingInfo && formik.touched.BillingInfo && (
@@ -497,6 +465,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.Feedback}
+              readOnly
             ></textarea>
 
             {formik.errors.Feedback && formik.touched.Feedback && (
@@ -518,6 +487,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.AttachedDocumentPath}
+              disabled
             />
 
             {formik.errors.AttachedDocumentPath &&
@@ -531,10 +501,11 @@ export default function AddDocument() {
           <div className="flex justify-end mt-5">
             <button
               type="submit"
+              disabled
               // disabled={uploadState !== 1}
               className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 transition"
             >
-              Add Document
+              Update Document
             </button>
             {/* <Button color="blue" text="Save Document" /> */}
           </div>
@@ -543,3 +514,5 @@ export default function AddDocument() {
     </div>
   );
 }
+
+export default DocumentDetails;
