@@ -12,9 +12,9 @@ const YearlyCalendar = ({ userLog = [] }) => {
   const months = useMemo(() => Array.from({ length: 12 }, (_, i) => new Date(currentYear, i, 1)), [currentYear]);
 
   return (
-    <div className="p-4 bg-gray-100 h-full overflow-scroll">
+    <div className="p-4 bg-gray-100 h-full overflow-scroll scroll-smooth w-full">
       <h2 className="text-xl font-bold text-center mb-4">Yearly Calendar - {currentYear}</h2>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid xl:grid-cols-3 md:grid-cols-2 lg:gap-4 md:gap-1">
         {months.map((month, index) => {
           const monthName = month.toLocaleString("default", { month: "long" });
           const firstDay = new Date(currentYear, index, 1).getDay();
@@ -24,7 +24,7 @@ const YearlyCalendar = ({ userLog = [] }) => {
             <div key={index} className="bg-white shadow-md p-4 rounded-lg">
               <h3 className="text-center font-semibold text-blue-500">{monthName}</h3>
               <div className="grid grid-cols-7 gap-1 text-xs mt-2">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
+                {["S", "M", "T", "W", "T", "F", "S"].map(day => (
                   <div key={day} className="text-gray-500 text-center font-bold">{day}</div>
                 ))}
                 {Array.from({ length: firstDay }).map((_, i) => (

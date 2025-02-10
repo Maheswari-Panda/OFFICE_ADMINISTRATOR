@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import userContext from "../context/user/userContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const nagivate = useNavigate();
@@ -54,16 +54,12 @@ function Navbar() {
         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[100] mt-3 w-52 p-2 shadow"
       >
         <li>
-          <a className="justify-between">
-            Profile
-            <span className="badge">New</span>
-          </a>
+          <Link className="gap-2" to="/dashboard/myprofile">
+            <i className="fas fa-user text-xs"></i> View Profile
+          </Link>
         </li>
         <li>
-          <a>Settings</a>
-        </li>
-        <li>
-          <a onClick={handleLogout}>Logout</a>
+          <Link className="gap-2" onClick={handleLogout} to="/"> <i className="fa-solid fa-arrow-up-from-bracket"></i>Logout</Link>
         </li>
       </ul>
     </div>

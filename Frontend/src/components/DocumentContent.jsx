@@ -18,7 +18,7 @@ function DocumentContent() {
     setFilteredDocuments(documents); // Reset filtered documents on initial render
   }, [documents]);
 
-  const handleSearch = (searchTerm, selectedFilter) => {
+  const handleSearch = (searchTerm, selectedFilter, selectedYear, selectedMonth, selectedDate) => {
     let filtered = documents;
 
     if (searchTerm.trim() !== "") {
@@ -33,11 +33,23 @@ function DocumentContent() {
     }
 
     if (selectedFilter) {
-        filtered = filtered.filter((document) => document.DocumentTypeId === selectedFilter);
+      filtered = filtered.filter((document) => document.DocumentTypeId === selectedFilter);
     }
 
+    if (selectedYear) {
+      filtered = filtered.filter((document) => ((new Date(document.DispatchedDateTime).getFullYear() )=== Number(selectedYear)));
+    }
+
+    if (selectedMonth) {
+      filtered = filtered.filter((document) => new Date(document.DispatchedDateTime).getMonth() + 1 === Number(selectedMonth));
+    }
+
+    if (selectedDate) {
+      filtered = filtered.filter((document) => new Date(document.DispatchedDateTime).getDate() === Number(selectedDate));
+    }
     setFilteredDocuments(filtered);
-  };
+};
+
 
   const handleToggleView = () => {
     setViewType(viewType === "grid" ? "list" : "grid");
@@ -69,7 +81,7 @@ function DocumentContent() {
         <div className="flex flex-wrap m-4">
           {filteredDocuments.length === 0 ? (
             <div className="flex justify-center items-center w-full font-bold">
-              <p>No documents found with serached name or filter!</p>
+              <p>No documents found with serached name or applied filter!</p>
             </div>
           ) : (
             filteredDocuments.map((document) => (

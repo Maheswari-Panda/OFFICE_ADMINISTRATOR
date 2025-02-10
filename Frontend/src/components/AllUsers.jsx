@@ -1,57 +1,67 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import userContext from "../context/user/userContext";
+import OfficeContext from "../context/office/officeContext";
 
 function AllUsers() {
-  const context = useContext(userContext);
-  const { users, getAllUsers } = context;
+  const { users, getAllUsers } = useContext(userContext);
+  const { offices, getAllOffices } = useContext(OfficeContext);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  let isMounted = true;
-  
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      // console.log("Fetching users...");
-      await getAllUsers();
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-    if (isMounted) setLoading(false);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([getAllUsers(), getAllOffices()]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchData();
-  
-  return () => { isMounted = false; }; // Cleanup function to prevent memory leaks
-}, []);
+    fetchData();
+  }, []);
 
+  const officeMap = useMemo(() => {
+    return offices.reduce((acc, office) => {
+      acc[office.OfficeId] = office.OfficeName;
+      return acc;
+    }, {});
+  }, [offices]);
 
-  const columns = [
+  const memoizedUsers = useMemo(() => {
+    return users.map((user) => ({
+      ...user,
+      OfficeId: officeMap[user.OfficeId] || "Unknown",
+    }));
+  }, [users, officeMap]);
+
+  const columns = useMemo(() => [
+    {
+      name: "Profile Image",
+      selector: (row) => (
+        <div>
+          {row?.ProfileImageUrl ? (
+            <img
+              src={row?.ProfileImageUrl}
+              alt="Profile"
+              className="h-8 w-8 rounded-full border-2 border-blue-500"
+            />
+          ) : (
+            <i className="fas fa-user-circle text-3xl text-blue-500"></i>
+          )}
+        </div>
+      ),
+    },
     { name: "ERN", selector: (row) => row?.ERN || "N/A", sortable: true },
     { name: "First Name", selector: (row) => row?.FirstName || "N/A", sortable: true },
     { name: "Middle Name", selector: (row) => row?.MiddleName || "N/A", sortable: true },
     { name: "Last Name", selector: (row) => row?.LastName || "N/A", sortable: true },
     { name: "Email", selector: (row) => row?.Email || "N/A", sortable: true },
     { name: "Role", selector: (row) => row?.Role || "N/A", sortable: true },
-    { name: "Office", selector: (row) => row?.Office || "N/A", sortable: true },
-    {
-      name: "Profile Image",
-      cell: (row) => (
-        <div>
-          {row?.ProfileImageUrl ? (
-            <img
-              src={row?.ProfileImageUrl}
-              alt="Profile"
-              className="h-10 w-10 rounded-full border-2 border-blue-500"
-            />
-          ) : (
-            <i className="fas fa-user-circle text-2xl text-blue-500"></i>
-          )}
-        </div>
-      ),
-    },
-  ];
+    { name: "Office", selector: (row) => row?.OfficeId || "N/A", sortable: true },
+  ], []);
 
   return (
     <div className="w-full flex justify-center bg-blue-100 min-h-screen">
@@ -63,13 +73,7 @@ useEffect(() => {
         ) : users.length === 0 ? (
           <div className="text-center text-gray-500 font-bold text-xl">No Users Found</div>
         ) : (
-          <DataTable
-            columns={columns}
-            data={users}
-            fixedHeader
-            // pagination
-            highlightOnHover
-          />
+          <DataTable columns={columns} data={memoizedUsers} fixedHeader pagination highlightOnHover />
         )}
       </div>
     </div>

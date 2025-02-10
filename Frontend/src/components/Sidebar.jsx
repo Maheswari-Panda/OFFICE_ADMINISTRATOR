@@ -7,6 +7,7 @@ import userContext from "../context/user/userContext";
 import CreateUserForm from "./CreateUserForm";
 import AllUsers from "./AllUsers";
 import UserProfile from "./UserProfile";
+import CreateDocument from "./CreateDocument";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -30,6 +31,7 @@ function Sidebar() {
           {/* <Content/> */}
           <Routes>
             <Route path="addDocument" element={<AddDocument />} />
+            <Route path="createDocument" element={<CreateDocument />} />
             <Route path="content" element={<Content />} />
             <Route path="allUsers" element={<AllUsers />} />
             <Route path="createUser" element={<CreateUserForm />} />
@@ -42,7 +44,7 @@ function Sidebar() {
         </div>
 
         {/* Sidebar */}
-        <div className="drawer-side h-screen lg:w-2/3">
+        <div className="drawer-side h-screen lg:w-2/3 z-20">
           <label
             htmlFor="my-drawer-2"
             className="drawer-overlay w-screen"
@@ -51,6 +53,10 @@ function Sidebar() {
             {/* Button to add document */}
             <Link to="/dashboard/addDocument">
               <Button icon="+" color="blue" text="Add Document" size="base" />
+            </Link>
+
+            <Link to="/dashboard/createDocument">
+              <Button icon="+" color="blue" text="Create Document" size="base" />
             </Link>
 
             {/* Sidebar Links */}
@@ -114,13 +120,6 @@ function Sidebar() {
               <label htmlFor="my-drawer-2" className="cursor-pointer">
                 <Link to="">
                   <i className="fa-solid fa-file-lines"></i> Reports
-                </Link>
-              </label>
-            </li>
-            <li>
-              <label htmlFor="my-drawer-2" className="cursor-pointer">
-                <Link to="/dashboard/myprofile">
-                  <i className="fa-solid fa-user"></i> My Profile
                 </Link>
               </label>
             </li>

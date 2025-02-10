@@ -1,22 +1,41 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, Field, Form } from "formik";
+
 import YearlyCalendar from "./YearlyCalander";
+import OfficeContext from "../context/office/officeContext";
 
 function UserProfile({ user }) {
+    const {getOfficeById } = useContext(OfficeContext); 
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          await Promise.all([getOfficeById(user.OfficeId)]);
+        } catch (error) {
+          console.error("Error fetching office data:", error);
+        }
+      };
+  
+      fetchData();
+    }, [])
+
+    
+    const {office} = useContext(OfficeContext); 
+    // console.log(office);
+    
     const userLog = [
-        { userId: 1, name: "John Doe", timestamp: "2024-01-05T09:30:00" },
-        { userId: 2, name: "Alice Smith", timestamp: "2024-01-10T14:15:00" },
-        { userId: 1, name: "John Doe", timestamp: "2024-02-20T11:00:00" },
-        { userId: 3, name: "Bob Johnson", timestamp: "2024-03-05T16:45:00" },
-        { userId: 2, name: "Alice Smith", timestamp: "2024-04-12T08:20:00" },
-        { userId: 4, name: "Emily Davis", timestamp: "2024-05-25T10:10:00" },
-        { userId: 3, name: "Bob Johnson", timestamp: "2024-06-30T19:00:00" },
-        { userId: 1, name: "John Doe", timestamp: "2024-07-15T12:50:00" },
-        { userId: 2, name: "Alice Smith", timestamp: "2024-08-22T09:10:00" },
-        { userId: 4, name: "Emily Davis", timestamp: "2024-09-18T13:30:00" },
-        { userId: 1, name: "John Doe", timestamp: "2024-10-05T07:45:00" },
-        { userId: 3, name: "Bob Johnson", timestamp: "2024-11-10T15:20:00" },
-        { userId: 2, name: "Alice Smith", timestamp: "2024-12-01T11:05:00" }
+        { userId: 1, name: "John Doe", timestamp: "2025-01-05T09:30:00" },
+        { userId: 2, name: "Alice Smith", timestamp: "2025-01-10T14:15:00" },
+        { userId: 1, name: "John Doe", timestamp: "2025-02-20T11:00:00" },
+        { userId: 3, name: "Bob Johnson", timestamp: "2025-03-05T16:45:00" },
+        { userId: 2, name: "Alice Smith", timestamp: "2025-04-12T08:20:00" },
+        { userId: 4, name: "Emily Davis", timestamp: "2025-05-25T10:10:00" },
+        { userId: 3, name: "Bob Johnson", timestamp: "2025-06-30T19:00:00" },
+        { userId: 1, name: "John Doe", timestamp: "2025-07-15T12:50:00" },
+        { userId: 2, name: "Alice Smith", timestamp: "2025-08-22T09:10:00" },
+        { userId: 4, name: "Emily Davis", timestamp: "2025-09-18T13:30:00" },
+        { userId: 1, name: "John Doe", timestamp: "2025-10-05T07:45:00" },
+        { userId: 3, name: "Bob Johnson", timestamp: "2025-11-10T15:20:00" },
+        { userId: 2, name: "Alice Smith", timestamp: "2025-12-01T11:05:00" }
       ];
       
   const [isEditing, setIsEditing] = useState(false);
@@ -28,7 +47,7 @@ function UserProfile({ user }) {
     email: user.Email,
     password: user.Password,
     role: user.Role,
-    office: user.OfficeId,
+    office: office.OfficeName,
     profileImg: user.ProfileImageUrl,
   };
 
@@ -38,9 +57,9 @@ function UserProfile({ user }) {
   };
 
   return (
-    <div className="w-full mx-auto bg-blue-100 p-4 flex items-start justify-center h-screen">
+    <div className="w-full mx-auto bg-blue-100 p-4 flex items-start justify-center h-full">
       {/* Profile Card */}
-      <div className="bg-white p-6 rounded-lg shadow-md w-full h-full flex justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center">
         <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300">
             {/* Profile Image */}
         <div className="flex justify-center mb-6">
@@ -184,9 +203,8 @@ function UserProfile({ user }) {
         </Formik>
         </div>
 
-        <div className="">
+        <div className="flex flex-wrap">
             <YearlyCalendar userLog={userLog}/>
-
         </div>
 
       </div>
