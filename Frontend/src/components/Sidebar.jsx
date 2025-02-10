@@ -56,7 +56,7 @@ function Sidebar() {
             </Link>
 
             <Link to="/dashboard/createDocument">
-              <Button icon="+" color="blue" text="Create Document" size="base" />
+              <Button color="blue" text="Create Document" size="base" iconTag={<i className="fa-solid fa-file-pen"></i>}/>
             </Link>
 
             {/* Sidebar Links */}
@@ -67,22 +67,15 @@ function Sidebar() {
                 </Link>
               </label>
             </li>
-            <li>
-              <label htmlFor="my-drawer-2" className="cursor-pointer">
-                <Link to="">
-                  <i className="fa-regular fa-folder"></i> Inward Documents
-                </Link>
-              </label>
-            </li>
-            <li>
-              <label htmlFor="my-drawer-2" className="cursor-pointer">
-                <Link to="">
-                  <i className="fa-solid fa-folder"></i> Outward Documents
-                </Link>
-              </label>
-            </li>
             {user.Role === "Admin" ? (
               <>
+            <li>
+            <label htmlFor="my-drawer-2" className="cursor-pointer">
+              <Link to="/dashboard/createUser">
+                <i className="fa-solid fa-user-plus"></i> Create User
+              </Link>
+            </label>
+          </li>
                <li>
                 <label htmlFor="my-drawer-2" className="cursor-pointer">
                   <Link to="/dashboard/allUsers">
@@ -99,13 +92,6 @@ function Sidebar() {
                 </label>
               </li>
               
-            <li>
-            <label htmlFor="my-drawer-2" className="cursor-pointer">
-              <Link to="/dashboard/createUser">
-                <i className="fa-solid fa-user-plus"></i> Create User
-              </Link>
-            </label>
-          </li>
           </>
             ) : (
               <li>

@@ -73,7 +73,7 @@ function AllUsers() {
         ) : users.length === 0 ? (
           <div className="text-center text-gray-500 font-bold text-xl">No Users Found</div>
         ) : (
-          <DataTable columns={columns} data={memoizedUsers} fixedHeader pagination highlightOnHover />
+          <DataTable columns={columns} data={memoizedUsers} fixedHeader highlightOnHover />
         )}
       </div>
     </div>
