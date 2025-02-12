@@ -92,7 +92,7 @@ exports.getAllDocuments = async () => {
     try {
         const pool = await db.getPool();
         const result = await pool.request()
-            .execute('GetAllDocuments');
+            .execute('GetCompleteDocumentDetails');
 
         return result.recordset; // Return all documents
     } catch (err) {

@@ -1,5 +1,6 @@
 import React,{memo} from 'react'
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import "@cyntler/react-doc-viewer/dist/index.css";
 
 import 'react-pdf/dist/Page/AnnotationLayer.css'; 
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -9,7 +10,9 @@ import 'react-pdf/dist/Page/TextLayer.css';
 const DocumentViewer=(props)=> {
     console.log("The pdf is rendering again");
     const docs = [
-        {uri: props.DocPath},
+        { uri: props.DocPath,
+          fileType: props.DocPath.split('.').pop().toLowerCase()
+        },
       ];
       return (
         <>

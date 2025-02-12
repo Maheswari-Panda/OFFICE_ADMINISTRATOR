@@ -17,6 +17,8 @@ export default function AddDocument() {
     getUsers,
     uploadDocument,
     addDocument,
+    uploadAttachedDocument,
+    addAttachedDocument
   } = documentContext;
   useEffect(() => {
     getAllDocumentType();
@@ -24,12 +26,16 @@ export default function AddDocument() {
   }, []);
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
+  const [attachedDocumentUrl, setAttachedDocumentUrl] = useState(null);
+  const [attachedDocument, setAttachedDocument] = useState(null);
   const [uploadState, setUploadState] = useState(0);
+  const [attachedDocumentUploadState, setAttachedDocumentUploadState] =
+    useState(0);
   const inputRef = useRef();
 
   const formik = useFormik({
     initialValues: {
-      IsInward: "",
+      IsInward: 0,
       DocumentName: "",
       DocumentTypeId: "",
       LetterSerialNumber: "",
@@ -40,7 +46,6 @@ export default function AddDocument() {
       SenderId: "",
       ReceiverId: "",
       BillingInfo: "",
-      Feedback: "",
       AttachedDocumentPath: "",
     },
     validationSchema: Yup.object({
@@ -56,12 +61,13 @@ export default function AddDocument() {
       SenderId: Yup.string().required("SenderId is required"),
       ReceiverId: Yup.string().required("ReceiverId is required"),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values) =>{
       console.log("clicked on submit");
       console.log(values);
       try {
-        if (uploadState === 1) {
+        if (uploadState === 1 && attachedDocumentUploadState === 1) {
           values.DocumentPath = file;
+          console.log(Number(values.IsInward));
           const response = await addDocument(
             values.IsInward,
             values.DocumentName,
@@ -73,12 +79,14 @@ export default function AddDocument() {
             values.DocumentPath,
             values.SenderId,
             values.ReceiverId,
-            values.BillingInfo,
-            values.Feedback,
-            values.AttachedDocumentPath
+            values.BillingInfo
           );
           console.log(response);
-          if (response != null) {
+          console.log(response.message);
+         
+          const AttachedDocumentResponse = await addAttachedDocument(response.message,values.AttachedDocumentPath);
+          console.log(AttachedDocumentResponse);
+          if (response != null && AttachedDocumentResponse!==null) {
             alert("Document added successfully!");
             navigate("/dashboard/content");
           } else {
@@ -107,6 +115,27 @@ export default function AddDocument() {
           `http://localhost:3000` + uploadResponse.DocumentPath;
         setFile(uploadedDocumentPath);
         formik.setFieldValue("DocumentPath", uploadedDocumentPath);
+      }
+    }
+  };
+
+  const handleAttachedDocuments = async () => {
+    let attachedDocumentPath = attachedDocumentUrl;
+    console.log(attachedDocument);
+    if (attachedDocument) {
+      const formData = new FormData();
+      formData.append("AttachedDocumentPath", attachedDocument);
+      // console.log(file);
+      const uploadResponse = await uploadAttachedDocument(formData);
+
+      if (uploadResponse) {
+        setAttachedDocumentUploadState(1); // Set uploadState to 1 after successful upload
+        attachedDocumentPath =
+          `http://localhost:3000` + uploadResponse.AttachedDocumentPath;
+        setAttachedDocumentUrl(attachedDocumentPath);
+        formik.setFieldValue("AttachedDocumentPath", attachedDocumentPath);
+        console.log(attachedDocumentPath);
+        console.log("Attached Document uploded successfully");
       }
     }
   };
@@ -210,10 +239,15 @@ export default function AddDocument() {
                 <input
                   type="radio"
                   name="IsInward"
-                  value="0"
+                  value={0}
                   className="radio checked:bg-blue-500"
-                  checked={formik.values.IsInward === "0"} // ✅ Correctly bind checked state
-                  onChange={formik.handleChange}
+                  checked={formik.values.IsInward === 0}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      "IsInward",
+                      parseInt(e.target.value, 10)
+                    )
+                  } // Convert value to number
                   onBlur={formik.handleBlur}
                 />
               </label>
@@ -224,14 +258,20 @@ export default function AddDocument() {
                 <input
                   type="radio"
                   name="IsInward"
-                  value="1"
+                  value={1}
                   className="radio checked:bg-blue-500"
-                  checked={formik.values.IsInward === "1"} // ✅ Correctly bind checked state
-                  onChange={formik.handleChange}
+                  checked={formik.values.IsInward === 1}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      "IsInward",
+                      parseInt(e.target.value, 10)
+                    )
+                  } // Convert value to number
                   onBlur={formik.handleBlur}
                 />
               </label>
             </div>
+
             {formik.touched.IsInward && formik.errors.IsInward && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.IsInward}
@@ -487,38 +527,38 @@ export default function AddDocument() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Feedback
-            </label>
-            <textarea
-              rows="2"
-              name="Feedback"
-              id="Feedback"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.Feedback}
-            ></textarea>
-
-            {formik.errors.Feedback && formik.touched.Feedback && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.Feedback}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
               Attachment
             </label>
-            <input
+            {attachedDocument === null ? 
+            (<input
               type="file"
               name="AttachedDocumentPath"
               id="AttachedDocumentPath"
               className="w-full text-sm text-gray-500 border border-gray-300 rounded-md p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
-              onChange={formik.handleChange}
+              multiple
+              onChange={(event) => setAttachedDocument(event.currentTarget.files[0])}
               onBlur={formik.handleBlur}
-              value={formik.values.AttachedDocumentPath}
-            />
+            />)
+            :(
+              <div className={`${attachedDocumentUploadState === 0 ? "text-center" : "hidden"}`}>
+              <span>{attachedDocument.name}</span>
+              <div>
+                <button
+                  className="btn btn-sm bg-red-500 text-white"
+                  onClick={() => setAttachedDocument(null)}
+                >
+                  Cencel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm bg-blue-500 text-white"
+                  onClick={handleAttachedDocuments}
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+            )}
 
             {formik.errors.AttachedDocumentPath &&
               formik.touched.AttachedDocumentPath && (

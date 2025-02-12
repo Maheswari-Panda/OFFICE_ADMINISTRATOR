@@ -1,0 +1,24 @@
+/* Styling for the DataTable */
+.data-table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-radius: 0.5rem;
+  }
+
+  .data-table .rdt_TableHeadRow{
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    background-color: #3b82f6;
+    color: white;
+  }
+  .data-table .rdt_TableCol:hover{
+    background-color: #1a67e1;
+    color: white;
+  }
+  
+  .data-table .rdt_TableRow:hover {
+    background-color: #3b83f62f;
+    color: #3b82f6;
+  }
+  
