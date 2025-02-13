@@ -84,14 +84,13 @@ exports.getUserByEmail = async (userEmail) => {
 };
 
 // Function to update user details by UserId
-exports.updateUser = async (userId, userEmail,userPassword, userERN, userFirstName, userMiddleName, userLastName, userRole,officeId,profileImgUrl) => {
+exports.updateUser = async (userId, userEmail, userERN, userFirstName, userMiddleName, userLastName, userRole,officeId,profileImgUrl) => {
     const pool = await db.getPool();
 console.log(profileImgUrl);
     try {
         const result = await pool.request()
             .input('UserId', sql.Int, userId)
             .input('Email', sql.NVarChar(100), userEmail)
-            .input('Password', sql.NVarChar(255), userPassword)
             .input('FirstName', sql.NVarChar(20), userFirstName)
             .input('MiddleName', sql.NVarChar(20), userMiddleName)
             .input('LastName', sql.NVarChar(20), userLastName)
@@ -99,7 +98,7 @@ console.log(profileImgUrl);
             .input('ERN', sql.Char(10), userERN)
             .input('OfficeId', sql.Int(10), officeId)
             .input('ProfileImageUrl',sql.NVarChar(255),profileImgUrl)
-            .execute('UpdateUser'); // Assuming the stored procedure is named UpdateUser
+            .execute('UpdateUserWithoutPassword'); // Assuming the stored procedure is named UpdateUser
 
         return result.recordset[0]?.UPDATE_STATUS;
     } catch (err) {

@@ -140,7 +140,6 @@ router.put('/update/:userId', [
     body("role").isLength({ min: 3 }),
     body("ERN").isLength({ min: 10,max:10}),
     body("email").isEmail(),
-    body("password").isLength({ min: 5 }),
     body("officeId").isLength({min:1,max:9})
 ], fetchUser,authorizeRole("User","Admin"), async (req, res) => {
     const errors = validationResult(req);
@@ -149,15 +148,15 @@ router.put('/update/:userId', [
     }
 
     const userId = req.user.userId;
-    const { email, password, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl } = req.body;
+    const { email, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl } = req.body;
 
     try {
-        // Make password secure with salt & pepper
-        const salt = await bcrypt.genSalt(10);
-        const securedPassword = await bcrypt.hash(password, salt);
+        // // Make password secure with salt & pepper
+        // const salt = await bcrypt.genSalt(10);
+        // const securedPassword = await bcrypt.hash(password, salt);
 
         // Call the updateUser function from the model
-        const message = await userModel.updateUser(userId, email, securedPassword, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl);
+        const message = await userModel.updateUser(userId, email, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl);
 
         const data = {
             user: {

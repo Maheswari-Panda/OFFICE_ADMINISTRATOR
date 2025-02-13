@@ -8,6 +8,7 @@ import CreateUserForm from "./CreateUserForm";
 import AllUsers from "./AllUsers";
 import UserProfile from "./UserProfile";
 import CreateDocument from "./CreateDocument";
+import ViewUser from "./ViewUser";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -35,7 +36,8 @@ function Sidebar() {
             <Route path="content" element={<Content />} />
             <Route path="allUsers" element={<AllUsers />} />
             <Route path="createUser" element={<CreateUserForm />} />
-            <Route path="myprofile" element={<UserProfile user={user}/>} />
+            <Route path="myprofile" element={<UserProfile/>} />
+            <Route path="viewUser" element={<ViewUser/>} />
             <Route path="/" element={<Navigate to="content" />} />
           </Routes>
 

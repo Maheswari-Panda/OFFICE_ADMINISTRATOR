@@ -5,10 +5,10 @@ import { jwtDecode } from "jwt-decode";
 
 const UserAuth = ({ children }) => {
   const host = "http://localhost:3000";
-  const initialUsers=[];
+  const initialUsers = [];
   const [user, setUser] = useState(null);
-  const [users,setUsers]=useState(initialUsers);
-  
+  const [users, setUsers] = useState(initialUsers);
+
   // Login function
 
   const login = async (email, password) => {
@@ -17,40 +17,43 @@ const UserAuth = ({ children }) => {
         email,
         password,
       });
-  
+
       // Check if the response was successful
       const data = response.data;
-  
+
       // Decode the token to get the expiration time (exp)
       const decodedToken = jwtDecode(data.accessToken);
       console.log(decodedToken);
       const expirationTime = decodedToken.exp * 1000; // Convert exp to milliseconds
-  
+
       // Store the token and expiration time
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("tokenExpirationTime", expirationTime);
-  
+
       // Fetch user details
       const userDetails = await getUser(data.accessToken);
       setUser(userDetails); // Update the user state
-  
+
       // Start a timer to log the user out when the token expires
       startTokenExpirationTimer(expirationTime);
-  
+
       return data.accessToken; // Return the access token
     } catch (error) {
-      console.error("Error during login:", error.response?.data || error.message);
+      console.error(
+        "Error during login:",
+        error.response?.data || error.message
+      );
       return false;
     }
   };
-  
+
   const startTokenExpirationTimer = (expirationTime) => {
     const currentTime = Date.now();
     const timeLeft = expirationTime - currentTime;
-  
+
     if (timeLeft <= 0) {
       // If the token is already expired, log out the user immediately
-      
+
       // Log out if the token is expired
       console.log("Sesssion expired");
       logout();
@@ -58,21 +61,20 @@ const UserAuth = ({ children }) => {
     } else {
       // Set a timeout to log out the user when the token expires
       setTimeout(() => {
-          console.log("Sesssion expired");
-          logout();
-          alert("Session expired, please log in again");
+        console.log("Sesssion expired");
+        logout();
+        alert("Session expired, please log in again");
       }, timeLeft); // Log out when the token expires
     }
   };
-  
+
   const logout = () => {
     localStorage.clear(); // Clear the token and expiration time
     setUser(null); // Reset the user state
     // Optionally redirect the user to the login page
-    window.location.href = '/';
+    window.location.href = "/";
     return true;
   };
-  
 
   // Get the logged-in user details
   const getUser = async () => {
@@ -92,7 +94,10 @@ const UserAuth = ({ children }) => {
       // Return the user details
       return response.data;
     } catch (error) {
-      console.error("Error fetching user details:", error.response?.data || error.message);
+      console.error(
+        "Error fetching user details:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -113,56 +118,136 @@ const UserAuth = ({ children }) => {
       // Return the user details
       return response.data;
     } catch (error) {
-      console.error("Error fetching user details:", error.response?.data || error.message);
+      console.error(
+        "Error fetching user details:",
+        error.response?.data || error.message
+      );
     }
   };
 
-  const createUser= async(email, password,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl)=>{
+  const createUser = async (
+    email,
+    password,
+    ERN,
+    firstName,
+    middleName,
+    lastName,
+    role,
+    officeId,
+    profileImgUrl
+  ) => {
     try {
-      const response =  await axios.post(`${host}/api/user/create`,
-        {email, password,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl}
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error creating user", error.response?.data || error.message);
-    }
-  }
-
-  
-  const uploadProfileImage =async(formData)=>{
-    try {
-      const response = await axios.post(`${host}/api/user/upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const response = await axios.post(`${host}/api/user/create`, {
+        email,
+        password,
+        ERN,
+        firstName,
+        middleName,
+        lastName,
+        role,
+        officeId,
+        profileImgUrl,
       });
       return response.data;
     } catch (error) {
-      console.error("Error Uploading user profile", error.response?.data || error.message);
-      
+      console.error(
+        "Error creating user",
+        error.response?.data || error.message
+      );
     }
-}
+  };
 
-const getAllUsers=async()=>{
-  try {
-    const accessToken = localStorage.getItem("accessToken");
-    const response = await axios.post(`${host}/api/user/getall`,
-      {}, // Empty request body
-      {
+  const updateUser = async (
+    userId,
+    email,
+    ERN,
+    firstName,
+    middleName,
+    lastName,
+    role,
+    officeId,
+    profileImgUrl
+  ) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.put(`${host}/api/user/update/${userId}`, {
+        email,
+        ERN,
+        firstName,
+        middleName,
+        lastName,
+        role,
+        officeId,
+        profileImgUrl,
+      },{
         headers: {
           accessToken: `${accessToken}`,
         },
-      }
-    );
-    const json = await response.data;
-    setUsers(json);
-   return json;
-  } catch (error) {
-    console.error("Error Getting all user details", error.response?.data || error.message);
-  }
-}
+      });
 
+      const userDetails = await getUser(accessToken);
+      // console.log(userDetails);
+      setUser(userDetails);
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating user : ",error.response?.data || error.message);
+    }
+  };
+
+  const uploadProfileImage = async (formData) => {
+    try {
+      const response = await axios.post(`${host}/api/user/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error Uploading user profile",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const getAllUsers = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.post(
+        `${host}/api/user/getall`,
+        {}, // Empty request body
+        {
+          headers: {
+            accessToken: `${accessToken}`,
+          },
+        }
+      );
+      const json = await response.data;
+      setUsers(json);
+      return json;
+    } catch (error) {
+      console.error(
+        "Error Getting all user details",
+        error.response?.data || error.message
+      );
+    }
+  };
 
   return (
-    <UserContext.Provider value={{ user,users, setUser, login, logout, getUser,getUserById, createUser ,uploadProfileImage,getAllUsers}}>
+    <UserContext.Provider
+      value={{
+        user,
+        users,
+        setUser,
+        login,
+        logout,
+        getUser,
+        getUserById,
+        createUser,
+        uploadProfileImage,
+        getAllUsers,
+        updateUser,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

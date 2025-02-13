@@ -3,12 +3,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import userContext from "../context/user/userContext";
 import YearlyCalendar from "./YearlyCalander";
+import { useLocation, useNavigate } from "react-router-dom";
+import UserActivity from "./UserActivity";
 
-function UserProfile() {
+function ViewUser() {
+  const location= useLocation();
+  const user = location.state?.user;
 
   const iRef = useRef();
   const context = useContext(userContext);
-  const { user,updateUser, uploadProfileImage } = context;
+  const { updateUser, uploadProfileImage } = context;
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(user.ProfileImageUrl);
   const [isOldImage, setIsOldImage] = useState(true);
@@ -102,11 +106,23 @@ function UserProfile() {
     },
   });
 
+  const navigate = useNavigate();
+  
+  const handleBackClick = () => {
+    navigate("/dashboard/allUsers"); // Redirect to AllUsers component
+  };
+
   return (
-    <div className="w-full mx-auto bg-blue-100 p-4 flex items-start justify-center h-full">
+    <div className="w-full mx-auto bg-blue-100 p-4 items-start justify-center h-full">
+        <button
+        onClick={handleBackClick}
+        className="btn btn-sm bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+      >
+        <i className="fa-solid fa-arrow-left"></i> Back to Users
+      </button>
       {/* Profile Card */}
-      <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center">
-        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
+        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -309,12 +325,15 @@ function UserProfile() {
           </form>
         </div>
 
-        <div className="flex flex-wrap">
-          <YearlyCalendar userLog={userLog} />
+        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
+          <UserActivity/>
         </div>
+      </div>
+      <div className="flex">
+            <YearlyCalendar userLog={userLog} />
       </div>
     </div>
   );
 }
 
-export default UserProfile;
+export default ViewUser;

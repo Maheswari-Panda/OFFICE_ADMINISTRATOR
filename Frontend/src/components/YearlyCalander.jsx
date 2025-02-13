@@ -24,7 +24,7 @@ const YearlyCalendar = ({ userLog = [] }) => {
             <div key={index} className="bg-white shadow-md p-4 rounded-lg">
               <h3 className="text-center font-semibold text-blue-500">{monthName}</h3>
               <div className="grid grid-cols-7 gap-1 text-xs mt-2">
-                {["S", "M", "T", "W", "T", "F", "S"].map(day => (
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
                   <div key={day} className="text-gray-500 text-center font-bold">{day}</div>
                 ))}
                 {Array.from({ length: firstDay }).map((_, i) => (

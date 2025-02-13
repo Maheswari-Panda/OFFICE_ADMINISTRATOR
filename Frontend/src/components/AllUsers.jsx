@@ -2,17 +2,18 @@ import React, { useContext, useEffect, useState, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import userContext from "../context/user/userContext";
 import OfficeContext from "../context/office/officeContext";
+import { useNavigate } from "react-router-dom";
 
 function AllUsers() {
+  const navigate= useNavigate();
   const { users, getAllUsers } = useContext(userContext);
-  const { offices, getAllOffices } = useContext(OfficeContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        await Promise.all([getAllUsers(), getAllOffices()]);
+        await Promise.all([getAllUsers()]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -23,19 +24,10 @@ function AllUsers() {
     fetchData();
   }, []);
 
-  const officeMap = useMemo(() => {
-    return offices.reduce((acc, office) => {
-      acc[office.OfficeId] = office.OfficeName;
-      return acc;
-    }, {});
-  }, [offices]);
-
-  const memoizedUsers = useMemo(() => {
-    return users.map((user) => ({
-      ...user,
-      OfficeId: officeMap[user.OfficeId] || "Unknown",
-    }));
-  }, [users, officeMap]);
+  const handleView = (row) =>{
+    console.log("View clicked:", row);
+    navigate("/dashboard/viewUser", { state: { user: row } });
+  }
 
   const columns = useMemo(() => [
     {
@@ -60,7 +52,26 @@ function AllUsers() {
     { name: "Last Name", selector: (row) => row?.LastName || "N/A", sortable: true },
     { name: "Email", selector: (row) => row?.Email || "N/A", sortable: true },
     { name: "Role", selector: (row) => row?.Role || "N/A", sortable: true },
-    { name: "Office", selector: (row) => row?.OfficeId || "N/A", sortable: true },
+    { name: "Office", selector: (row) => row?.OfficeName || "N/A", sortable: true },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <div className="flex space-x-2">
+          <button
+            className="p-1 text-blue-500 hover:text-blue-700"
+            onClick={() => handleView(row)}
+          >
+            <i className="fas fa-edit"></i>
+          </button>
+          <button
+            className="p-1 text-red-500 hover:text-red-700"
+            onClick={() => handleDelete(row)}
+          >
+            <i className="fas fa-trash"></i>
+          </button>
+        </div>
+      ),
+    }
   ], []);
 
   return (
@@ -73,7 +84,7 @@ function AllUsers() {
         ) : users.length === 0 ? (
           <div className="text-center text-gray-500 font-bold text-xl">No Users Found</div>
         ) : (
-          <DataTable columns={columns} data={memoizedUsers} fixedHeader highlightOnHover />
+          <DataTable columns={columns} data={users} fixedHeader highlightOnHover />
         )}
       </div>
     </div>
