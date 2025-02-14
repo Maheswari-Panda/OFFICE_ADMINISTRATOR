@@ -65,7 +65,7 @@ export default function AddDocument() {
       console.log("clicked on submit");
       console.log(values);
       try {
-        if (uploadState === 1 && attachedDocumentUploadState === 1) {
+        if ((uploadState===1 && values.AttachedDocumentPath==="") || (values.AttachedDocumentPath!=="" && uploadState === 1 && attachedDocumentUploadState === 1)) {
           values.DocumentPath = file;
           console.log(Number(values.IsInward));
           const response = await addDocument(
@@ -84,14 +84,24 @@ export default function AddDocument() {
           console.log(response);
           console.log(response.message);
          
-          const AttachedDocumentResponse = await addAttachedDocument(response.message,values.AttachedDocumentPath);
-          console.log(AttachedDocumentResponse);
-          if (response != null && AttachedDocumentResponse!==null) {
-            alert("Document added successfully!");
-            navigate("/dashboard/content");
-          } else {
-            alert("error in document adding");
+          if(values.AttachedDocumentPath!==""){
+
+            const AttachedDocumentResponse = await addAttachedDocument(response.message,values.AttachedDocumentPath);
+            console.log(AttachedDocumentResponse);
+            if (response != null && AttachedDocumentResponse!==null) {
+              alert("Document added successfully!");
+              navigate("/dashboard/content");
+            } else {
+              alert("error in document adding");
+            }
           }
+          
+            if (response != null) {
+              alert("Document added successfully!");
+              navigate("/dashboard/content");
+            } else {
+              alert("error in document adding");
+            }
         }
       } catch (error) {
         console.error("Error adding  user:", error);

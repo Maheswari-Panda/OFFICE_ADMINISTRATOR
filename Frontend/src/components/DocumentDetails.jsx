@@ -3,10 +3,13 @@ import Button from "./Button";
 import DocumentContext from "../context/document/documentContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DocumentViewer from "./DocumentViewer";
 
 function DocumentDetails({ document }) {
+    const location= useLocation();
+    document = (document===undefined)?location.state.document:document;
+  
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
   const {
@@ -111,9 +114,17 @@ function DocumentDetails({ document }) {
       }
     }
   };
+  const handleBackClick=()=>{
+    navigate("/dashboard/review");
+  }
   return (
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
-      
+      <button
+        onClick={handleBackClick}
+        className="absolute z-10 btn btn-sm bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+      >
+        <i className="fa-solid fa-arrow-left"></i>
+      </button>
         <div
           className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
         >

@@ -43,10 +43,14 @@ function Navbar() {
         className="btn btn-ghost btn-circle avatar"
       >
         <div className="w-10 rounded-full">
-          <img
-            alt="User Avatar"
-            src={user.ProfileImageUrl}
-          />
+          {user?.ProfileImageUrl ? (
+            <img
+              src={user?.ProfileImageUrl}
+              alt="Profile"
+            />
+          ) : (
+            <i className="fas fa-user-circle text-3xl text-blue-500"></i>
+          )}
         </div>
       </div>
       <ul

@@ -47,7 +47,7 @@ router.post('/create', [
 
         // Destructure the user details from the request body
         const { email, password,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl } = req.body;
-
+        
         // Make password secure with salt & pepper
         const salt = await bcrypt.genSalt(10);
         const securedPassword = await bcrypt.hash(password, salt);
@@ -114,7 +114,7 @@ router.post('/login', [
 });
 
 // Route 3 : to get logged-in user details by : POST "/api/user/getuser" Login required
-router.post('/getuser', fetchUser,authorizeRole("Admin","User","user"), async (req, res) => {
+router.post('/getuser', fetchUser,authorizeRole("Admin","User","user","admin"), async (req, res) => {
     try {
         // Get the logged-in user id from the token
         const userId = req.user.userId;
@@ -141,7 +141,7 @@ router.put('/update/:userId', [
     body("ERN").isLength({ min: 10,max:10}),
     body("email").isEmail(),
     body("officeId").isLength({min:1,max:9})
-], fetchUser,authorizeRole("User","Admin"), async (req, res) => {
+], fetchUser,authorizeRole("User","Admin","user","admin"), async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -207,7 +207,7 @@ router.delete('/delete/:userId',fetchUser, async (req, res) => {
 
 
 // Route 6 : to get any user details by user id : POST "/api/user/getuser/:id" Login required
-router.post('/getall',fetchUser,authorizeRole("Admin","User"), async (req, res) => {
+router.post('/getall',fetchUser,authorizeRole("Admin","User","admin"), async (req, res) => {
     try {
         const user = await userModel.getAllUsers();
 
@@ -224,7 +224,7 @@ router.post('/getall',fetchUser,authorizeRole("Admin","User"), async (req, res) 
 });
 
 // Route 7 : to get username by user id : POST "/api/user/getusername/:id" Login required
-router.post('/get/:id', fetchUser,authorizeRole("Admin","User","user"), async (req, res) => {
+router.post('/get/:id', fetchUser,authorizeRole("Admin","User","user","admin"), async (req, res) => {
     try {
         // authetication
         // Get the logged-in user id from the token

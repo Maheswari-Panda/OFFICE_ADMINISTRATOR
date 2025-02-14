@@ -1,45 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import DataTable from "react-data-table-component";
 
-const UserActivity = () => {
-  const userLogs=[
-    {
-      LogTableId: 1,
-      UserId: 101,
-      DateTime: "2025-02-13 10:00:00",
-      ActionPerformed: "User created a new profile"
-    },
-    {
-      LogTableId: 2,
-      UserId: 102,
-      DateTime: "2025-02-13 10:15:00",
-      ActionPerformed: "User updated email address"
-    },
-    {
-      LogTableId: 3,
-      UserId: 103,
-      DateTime: "2025-02-13 10:30:00",
-      ActionPerformed: "User logged in"
-    },
-    {
-      LogTableId: 4,
-      UserId: 101,
-      DateTime: "2025-02-13 11:00:00",
-      ActionPerformed: "User changed profile picture"
-    },
-    {
-      LogTableId: 5,
-      UserId: 104,
-      DateTime: "2025-02-13 11:10:00",
-      ActionPerformed: "User deleted an old record"
-    },
-    {
-      LogTableId: 6,
-      UserId: 105,
-      DateTime: "2025-02-13 11:20:00",
-      ActionPerformed: "User logged out"
-    }
-  ];
+const UserActivity = ({userLogs}) => {
 
   // Define the columns for the DataTable
   const columns = [
@@ -50,12 +12,12 @@ const UserActivity = () => {
     },
     {
       name: "User ID",
-      selector: (row) => row.UserId,
+      selector: (row) => (row.UserName),
       sortable: true,
     },
     {
       name: "Date & Time",
-      selector: (row) => row.DateTime,
+      selector: (row) => new Date(row.DateTime).toLocaleDateString() +" "+ new Date(row.DateTime).toLocaleTimeString(),
       sortable: true,
     },
     {
@@ -67,7 +29,7 @@ const UserActivity = () => {
 
   return (
     <div className="w-full">
-        <h2>User Activity</h2>
+        <h2 className="mx-3">User Activity</h2>
       <DataTable
         columns={columns}
         data={userLogs}

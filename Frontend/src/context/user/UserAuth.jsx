@@ -232,6 +232,39 @@ const UserAuth = ({ children }) => {
     }
   };
 
+   // Get the logged-in user details
+   const getUserLogs = async (userId) => {
+    try {
+      const response = await axios.get(
+        `${host}/api/userLog/get/${userId}`,
+      );
+
+      // Return the user details
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching user log details:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const getAllUserLogs = async () => {
+    try {
+      const response = await axios.get(
+        `${host}/api/userLog/getall`,
+      );
+
+      // Return the user details
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching user log details:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -246,6 +279,8 @@ const UserAuth = ({ children }) => {
         uploadProfileImage,
         getAllUsers,
         updateUser,
+        getUserLogs,
+        getAllUserLogs
       }}
     >
       {children}

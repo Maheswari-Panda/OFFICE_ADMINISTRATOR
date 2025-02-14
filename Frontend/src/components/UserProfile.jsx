@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import userContext from "../context/user/userContext";
 import YearlyCalendar from "./YearlyCalander";
+import UserActivity from "./UserActivity";
 
 function UserProfile() {
 
@@ -13,23 +14,24 @@ function UserProfile() {
   const [imageUrl, setImageUrl] = useState(user.ProfileImageUrl);
   const [isOldImage, setIsOldImage] = useState(true);
 
-  // console.log(user);
+  
+  const [userLogs,setUserLogs]=useState([]);
+  const {getUserLogs}=context;
+  
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const userLogs = await getUserLogs(user.UserId);  // Fetch logs for the specific user
+        setUserLogs(userLogs);
+      } catch (error) {
+        console.error("Failed to load user logs:", error);
+      }
+    };
 
-  const userLog = [
-    { userId: 1, name: "John Doe", timestamp: "2025-01-05T09:30:00" },
-    { userId: 2, name: "Alice Smith", timestamp: "2025-01-10T14:15:00" },
-    { userId: 1, name: "John Doe", timestamp: "2025-02-20T11:00:00" },
-    { userId: 3, name: "Bob Johnson", timestamp: "2025-03-05T16:45:00" },
-    { userId: 2, name: "Alice Smith", timestamp: "2025-04-12T08:20:00" },
-    { userId: 4, name: "Emily Davis", timestamp: "2025-05-25T10:10:00" },
-    { userId: 3, name: "Bob Johnson", timestamp: "2025-06-30T19:00:00" },
-    { userId: 1, name: "John Doe", timestamp: "2025-07-15T12:50:00" },
-    { userId: 2, name: "Alice Smith", timestamp: "2025-08-22T09:10:00" },
-    { userId: 4, name: "Emily Davis", timestamp: "2025-09-18T13:30:00" },
-    { userId: 1, name: "John Doe", timestamp: "2025-10-05T07:45:00" },
-    { userId: 3, name: "Bob Johnson", timestamp: "2025-11-10T15:20:00" },
-    { userId: 2, name: "Alice Smith", timestamp: "2025-12-01T11:05:00" },
-  ];
+    fetchLogs();
+  }, [user.UserId]);
+
+  // console.log(userLogs);
 
   const formik = useFormik({
     initialValues: {
@@ -103,10 +105,10 @@ function UserProfile() {
   });
 
   return (
-    <div className="w-full mx-auto bg-blue-100 p-4 flex items-start justify-center h-full">
+    <div className="w-full mx-auto bg-blue-100 p-4 items-start justify-center h-full">
       {/* Profile Card */}
-      <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center">
-        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
+      <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -309,10 +311,13 @@ function UserProfile() {
           </form>
         </div>
 
-        <div className="flex flex-wrap">
-          <YearlyCalendar userLog={userLog} />
+        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
+          <UserActivity userLogs={userLogs} />
         </div>
       </div>
+      <div className="flex">
+          <YearlyCalendar userLog={userLogs} />
+        </div>
     </div>
   );
 }

@@ -1,12 +1,17 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo} from "react";
 
-const YearlyCalendar = ({ userLog = [] }) => {
+const YearlyCalendar = ({ userLog }) => {
   const currentYear = new Date().getFullYear();
   const [activeDays, setActiveDays] = useState(new Set());
 
   useEffect(() => {
-    const activeDates = new Set(userLog.map(log => new Date(log.timestamp).toDateString()));
-    setActiveDays(activeDates);
+    if(userLog.length!==0){
+      const activeDates = new Set(userLog.map(log => new Date(log.DateTime).toDateString()));
+      setActiveDays(activeDates);
+    }
+    else{
+      setActiveDays(new Set([new Date().toDateString()]));
+    }
   }, [userLog]);
 
   const months = useMemo(() => Array.from({ length: 12 }, (_, i) => new Date(currentYear, i, 1)), [currentYear]);

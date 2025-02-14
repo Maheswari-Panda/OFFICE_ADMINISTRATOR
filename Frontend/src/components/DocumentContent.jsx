@@ -120,7 +120,7 @@ function DocumentContent() {
         sortable: true,
       },
       {
-        name: "Dispatched Date",
+        name: "Date Inserted",
         selector: (row) =>
           row?.DispatchedDateTime
             ? new Date(row?.DispatchedDateTime).toLocaleDateString()

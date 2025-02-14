@@ -9,6 +9,9 @@ import AllUsers from "./AllUsers";
 import UserProfile from "./UserProfile";
 import CreateDocument from "./CreateDocument";
 import ViewUser from "./ViewUser";
+import ReviewDocuments from "./ReviewDocuments";
+import AllUserLogs from "./AllUserLogs";
+import DocumentDetails from "./DocumentDetails";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -38,6 +41,9 @@ function Sidebar() {
             <Route path="createUser" element={<CreateUserForm />} />
             <Route path="myprofile" element={<UserProfile/>} />
             <Route path="viewUser" element={<ViewUser/>} />
+            <Route path="reviewDocument" element={<DocumentDetails/>} />
+            <Route path="review" element={<ReviewDocuments/>} />
+            <Route path="userActivity" element={<AllUserLogs/>} />
             <Route path="/" element={<Navigate to="content" />} />
           </Routes>
 
@@ -71,6 +77,14 @@ function Sidebar() {
             </li>
             {user.Role === "Admin" ? (
               <>
+              
+              <li>
+                <label htmlFor="my-drawer-2" className="cursor-pointer">
+                  <Link to="/dashboard/review">
+                    <i className="fa-solid fa-folder"></i> Review Documents
+                  </Link>
+                </label>
+              </li>
             <li>
             <label htmlFor="my-drawer-2" className="cursor-pointer">
               <Link to="/dashboard/createUser">
@@ -88,7 +102,7 @@ function Sidebar() {
 
               <li>
                 <label htmlFor="my-drawer-2" className="cursor-pointer">
-                  <Link to="">
+                  <Link to="/dashboard/userActivity">
                     <i className="fa-solid fa-clock-rotate-left"></i> User Activity
                   </Link>
                 </label>

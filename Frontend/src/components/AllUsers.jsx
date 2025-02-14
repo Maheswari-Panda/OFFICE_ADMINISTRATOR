@@ -47,6 +47,7 @@ function AllUsers() {
       ),
     },
     { name: "ERN", selector: (row) => row?.ERN || "N/A", sortable: true },
+    { name: "CreatedAt", selector: (row) => new Date(row?.CreatedAt).toLocaleDateString() || "N/A", sortable: true },
     { name: "First Name", selector: (row) => row?.FirstName || "N/A", sortable: true },
     { name: "Middle Name", selector: (row) => row?.MiddleName || "N/A", sortable: true },
     { name: "Last Name", selector: (row) => row?.LastName || "N/A", sortable: true },
