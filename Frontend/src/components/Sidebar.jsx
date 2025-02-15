@@ -12,6 +12,7 @@ import ViewUser from "./ViewUser";
 import ReviewDocuments from "./ReviewDocuments";
 import AllUserLogs from "./AllUserLogs";
 import DocumentDetails from "./DocumentDetails";
+import AllDocumentLogs from "./AllDocumentLogs";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -44,6 +45,7 @@ function Sidebar() {
             <Route path="reviewDocument" element={<DocumentDetails/>} />
             <Route path="review" element={<ReviewDocuments/>} />
             <Route path="userActivity" element={<AllUserLogs/>} />
+            <Route path="alldocumentlogs" element={<AllDocumentLogs/>} />
             <Route path="/" element={<Navigate to="content" />} />
           </Routes>
 
@@ -60,7 +62,7 @@ function Sidebar() {
           <ul className="menu bg-white text-base-content min-h-full lg:w-full p-4 border-r md:w-1/3">
             {/* Button to add document */}
             <Link to="/dashboard/addDocument">
-              <Button icon="+" color="blue" text="Add Document" size="base" />
+              <Button iconTag={<i className="fa-solid fa-plus mx-2"></i>} color="blue" text="Add Document" size="base" />
             </Link>
 
             <Link to="/dashboard/createDocument">
@@ -82,6 +84,13 @@ function Sidebar() {
                 <label htmlFor="my-drawer-2" className="cursor-pointer">
                   <Link to="/dashboard/review">
                     <i className="fa-solid fa-folder"></i> Review Documents
+                  </Link>
+                </label>
+              </li>
+              <li>
+                <label htmlFor="my-drawer-2" className="cursor-pointer">
+                  <Link to="/dashboard/alldocumentlogs">
+                    <i className="fa-solid fa-folder-open"></i> Document Logs
                   </Link>
                 </label>
               </li>
