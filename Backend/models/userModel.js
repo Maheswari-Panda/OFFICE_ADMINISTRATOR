@@ -5,6 +5,8 @@ var jwt = require('jsonwebtoken');
 
 const JWT_ACCESS_SECRET_KEY=process.env.JWT_ACCESS_SECRET_KEY;
 const JWT_ACCESS_TOKEN_EXPIRE_TIME=process.env.JWT_ACCESS_TOKEN_EXPIRE_TIME;
+const JWT_RESET_PASSWORD_LINK_EXPIRE_TIME=process.env.JWT_RESET_PASSWORD_LINK_EXPIRE_TIME;
+const JWT_PASSWORD_SECRET_KEY = process.env.JWT_PASSWORD_SECRET_KEY;
 
 exports.isUserEmailExists = async (userEmail) => {
     const pool = await db.getPool();
@@ -107,6 +109,22 @@ console.log(profileImgUrl);
     }
 };
 
+// Function to update user details by UserId
+exports.updateUserPassword = async (userId, userEmail, userPassword) => {
+    const pool = await db.getPool();
+    try {
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .input('Email', sql.NVarChar(100), userEmail)
+            .input('Password', sql.NVarChar(255), userPassword)
+            .execute('UpdateUserPasswordAndEmail'); // Assuming the stored procedure is named UpdateUser
+        return result.recordset[0]?.UPDATE_STATUS;
+    } catch (err) {
+        console.error('Error executing UpdateUserPassword:', err);
+        throw err;
+    }
+};
+
 // Function to delete a user by UserId
 exports.deleteUser = async (userId) => {
     const pool = await db.getPool();
@@ -126,4 +144,9 @@ exports.deleteUser = async (userId) => {
 exports.generateAccessToken= (data)=>{
     const accessToken= jwt.sign(data, JWT_ACCESS_SECRET_KEY,{expiresIn: JWT_ACCESS_TOKEN_EXPIRE_TIME});
     return accessToken;
+}
+
+exports.generateResetPasswordLink= (data)=>{
+    const resetPasswordLink= jwt.sign(data, JWT_PASSWORD_SECRET_KEY,{expiresIn: JWT_RESET_PASSWORD_LINK_EXPIRE_TIME});
+    return resetPasswordLink;
 }

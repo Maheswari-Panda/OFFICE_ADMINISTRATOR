@@ -265,6 +265,37 @@ const UserAuth = ({ children }) => {
     }
   };
 
+  const forgetPassword = async(email)=>{
+    try{
+      const response = await axios.post(`${host}/api/user/forgetpassword`,{email});
+      return response.data;
+    }
+    catch(error){
+      console.log('error in sending forget password email to user',
+        error.response?.data || error.message);
+    }
+  }
+
+  const resetPassword = async(userId,email,newPassword)=>{
+    try{
+      const response = await axios.put(`${host}/api/user/updatepassword`,{userId,email,newPassword});
+      return response.data;
+    }
+    catch(error){
+      console.log('error in updating user password',
+        error.response?.data || error.message);
+    }
+  }
+
+  const verifyResetPasswordToken = async(token)=>{
+    try {
+      const response = await axios.post(`${host}/api/user/verify-reset-link?token=${token}`);
+      return response.data;
+    } catch (error) {
+      console.log("error in verifying the reset password link",error);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -280,7 +311,10 @@ const UserAuth = ({ children }) => {
         getAllUsers,
         updateUser,
         getUserLogs,
-        getAllUserLogs
+        getAllUserLogs,
+        forgetPassword,
+        resetPassword,
+        verifyResetPasswordToken
       }}
     >
       {children}

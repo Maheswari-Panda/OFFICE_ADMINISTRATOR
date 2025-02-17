@@ -1,6 +1,6 @@
 import './App.css'
 import { Button } from 'react-daisyui'
-import Login from './Pages/Login'
+import Login from './pages/Login'
 import {
   BrowserRouter as Router,
   Routes,
@@ -19,6 +19,8 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import DocumentViewer from './components/DocumentViewer';
 import DocumentPreview from './components/DocumentPreview';
+import ForgetPasswordForm from './pages/ForgetPasswordForm';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
   const context = useContext(userContext);
@@ -39,6 +41,15 @@ function App() {
     <Route
       exact path="/dashboard/*"
       element={user !== null ? <Dashboard /> : <Navigate to="/" />}
+    />
+    <Route
+      exact path="/forgetpassword/*"
+      element={<ForgetPasswordForm />}
+    />
+    
+    <Route
+      exact path="/resetpassword/:token"
+      element={<ChangePassword />}
     />
       </Routes>
     </Router>

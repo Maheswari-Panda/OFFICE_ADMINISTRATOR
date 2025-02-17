@@ -4,18 +4,17 @@ import userContext from "../context/user/userContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 
-function Login() {
+function ForgetPasswordForm() {
   const context = useContext(userContext);
   const navigate = useNavigate();
   const generatedCaptcha = Math.random().toString(36).slice(8);
   const [captcha, setCaptcha] = useState(generatedCaptcha);
 
-  const { login } = context;
+  const { forgetPassword } = context;
 
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
       enteredCaptcha: "",
     },
     validate: (values) => {
@@ -26,21 +25,6 @@ function Login() {
         errors.email = "Email is required!";
       }
 
-      // Password Validation
-      if (!values.password) {
-        errors.password = "Password is required!";
-      } else if (values.password.length < 6) {
-        errors.password = "Password must be at least 6 characters!";
-      } else if (!/[A-Z]/.test(values.password)) {
-        errors.password = "Password must contain at least one uppercase letter!";
-      } else if (!/[a-z]/.test(values.password)) {
-        errors.password = "Password must contain at least one lowercase letter!";
-      } else if (!/\d/.test(values.password)) {
-        errors.password = "Password must contain at least one number!";
-      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(values.password)) {
-        errors.password = "Password must contain at least one special character!";
-      }
-
       // Captcha Validation
       if (values.enteredCaptcha !== captcha) {
         errors.enteredCaptcha = "Invalid Captcha!";
@@ -49,11 +33,11 @@ function Login() {
       return errors;
     },
     onSubmit: async (values) => {
-      const response = await login(values.email, values.password);
+      const response = await forgetPassword(values.email);
       if (response) {
-        navigate("/dashboard");
+        alert('email sent successfully.',response);
       } else {
-        alert("Invalid email or password");
+        alert("Invalid email");
       }
     },
   });
@@ -93,7 +77,7 @@ function Login() {
               <h3 className="font-semibold text-2xl text-gray-800">
                 Welcome Back!
               </h3>
-              <p className="text-gray-500">Login here to get started.</p>
+              <p className="text-gray-500">Enter your registred email to create new password.</p>
             </div>
             <form onSubmit={formik.handleSubmit}>
               <div className="space-y-5">
@@ -115,27 +99,6 @@ function Login() {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.email}
-                  />
-                </div>
-
-                {/* Password Input */}
-                <div className="space-y-2">
-                  <label className="flex justify-between text-sm font-medium text-gray-700 tracking-wide">
-                    Password
-                    {formik.errors.password && formik.touched.password && (
-                      <span className="label-text-alt text-red-500">
-                        {formik.errors.password}
-                      </span>
-                    )}
-                  </label>
-                  <input
-                    className="w-full content-center text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-400"
-                    type="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.password}
                   />
                 </div>
 
@@ -178,10 +141,10 @@ function Login() {
                 <div className="flex items-center justify-center">
                   <div className="text-sm">
                     <Link
-                      to="/forgetpassword"
+                      to="/"
                       className="text-blue-400 hover:text-blue-500"
                     >
-                      Forgot your password?
+                      Click here to login!
                     </Link>
                   </div>
                 </div>
@@ -192,7 +155,7 @@ function Login() {
                     type="submit"
                     className="w-full flex justify-center bg-blue-400 hover:bg-blue-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
                   >
-                    Login
+                    Send Email
                   </button>
                 </div>
               </div>
@@ -206,7 +169,7 @@ function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default ForgetPasswordForm
