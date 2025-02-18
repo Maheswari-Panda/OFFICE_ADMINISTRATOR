@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Content from "./Content";
 import AddDocument from "./AddDocument";
 import Button from "./Button";
@@ -13,10 +13,31 @@ import ReviewDocuments from "./ReviewDocuments";
 import AllUserLogs from "./AllUserLogs";
 import DocumentDetails from "./DocumentDetails";
 import AllDocumentLogs from "./AllDocumentLogs";
+import ReportGenerator from "./ReportGenerator";
+import UserActivity from "./UserActivity";
+import PendingDocuments from "./PendingDocuments";
+import ApprovedDocuments from "./ApprovedDocuments";
 
 function Sidebar() {
   const context = useContext(userContext);
   const { user } = context;
+
+  
+    const [userLogs,setUserLogs]=useState([]);
+    const {getUserLogs}=context;
+    
+    useEffect(() => {
+      const fetchLogs = async () => {
+        try {
+          const userLogs = await getUserLogs(user.UserId);  // Fetch logs for the specific user
+          setUserLogs(userLogs);
+        } catch (error) {
+          console.error("Failed to load user logs:", error);
+        }
+      };
+  
+      fetchLogs();
+    }, [user.UserId]);
   // console.log(user.Role);
   return (
     <>
@@ -40,12 +61,16 @@ function Sidebar() {
             <Route path="content" element={<Content />} />
             <Route path="allUsers" element={<AllUsers />} />
             <Route path="createUser" element={<CreateUserForm />} />
-            <Route path="myprofile" element={<UserProfile/>} />
-            <Route path="viewUser" element={<ViewUser/>} />
-            <Route path="reviewDocument" element={<DocumentDetails/>} />
-            <Route path="review" element={<ReviewDocuments/>} />
-            <Route path="userActivity" element={<AllUserLogs/>} />
-            <Route path="alldocumentlogs" element={<AllDocumentLogs/>} />
+            <Route path="myprofile" element={<UserProfile />} />
+            <Route path="viewUser" element={<ViewUser />} />
+            <Route path="reviewDocument" element={<DocumentDetails />} />
+            <Route path="review" element={<ReviewDocuments />} />
+            <Route path="pendingDocuments" element={<PendingDocuments />} />
+            <Route path="approvedDocuments" element={<ApprovedDocuments />} />
+            <Route path="userActivity" element={<AllUserLogs />} />
+            <Route path="myActivity" element={<UserActivity userLogs={userLogs} />} />
+            <Route path="alldocumentlogs" element={<AllDocumentLogs />} />
+            <Route path="report" element={<ReportGenerator />} />
             <Route path="/" element={<Navigate to="content" />} />
           </Routes>
 
@@ -62,11 +87,21 @@ function Sidebar() {
           <ul className="menu bg-white text-base-content min-h-full lg:w-full p-4 border-r md:w-1/3">
             {/* Button to add document */}
             <Link to="/dashboard/addDocument">
-              <Button iconTag={<i className="fa-solid fa-plus mx-2"></i>} color="blue" text="Add Document" size="base" />
+              <Button
+                iconTag={<i className="fa-solid fa-plus mx-2"></i>}
+                color="blue"
+                text="Add Document"
+                size="base"
+              />
             </Link>
 
             <Link to="/dashboard/createDocument">
-              <Button color="blue" text="Create Document" size="base" iconTag={<i className="fa-solid fa-file-pen"></i>}/>
+              <Button
+                color="blue"
+                text="Create Document"
+                size="base"
+                iconTag={<i className="fa-solid fa-file-pen"></i>}
+              />
             </Link>
 
             {/* Sidebar Links */}
@@ -79,57 +114,74 @@ function Sidebar() {
             </li>
             {user.Role === "Admin" ? (
               <>
-              
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                    <Link to="/dashboard/review">
+                      <i className="fa-solid fa-folder"></i> Review Documents
+                    </Link>
+                  </label>
+                </li>
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                    <Link to="/dashboard/alldocumentlogs">
+                      <i className="fa-solid fa-folder-open"></i> Document Logs
+                    </Link>
+                  </label>
+                </li>
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                    <Link to="/dashboard/createUser">
+                      <i className="fa-solid fa-user-plus"></i> Create User
+                    </Link>
+                  </label>
+                </li>
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                    <Link to="/dashboard/allUsers">
+                      <i className="fa-solid fa-users"></i> All Users
+                    </Link>
+                  </label>
+                </li>
+
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                    <Link to="/dashboard/userActivity">
+                      <i className="fa-solid fa-clock-rotate-left"></i> User
+                      Activity
+                    </Link>
+                  </label>
+                </li>
+              </>
+            ) : (
+              <>
               <li>
                 <label htmlFor="my-drawer-2" className="cursor-pointer">
-                  <Link to="/dashboard/review">
-                    <i className="fa-solid fa-folder"></i> Review Documents
+                  <Link to="/dashboard/pendingDocuments">
+                  <i className="fa-solid fa-hourglass-end"></i> Pending Documents
                   </Link>
                 </label>
               </li>
               <li>
                 <label htmlFor="my-drawer-2" className="cursor-pointer">
-                  <Link to="/dashboard/alldocumentlogs">
-                    <i className="fa-solid fa-folder-open"></i> Document Logs
-                  </Link>
-                </label>
-              </li>
-            <li>
-            <label htmlFor="my-drawer-2" className="cursor-pointer">
-              <Link to="/dashboard/createUser">
-                <i className="fa-solid fa-user-plus"></i> Create User
-              </Link>
-            </label>
-          </li>
-               <li>
-                <label htmlFor="my-drawer-2" className="cursor-pointer">
-                  <Link to="/dashboard/allUsers">
-                    <i className="fa-solid fa-users"></i> All Users
+                  <Link to="/dashboard/approvedDocuments">
+                  <i className="fa-solid fa-file-circle-check"></i> Approved Documents
                   </Link>
                 </label>
               </li>
 
               <li>
                 <label htmlFor="my-drawer-2" className="cursor-pointer">
-                  <Link to="/dashboard/userActivity">
-                    <i className="fa-solid fa-clock-rotate-left"></i> User Activity
+                  <Link to="/dashboard/myActivity">
+                    <i className="fa-solid fa-clock-rotate-left"></i> My
+                    Activity
                   </Link>
                 </label>
               </li>
-              
-          </>
-            ) : (
-              <li>
-                <label htmlFor="my-drawer-2" className="cursor-pointer">
-                  <Link to="">
-                    <i className="fa-solid fa-clock-rotate-left"></i> My Activity
-                  </Link>
-                </label>
-              </li>
+              </>
             )}
             <li>
               <label htmlFor="my-drawer-2" className="cursor-pointer">
-                <Link to="">
+                <Link to="/dashboard/report">
                   <i className="fa-solid fa-file-lines"></i> Reports
                 </Link>
               </label>

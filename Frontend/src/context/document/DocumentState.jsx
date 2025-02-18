@@ -142,6 +142,38 @@ const DocumentState = (props) => {
     }
   }
 
+    // Fetch the PDF report
+    const fetchPdfReport = async () => {
+      try {
+        const response = await axios.get(`${host}/api/report/pdf`, {
+          responseType: 'blob',  // This ensures the response is treated as a file
+        });
+        // Create a URL for the blob (PDF)
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        // Optional: You can return the URL, or you can trigger download here.
+        return url;
+      } catch (error) {
+        console.log("Error in getting PDF report:", error);
+      }
+    };
+    
+    const fetchExcelReport = async () => {
+      try {
+        const response = await axios.get(`${host}/api/report/excel`, {
+          responseType: 'blob',  // This ensures the response is treated as a file
+        });
+    
+        // Create a URL for the blob (Excel)
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+    
+        // Optional: You can return the URL, or you can trigger download here.
+        return url;
+      } catch (error) {
+        console.log("Error in getting Excel report:", error);
+      }
+    };
+    
+
   return (
     <DocumentContext.Provider
       value={{
@@ -158,7 +190,9 @@ const DocumentState = (props) => {
         addDocument,
         uploadAttachedDocument,
         addAttachedDocument,
-        getStatusById
+        getStatusById,
+        fetchPdfReport,
+        fetchExcelReport
       }}
     >
       {props.children}

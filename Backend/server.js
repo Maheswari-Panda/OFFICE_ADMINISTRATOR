@@ -19,6 +19,7 @@ app.use('/api/document',require('./routes/document'))
 app.use('/api/attachedDocument',require('./routes/attachedDocument'))
 app.use('/api/status',require('./routes/status'))
 app.use('/api/userLog',require('./routes/userLog'))
+app.use('/api/report',require('./routes/report'))
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

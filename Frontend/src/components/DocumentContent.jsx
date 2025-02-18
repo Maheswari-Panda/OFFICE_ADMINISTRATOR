@@ -219,6 +219,7 @@ function DocumentContent() {
                     } fa-folder-open`}
                   ></i>{" "}
                   All
+                  {selectedTab === "All" && <span className="mx-2">({filteredDocuments.length})</span>}
                 </div>
                 <div
                   className={`px-4 py-2 hover:bg-blue-100 hover:text-blue-500 ${
@@ -234,6 +235,7 @@ function DocumentContent() {
                     } fa-folder`}
                   ></i>{" "}
                   Inward
+                  {selectedTab === "Inward" && <span className="mx-2">({filteredDocuments.length})</span>}
                 </div>
                 <div
                   className={`px-4 py-2 hover:bg-blue-100 hover:text-blue-500 ${
@@ -249,6 +251,7 @@ function DocumentContent() {
                     } fa-folder`}
                   ></i>{" "}
                   Outward
+                  {selectedTab === "Outward" && <span className="mx-2">({filteredDocuments.length})</span>}
                 </div>
               </div>
             </div>

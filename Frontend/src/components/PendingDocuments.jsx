@@ -3,34 +3,21 @@ import DataTable from 'react-data-table-component'; // Import the DataTable comp
 import DocumentContext from '../context/document/documentContext';
 import { useNavigate } from 'react-router-dom';
 
-function ReviewDocuments() {
+function PendingDocuments() {
   const { documents,getAllDocuments } = useContext(DocumentContext); // Get documents from the context
-  const [activeDocuments, setActiveDocuments] = useState([]);
+  const [pendingDocuments, setPendingDocuments] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     getAllDocuments();
   }, []);
   useEffect(() => {
-      setActiveDocuments(documents); // Reset filtered documents on initial render
+      setPendingDocuments(documents); // Reset filtered documents on initial render
     }, [documents]);
 
   const handleViewDocument = (row) => {
-    // Navigate to the DocumentDetails component with the selected document
-    // history.push(`/document-details/${documentId}`);
-    // console.log("Handle Review Document : ",row);
-    navigate("/dashboard/reviewDocument", { state: { document: row } });
-  };
-
-  const handleApproveDocument = async (documentId) => {
-    // Call the API to approve the document
-    await approveDocument(documentId);
-    // After approval, update the document status in the context or re-fetch the documents
-    setActiveDocuments((prevDocs) =>
-      prevDocs.map((doc) =>
-        doc.id === documentId ? { ...doc, status: 'Approved' } : doc
-      )
-    );
+    console.log("Handle Review Document : ",row);
+    // navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
   // Columns definition for the DataTable
@@ -61,6 +48,11 @@ function ReviewDocuments() {
       sortable: true,
     },
     {
+      name: 'Status',
+      selector: row => <div className="badge bg-red-100 text-red-500">pending</div>,
+      sortable: true,
+    },
+    {
       name: 'Actions',
       cell: row => (
         <div>
@@ -71,12 +63,6 @@ function ReviewDocuments() {
             <i className="fas fa-eye text-xs mr-1 text-white"></i>
             View
           </button>
-          <button
-            className="ml-2 bg-green-500 text-white py-1 px-4 rounded hover:bg-green-600 focus:outline-none"
-            onClick={() => handleApproveDocument(row)}
-          >
-            Approve
-          </button>
         </div>
       ),
     },
@@ -84,16 +70,16 @@ function ReviewDocuments() {
 
   return (
     <div className="min-h-screen bg-blue-100 p-4 w-full">
-      <h2 className="text-blue-500 text-2xl font-bold mb-4">Review Documents</h2>
+      <h2 className="text-blue-500 text-2xl font-bold mb-4">Pending Documents</h2>
 
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <DataTable
           columns={columns} // Columns for the table
-          data={activeDocuments} // Data for the table
+          data={pendingDocuments} // Data for the table
         />
       </div>
     </div>
   );
 }
 
-export default ReviewDocuments;
+export default PendingDocuments
