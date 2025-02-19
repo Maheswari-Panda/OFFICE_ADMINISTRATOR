@@ -111,7 +111,7 @@ function DocumentContent() {
     () => [
       {
         name: "Document ID",
-        selector: (row) => row?.DocumentId || "N/A",
+        selector: (row, index ) => index + 1,
         sortable: true,
       },
       {

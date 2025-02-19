@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from "react";
+import React, { useContext, useEffect, useState, useMemo, useRef } from "react";
 import DataTable from "react-data-table-component";
 import userContext from "../context/user/userContext";
 import OfficeContext from "../context/office/officeContext";
@@ -6,8 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 function AllUsers() {
   const navigate= useNavigate();
-  const { users, getAllUsers } = useContext(userContext);
+  const { users, getAllUsers,deleteUser } = useContext(userContext);
   const [loading, setLoading] = useState(true);
+  const [selectedUser,setSelectedUser]=useState(null);
+
+  const deleteRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +32,23 @@ function AllUsers() {
     navigate("/dashboard/viewUser", { state: { user: row } });
   }
 
+  const handleDeleteModal = (row)=>{
+    setSelectedUser(row);
+    console.log("Clicked on Delete Modal",row);
+    deleteRef.current.click();
+  }
+
+  const handelDeleteUser =async(userId)=>{
+    console.log(selectedUser);
+    const response = await deleteUser(userId);
+    console.log(response);
+    if(response){
+      alert("User Deleted Successfuully!");
+    }
+    else{
+      alert("Error Deleting User");
+    }
+  }
   const columns = useMemo(() => [
     {
       name: "Profile Image",
@@ -66,7 +86,7 @@ function AllUsers() {
           </button>
           <button
             className="p-1 text-red-500 hover:text-red-700"
-            onClick={() => handleDelete(row)}
+            onClick={() => handleDeleteModal(row)}
           >
             <i className="fas fa-trash"></i>
           </button>
@@ -88,6 +108,21 @@ function AllUsers() {
           <DataTable columns={columns} data={users} fixedHeader highlightOnHover />
         )}
       </div>
+        {/* Open the modal using document.getElementById('ID').showModal() method */}
+<button className="btn hidden" onClick={()=>document.getElementById('my_modal_6').showModal()} ref={deleteRef}>open modal</button>
+<dialog id="my_modal_6" className="modal modal-bottom sm:modal-middle">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg text-red-500">Delete User</h3>
+    <p className="py-4">Are sure you want to delete this user once it gets deleted the related data to this user will get deleted and you cannot retrive it!</p>
+    <div className="modal-action">
+      <form method="dialog">
+        {/* if there is a button in form, it will close the modal */}
+        <button className="btn btn-sm bg-red-500 text-white mx-2 hover:bg-red-600" onClick={()=>handelDeleteUser(selectedUser.UserId)}>Delete</button>
+        <button className="btn btn-sm bg-blue-500 text-white hover:bg-blue-600">Cencel</button>
+      </form>
+    </div>
+  </div>
+</dialog>
     </div>
   );
 }

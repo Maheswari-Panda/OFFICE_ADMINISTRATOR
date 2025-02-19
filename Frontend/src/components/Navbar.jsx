@@ -24,7 +24,7 @@ function Navbar() {
 
   {/* Title Section */}
   <div className="flex-1">
-    <a className="lg:text-2xl md:text-lg font-serif">Computer Centre</a>
+    <a className="lg:text-2xl md:text-lg font-serif">{user.OfficeName}</a>
   </div>
 
   {/* User Info and Menu */}

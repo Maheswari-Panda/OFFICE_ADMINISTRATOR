@@ -74,8 +74,10 @@ router.delete('/delete/:officeId', async (req, res) => {
     try {
         const officeId = req.params.officeId;
         const result = await officeModel.deleteOffice(officeId);
-        if(result==1){
-            res.status(200).json({message:result });
+        console.log(result);
+        if(result.Status==1){
+            console.log("inside the result",result);
+            res.status(200).json({message:result.Message });
         }
         else{
             res.status(404).json({message: result});

@@ -130,11 +130,10 @@ exports.deleteUser = async (userId) => {
     const pool = await db.getPool();
 
     try {
-        await pool.request()
+        const result = await pool.request()
             .input('UserId', sql.Int, userId)
             .execute('DeleteUser'); // Assuming the stored procedure is named DeleteUser
-
-        return 'User deleted successfully';
+        return result.recordset[0]?.DELETE_STATUS;
     } catch (err) {
         console.error('Error in deleteUser:', err);
         throw new Error('Failed to delete user');

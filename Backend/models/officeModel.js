@@ -56,6 +56,6 @@ exports.deleteOffice = async (officeId) => {
         return result.recordset[0];
     } catch (error) {
         console.error('Error deleting office details:', error);
-        throw err; 
+        throw error; 
     }
 };

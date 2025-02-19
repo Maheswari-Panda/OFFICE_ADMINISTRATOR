@@ -1,38 +1,47 @@
-import React, { useContext, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import userContext from '../context/user/userContext';
+import React, { useContext, useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import userContext from "../context/user/userContext";
+import OfficeContext from "../context/office/officeContext";
 
 function CreateUserForm() {
   const context = useContext(userContext);
-  const {createUser,uploadProfileImage}=context;
-  const [imageUrl, setImageUrl] = useState('');
+  const officeContext = useContext(OfficeContext);
+  const { offices, getAllOffices } = officeContext;
+  const { user, createUser, uploadProfileImage } = context;
+  const [imageUrl, setImageUrl] = useState("");
+
+  useEffect(() => {
+    getAllOffices();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
-      ern: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      role: '',
-      office: '',
-      profileImg:''
+      ern: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      role: "",
+      office: "",
+      profileImg: "",
     },
     validationSchema: Yup.object({
-      ern: Yup.string().required('ERN is required'),
-      firstName: Yup.string().required('First Name is required'),
-      middleName: Yup.string().required('First Name is required'),
-      lastName: Yup.string().required('Last Name is required'),
-      email: Yup.string().email('Invalid email format').required('Email is required'),
+      ern: Yup.string().required("ERN is required"),
+      firstName: Yup.string().required("First Name is required"),
+      middleName: Yup.string().required("First Name is required"),
+      lastName: Yup.string().required("Last Name is required"),
+      email: Yup.string()
+        .email("Invalid email format")
+        .required("Email is required"),
       password: Yup.string()
-        .min(6, 'Password must be at least 6 characters')
-        .required('Password is required'),
-      role: Yup.string().required('Role is required'),
-      office: Yup.string().required('Office is required'),
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+      role: Yup.string().required("Role is required"),
+      office: Yup.string().required("Office is required"),
     }),
-    onSubmit: async (values,{resetForm}) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
         let uploadedImageUrl = imageUrl;
 
@@ -40,25 +49,35 @@ function CreateUserForm() {
         console.log(values.profileImg);
         if (values.profileImg) {
           const formData = new FormData();
-          formData.append('profileImg', values.profileImg);
+          formData.append("profileImg", values.profileImg);
           // console.log(formData);
 
           const uploadResponse = await uploadProfileImage(formData);
 
           console.log(uploadResponse.imageUrl);
-          uploadedImageUrl = `http://localhost:3000`+uploadResponse.imageUrl;
+          uploadedImageUrl = `http://localhost:3000` + uploadResponse.imageUrl;
           setImageUrl(uploadedImageUrl);
         }
 
         // Step 2: Create User with Image URL
-        const response = await createUser(values.email,values.password,values.ern,values.firstName,values.middleName,values.lastName,values.role,values.office,uploadedImageUrl);
+        const response = await createUser(
+          values.email,
+          values.password,
+          values.ern,
+          values.firstName,
+          values.middleName,
+          values.lastName,
+          values.role,
+          values.office,
+          uploadedImageUrl
+        );
 
         console.log(response.data);
-        alert('User created successfully!');
+        alert("User created successfully!");
         resetForm();
       } catch (error) {
-        console.error('Error creating user:', error);
-        alert('Error creating user');
+        console.error("Error creating user:", error);
+        alert("Error creating user");
       }
     },
   });
@@ -67,10 +86,9 @@ function CreateUserForm() {
     <div className="flex items-start justify-center min-h-screen bg-blue-100 w-full">
       <div className="bg-white m-2 p-8 rounded-2xl shadow-md w-1/2">
         <h2 className="text-xl font-semibold text-start text-blue-500 mb-6">
-          Create User
+          Create User {user.Role === "SuperAdmin" && " / Admin"}
         </h2>
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
-          
           {/* ERN */}
           <div className="relative">
             <input
@@ -160,7 +178,7 @@ function CreateUserForm() {
               value={formik.values.email}
             />
             <span className="absolute left-3 top-1 text-blue-500">
-            <i className="fa-solid fa-envelope"></i>
+              <i className="fa-solid fa-envelope"></i>
             </span>
             {formik.touched.email && formik.errors.email && (
               <p className="text-red-500 text-sm">{formik.errors.email}</p>
@@ -180,7 +198,7 @@ function CreateUserForm() {
               minLength={6}
             />
             <span className="absolute left-3 top-1 text-blue-500">
-            <i className="fa-solid fa-key"></i>
+              <i className="fa-solid fa-key"></i>
             </span>
             {formik.touched.password && formik.errors.password && (
               <p className="text-red-500 text-sm">{formik.errors.password}</p>
@@ -195,33 +213,64 @@ function CreateUserForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.role}
+              disabled={user.Role === "Admin"}
             >
-              <option value="">Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
+              {user.Role==="Admin" || user.Role==="admin"?
+              (
+                <option value="User">User</option>
+              ):(
+                <option value="">Select Role</option>
+              )}
+              {user.Role === "SuperAdmin" && (
+                <>
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </>
+              )}
             </select>
             <span className="absolute left-3 top-1 text-blue-500">
-            <i className="fa-solid fa-users"></i>
+              <i className="fa-solid fa-users"></i>
             </span>
             {formik.touched.role && formik.errors.role && (
               <p className="text-red-500 text-sm">{formik.errors.role}</p>
             )}
           </div>
 
-           {/* Office */}
-           <div className="relative">
+          {/* Office */}
+          <div className="relative">
             <select
               name="office"
               className="input input-sm w-full px-4 pl-10 border border-gray-300 hover:border-blue-500 rounded-lg focus:outline-none focus:ring-0 focus:ring-blue-500"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.office}
+              value={
+                user.Role === "Admin" ? user.OfficeId : formik.values.office
+              }
+              disabled={user.Role === "Admin"}
             >
-              <option value="">Select Office</option>
-              <option value="1">Computer Center</option>
+              <option
+                value={
+                  user.Role === "Admin" || user.Role === "admin"
+                    ? `${user.OfficeId}`
+                    : ""
+                }
+              >
+                {user.Role === "Admin" || user.Role === "admin"
+                  ? `${user.OfficeName}`
+                  : "Select Office"}
+              </option>
+              {offices.map((office, index) => (
+                <option
+                  value={office.OfficeId}
+                  key={`${office.OfficeId}-${index}`}
+                >
+                  {office.OfficeName}
+                </option>
+              ))}
             </select>
+
             <span className="absolute left-3 top-1 text-blue-500">
-            <i className="fa-solid fa-building-columns"></i>
+              <i className="fa-solid fa-building-columns"></i>
             </span>
             {formik.touched.office && formik.errors.office && (
               <p className="text-red-500 text-sm">{formik.errors.office}</p>
@@ -230,16 +279,18 @@ function CreateUserForm() {
 
           {/* Profile Img */}
           <div className="relative">
-          <input
+            <input
               type="file"
               name="profileImg"
               placeholder="Choose Image"
               className="input input-sm w-full text-sm text-gray-500 border border-gray-300 rounded-md p-1 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition file:mr-4 file:py-0 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
-              onChange={(event) => formik.setFieldValue('profileImg', event.currentTarget.files[0])}
-              value={formik.values.profileImg}
+              onChange={(event) =>
+                formik.setFieldValue("profileImg", event.currentTarget.files[0])
+              }
+              // value={formik.values.profileImg}
               onBlur={formik.handleBlur}
             />
-      
+
             {formik.touched.profileImg && formik.errors.profileImg && (
               <p className="text-red-500 text-sm">{formik.errors.profileImg}</p>
             )}

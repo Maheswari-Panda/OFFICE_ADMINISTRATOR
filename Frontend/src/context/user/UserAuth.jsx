@@ -296,6 +296,17 @@ const UserAuth = ({ children }) => {
     }
   }
 
+  
+  const deleteUser = async(userId)=>{
+    try {
+      const response = await axios.delete(`${host}/api/user/delete/${userId}`);
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.log("error deleting user",error);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -314,7 +325,8 @@ const UserAuth = ({ children }) => {
         getAllUserLogs,
         forgetPassword,
         resetPassword,
-        verifyResetPasswordToken
+        verifyResetPasswordToken,
+        deleteUser
       }}
     >
       {children}

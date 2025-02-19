@@ -126,7 +126,7 @@ router.post('/login', [
 });
 
 // Route 3 : to get logged-in user details by : POST "/api/user/getuser" Login required
-router.post('/getuser', fetchUser,authorizeRole("Admin","User","user","admin"), async (req, res) => {
+router.post('/getuser', fetchUser,authorizeRole("Admin","User","user","admin","SuperAdmin"), async (req, res) => {
     try {
         // Get the logged-in user id from the token
         const userId = req.user.userId;
@@ -153,7 +153,7 @@ router.put('/update/:userId', [
     body("ERN").isLength({ min: 10,max:10}),
     body("email").isEmail(),
     body("officeId").isLength({min:1,max:9})
-], fetchUser,authorizeRole("User","Admin","user","admin"), async (req, res) => {
+], fetchUser,authorizeRole("User","Admin","user","admin","SuperAdmin"), async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -192,31 +192,32 @@ router.put('/update/:userId', [
 });
 
 
-// Route 4: to update user details by : PUT '/api/user/delete/:userId' . Login required
-router.delete('/delete/:userId',fetchUser, async (req, res) => {
+// Route 4: to Delete user details by : PUT '/api/user/delete/:userId' . Login required
+router.delete('/delete/:userId', async (req, res) => {
     try {
             // Get the logged-in user id from the token
-            const userId = req.user.userId;
-            const user = await userModel.getUserById(userId);
-        
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+            const userId = req.params.userId;
+            const response = await userModel.deleteUser(userId);
+            console.log(response);
+            if(response==1){
+                console.log("inside the response",response);
+                res.status(200).json({message:response });
             }
-
-        // Call the deleteUser function from the model
-        const message = `Deleted by user id : ${user.UserId} and name: ${user.FirstName}`+ await userModel.deleteUser(userId);
-
-        // Return success response
-        res.status(200).json({ message });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Failed to delete user' });
-    }
+            else{
+                res.status(404).json({message: "Error deleting the user with respons_status :"+response});
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: 'Failed to delete User',
+                error: error.message
+            });
+        }
 });
 
 
 // Route 6 : to get any user details by user id : POST "/api/user/getuser/:id" Login required
-router.post('/getall',fetchUser,authorizeRole("Admin","User","admin"), async (req, res) => {
+router.post('/getall',fetchUser,authorizeRole("Admin","User","admin","user","SuperAdmin"), async (req, res) => {
     try {
         const user = await userModel.getAllUsers();
 
@@ -233,7 +234,7 @@ router.post('/getall',fetchUser,authorizeRole("Admin","User","admin"), async (re
 });
 
 // Route 7 : to get username by user id : POST "/api/user/getusername/:id" Login required
-router.post('/get/:id', fetchUser,authorizeRole("Admin","User","user","admin"), async (req, res) => {
+router.post('/get/:id', fetchUser,authorizeRole("Admin","User","user","admin","SuperAdmin"), async (req, res) => {
     try {
         // authetication
         // Get the logged-in user id from the token

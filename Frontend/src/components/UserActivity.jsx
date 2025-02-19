@@ -7,7 +7,7 @@ const UserActivity = ({userLogs}) => {
   const columns = [
     {
       name: "Log Table ID",
-      selector: (row) => row.LogTableId,
+      selector: (row, index ) => index + 1,
       sortable: true,
     },
     {
