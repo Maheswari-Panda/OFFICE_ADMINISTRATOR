@@ -91,6 +91,7 @@ const DocumentState = (props) => {
     BillingInfo
   ) => {
     try {
+      const accessToken = localStorage.getItem("accessToken");
       const response = await axios.post(`${host}/api/document/add`, {
         IsInward,
         DocumentName,
@@ -103,6 +104,10 @@ const DocumentState = (props) => {
         SenderId,
         ReceiverId,
         BillingInfo,
+      },{
+        headers: {
+          accessToken: `${accessToken}`,
+        },
       });
       const json = await response.data;
       console.log(json);
@@ -174,6 +179,23 @@ const DocumentState = (props) => {
     };
     
 
+    const getAllDocumentLogs = async () => {
+      try {
+        const response = await axios.get(
+          `${host}/api/documentLog/getall`,
+        );
+  
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error fetching document log details:",
+          error.response?.data || error.message
+        );
+      }
+    };
+  
+
   return (
     <DocumentContext.Provider
       value={{
@@ -192,7 +214,8 @@ const DocumentState = (props) => {
         addAttachedDocument,
         getStatusById,
         fetchPdfReport,
-        fetchExcelReport
+        fetchExcelReport,
+        getAllDocumentLogs
       }}
     >
       {props.children}

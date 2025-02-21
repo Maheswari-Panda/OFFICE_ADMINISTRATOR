@@ -125,16 +125,18 @@ function ViewUser() {
       </button>
       {/* Profile Card */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
-        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
+        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
               {/* Profile Image */}
-              <img
+              {imageUrl ? (<img
                 src={imageUrl || "default-image.jpg"}
                 alt="Profile Image"
                 className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
-              />
+              />):(
+                <i className="fas fa-user text-blue-500 text-3xl p-10 border-4 border-blue-500 rounded-full"></i>
+              )}
               {/* Edit Icon */}
               <button
                 type="button"
@@ -156,7 +158,7 @@ function ViewUser() {
                   type="file"
                   id="profileImg"
                   name="profileImg"
-                  className="input-sm border rounded-md w-full max-w-xs"
+                  className="input-sm border  border-gray-300 p-2 rounded-md w-full max-w-xs"
                   onChange={(event) =>
                     formik.setFieldValue(
                       "profileImg",
@@ -177,7 +179,7 @@ function ViewUser() {
                     type="text"
                     id="ern"
                     name="ern"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.ern}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -195,7 +197,7 @@ function ViewUser() {
                     type="text"
                     id="firstName"
                     name="firstName"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border  border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -215,7 +217,7 @@ function ViewUser() {
                     type="text"
                     id="middleName"
                     name="middleName"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border  border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.middleName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -236,7 +238,7 @@ function ViewUser() {
                     type="text"
                     id="lastName"
                     name="lastName"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border  border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -259,7 +261,7 @@ function ViewUser() {
                   type="email"
                   id="email"
                   name="email"
-                  className="input-sm border rounded-md w-full"
+                  className="input-sm border rounded-md w-full border-gray-300 p-2"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -279,7 +281,7 @@ function ViewUser() {
                   type="text"
                   id="role"
                   name="role"
-                  className="input-sm border rounded-md w-full"
+                  className="input-sm border rounded-md w-full border-gray-300 p-2"
                   value={formik.values.role}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -296,7 +298,7 @@ function ViewUser() {
                   type="text"
                   id="office"
                   name="office"
-                  className="input-sm border rounded-md w-full"
+                  className="input-sm border rounded-md w-full border-gray-300 p-2"
                   value={formik.values.office}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -328,7 +330,7 @@ function ViewUser() {
           </form>
         </div>
 
-        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
+        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
           <UserActivity userLogs={userLogs}/>
         </div>
       </div>

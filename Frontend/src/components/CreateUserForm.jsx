@@ -72,7 +72,7 @@ function CreateUserForm() {
           uploadedImageUrl
         );
 
-        console.log(response.data);
+        console.log(response);
         alert("User created successfully!");
         resetForm();
       } catch (error) {
@@ -216,8 +216,10 @@ function CreateUserForm() {
               disabled={user.Role === "Admin"}
             >
               {user.Role==="Admin" || user.Role==="admin"?
-              (
+              (<>
+                <option value="">Select Role</option>
                 <option value="User">User</option>
+                </>
               ):(
                 <option value="">Select Role</option>
               )}
@@ -243,30 +245,26 @@ function CreateUserForm() {
               className="input input-sm w-full px-4 pl-10 border border-gray-300 hover:border-blue-500 rounded-lg focus:outline-none focus:ring-0 focus:ring-blue-500"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={
-                user.Role === "Admin" ? user.OfficeId : formik.values.office
-              }
-              disabled={user.Role === "Admin"}
+              value={formik.values.office}
             >
-              <option
-                value={
-                  user.Role === "Admin" || user.Role === "admin"
-                    ? `${user.OfficeId}`
-                    : ""
-                }
-              >
-                {user.Role === "Admin" || user.Role === "admin"
-                  ? `${user.OfficeName}`
-                  : "Select Office"}
-              </option>
-              {offices.map((office, index) => (
-                <option
-                  value={office.OfficeId}
-                  key={`${office.OfficeId}-${index}`}
-                >
-                  {office.OfficeName}
-                </option>
-              ))}
+              {user.Role==="Admin" || user.Role==="admin"?
+              (<>
+                <option value="">Select Office</option>
+                <option value={user.OfficeId}>{user.OfficeName}</option>
+                </>
+              ):(
+                <>
+                {offices.map((office, index) => (
+                  <option
+                    value={office.OfficeId}
+                    key={`${office.OfficeId}-${index}`}
+                  >
+                    {office.OfficeName}
+                  </option>
+                ))}
+                </>
+              )}
+              
             </select>
 
             <span className="absolute left-3 top-1 text-blue-500">
@@ -299,7 +297,7 @@ function CreateUserForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="input input-sm w-full text-white border-gray-300 bg-blue-500 hover:border-blue-600 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-0 focus:ring-blue-500"
+            className="btn cursor-pointer w-full text-white border-gray-300 bg-blue-500 hover:border-blue-600 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-0 focus:ring-blue-500"
           >
             Create User
           </button>

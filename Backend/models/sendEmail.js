@@ -66,7 +66,7 @@ Reset Password: ${link}
 
 Please change your password to proceed.
 
-For security reasons, we recommend updating your password after your first login. If you encounter any issues or require assistance, please do not hesitate to contact our support team at ${from}.  
+For security reasons, we recommend updating your password after your first login. If you encounter any issues or require assistance, please do not hesitate to contact our support team at ${process.env.EMAIL_USER}.  
 
 Welcome! We look forward to serving you.  
 

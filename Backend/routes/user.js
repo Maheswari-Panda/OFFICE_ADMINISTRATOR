@@ -12,6 +12,7 @@ const multer = require('multer');
 const path = require('path');
 
 const {sendEmail,sendEmailForForgetPassword} = require('../models/sendEmail'); 
+const {addUserLog} = require('../models/userLogModel');
 
 const storage = multer.diskStorage({
     destination: './uploads/UserProfiles', // Folder to store uploaded files
@@ -57,14 +58,17 @@ router.post('/create', [
         // Call the createUser function from the model
         let userId = await userModel.createUser(email, securedPassword,ERN, firstName, middleName, lastName, role,officeId,profileImgUrl);
 
-        const data = {
-            user: {
-                userId: userId,
-                userEmail:email,
-                role:role,
-            }
-        };
-        const accessToken = await userModel.generateAccessToken(data);
+            const data = {
+                user: {
+                    userId: userId,
+                    userEmail:email,
+                    role:role,
+                }
+            };
+            const accessToken = await userModel.generateAccessToken(data);
+    
+            // work on it it doesn't working for create user
+            // const result = await addUserLog(userId,'User Created');
 
         // it's working whenever an user being created the mail will be sent to the user
         
@@ -76,7 +80,8 @@ router.post('/create', [
         // await sendEmail(email, username, userPassword, loginLink);
 
         // console.log('User created successfully, email sent!');
-        res.status(201).json({ accessToken});
+            
+            res.status(201).json({ accessToken});
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to create user' });
@@ -106,6 +111,7 @@ router.post('/login', [
         // Compare entered password with hashed stored password in the database
         const passwordCompare = await bcrypt.compare(password, user.Password);
         if (!passwordCompare) {
+            const result = await addUserLog(user.UserId,'Login Failed');
             return res.status(400).json({ error: "Please try to login with correct credentials" });
         }
         
@@ -118,6 +124,10 @@ router.post('/login', [
         };
         
         const accessToken = await userModel.generateAccessToken(data);
+        if(accessToken){
+            const result = await addUserLog(user.UserId,'Logged In');
+            // console.log("User Log table details added ",result);
+        }
         res.status(201).json({ accessToken});
     } catch (err) {
         console.error(err);
@@ -178,6 +188,7 @@ router.put('/update/:userId', [
             // set new access token 
             const accessToken = await userModel.generateAccessToken(data);
             
+            const result = await addUserLog(userId,'Profile Updated');
             // Return success response
             res.status(200).json({ accessToken });
 
@@ -320,6 +331,7 @@ router.put('/updatepassword', async (req, res) => {
         const response = await userModel.updateUserPassword(userId,email,securedPassword);
         
         if(response){
+            const result = await addUserLog(userId,'Password Updated');
             res.status(200).json({ message: "Password updated successfully" });
         }
         else{

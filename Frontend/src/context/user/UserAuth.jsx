@@ -68,9 +68,13 @@ const UserAuth = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const result = await axios.post(`${host}/api/userLog/add`,{userId : user.UserId,action :'Logged Out'});
+    console.log("User Log table details added logout ",result);
+
     localStorage.clear(); // Clear the token and expiration time
     setUser(null); // Reset the user state
+    
     // Optionally redirect the user to the login page
     window.location.href = "/";
     return true;
@@ -184,7 +188,7 @@ const UserAuth = ({ children }) => {
           accessToken: `${accessToken}`,
         },
       });
-
+console.log(response);
       const userDetails = await getUser(accessToken);
       // console.log(userDetails);
       setUser(userDetails);

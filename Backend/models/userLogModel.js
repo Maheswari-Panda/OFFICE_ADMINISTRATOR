@@ -28,3 +28,18 @@ exports.getAllUserLogs = async () => {
         throw new Error('Failed to fetch all user logs');
     }
 };
+
+exports.addUserLog = async (userId, action) => {
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .input('ActionPerformed', sql.NVarChar, action)
+            .execute('AddUserLog');
+
+        return result.recordset[0]; // Returns { LogId, StatusMessage }
+    } catch (err) {
+        console.error('Error adding user log:', err);
+        return { LogId: null, StatusMessage: 'Failed to add user log' };
+    }
+};

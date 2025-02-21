@@ -39,7 +39,7 @@ exports.getAllOfficeDetails=async()=>{
         const result = await pool.request()
           .execute('GetAllOfficeDetails');  // Execute the stored procedure to fetch all offices
     
-        return result.recordset;  // Return the list of offices
+        return result.recordsets;  // Return the list of offices
       } catch (err) {
         console.error('Error getting office details:', err);
         throw err;  // Re-throw error for handling at a higher level

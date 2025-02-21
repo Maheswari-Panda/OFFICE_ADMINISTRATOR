@@ -37,4 +37,21 @@ router.get('/getall', async (req, res) => {
     }
 });
 
+router.post('/add', async (req, res) => {
+    const {userId,action}=req.body;
+    try {
+        const userLogs = await userLogModel.addUserLog(userId,action);
+
+        if (!userLogs) {
+            return res.status(404).json({ message: 'User logs not added' });
+        }
+
+        // Return the user details
+        res.status(200).json(userLogs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to add user log' });
+    }
+});
+
 module.exports = router;

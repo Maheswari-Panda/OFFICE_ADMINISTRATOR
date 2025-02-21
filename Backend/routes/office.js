@@ -63,7 +63,7 @@ router.get('/getall', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: 'Failed to update office',
+            message: 'Failed to get all office',
             error: error.message
         });
     }

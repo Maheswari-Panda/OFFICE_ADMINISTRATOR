@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const documentModel = require('../models/documentModel'); // Import the document model
+const documentLogModel = require('../models/documentLogModel'); // Import the document model
+var fetchUser = require('../middleware/fetchUser');
 
 const multer = require('multer');
 const path = require('path');
@@ -17,11 +19,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
   
 // Add a new document
-router.post('/add', async (req, res) => {
+router.post('/add',fetchUser, async (req, res) => {
+  const userId = req.user.userId;
   const documentData = req.body; // Expecting full document data in the request body
   console.log(req.body);
   try {
     const message = await documentModel.addDocument(documentData); // Call the addDocument model function
+   if(message){
+     const result = await documentLogModel.addDocumentLog(userId,message,'Document Added');
+   }
     res.status(200).json({ message }); // Return success message
   } catch (err) {
     res.status(500).json({ error: 'An error occurred while adding the document', details: err.message });

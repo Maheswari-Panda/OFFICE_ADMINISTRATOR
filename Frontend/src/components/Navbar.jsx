@@ -6,8 +6,8 @@ function Navbar() {
   const nagivate = useNavigate();
   const context = useContext(userContext);
   const { user,logout, getUser } = context;
-  const handleLogout=()=>{
-    const status = logout();
+  const handleLogout= async()=>{
+    const status = await logout();
     if(status){
       nagivate("/");
     }
