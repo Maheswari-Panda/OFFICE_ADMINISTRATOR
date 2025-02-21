@@ -35,14 +35,14 @@ function DocumentDetails({ document }) {
     initialValues: {
       IsInward: document.IsInward,
       DocumentName: document.DocumentName,
-      DocumentTypeId: document.DocumentTypeId,
+      DocumentTypeId: document.DocumentTypeName,
       LetterSerialNumber: document.LetterSerialNumber,
-      InwardOutwardReferenceDocumentId: document.InwardOutwardReferenceDocumentId,
-      EndUserId: document.EndUserId,
+      InwardOutwardReferenceDocumentId: document.InwardOutwardReferenceDocumentName,
+      EndUserId: document.EndUserName,
       DocumentDescription: document.DocumentDescription,
       DocumentPath: document.DocumentPath,
-      SenderId: document.SenderId,
-      ReceiverId: document.ReceiverId,
+      SenderId: document.SenderName,
+      ReceiverId: document.ReceiverName,
       BillingInfo: document.BillingInfo,
       Feedback: "",
       AttachedDocumentPath: "",
@@ -151,7 +151,7 @@ function DocumentDetails({ document }) {
         </div>
 
         <form
-        className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-1/4"
+        className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen w-1/4"
         onSubmit={(e) => {
           e.preventDefault();
           console.log(formik.errors);
@@ -162,15 +162,15 @@ function DocumentDetails({ document }) {
           <h2 className="text-2xl font-bold text-blue-600 mb-6">
             Document Details
           </h2>
-          <div className="flex justify-around my-2 form-control">
+          <div className="my-2 form-control">
             <div className="form-control">
-              <label className="label cursor-pointer hover:bg-gray-100 rounded p-2">
+              <label className="label cursor-pointer flex justify-between hover:bg-gray-100 rounded p-2">
                 <span className="label-text">Inward</span>
                 <input
                   type="radio"
                   name="IsInward"
                   value="0"
-                  className="radio checked:bg-blue-500"
+                  className="radio checked:text-blue-500"
                   checked={formik.values.IsInward} // ✅ Correctly bind checked state
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -179,13 +179,13 @@ function DocumentDetails({ document }) {
               </label>
             </div>
             <div className="form-control">
-              <label className="label cursor-pointer hover:bg-gray-100 rounded p-2">
+              <label className="label cursor-pointer flex justify-between hover:bg-gray-100 rounded p-2">
                 <span className="label-text">Outward</span>
                 <input
                   type="radio"
                   name="IsInward"
                   value="1"
-                  className="radio checked:bg-blue-500"
+                  className="radio checked:text-blue-500"
                   checked={formik.values.IsInward} // ✅ Correctly bind checked state
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -201,7 +201,7 @@ function DocumentDetails({ document }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2" hidden>
               Update Document
             </label>
             <input
@@ -210,7 +210,7 @@ function DocumentDetails({ document }) {
               name="DocumentPath"
               id="DocumentPath"
               onChange={(event) => setFile(event.currentTarget.files[0])}
-              disabled
+              hidden
             />
             {formik.errors.DocumentPath && formik.touched.DocumentPath && (
               <div className="text-red-500 text-xs mt-1">
@@ -274,7 +274,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentTypeId}
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               readOnly
               disabled
             >
@@ -299,13 +299,13 @@ function DocumentDetails({ document }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Letter Number
+              Letter Srno.
             </label>
             <input
               type="text"
               name="LetterSerialNumber"
               id="latterNumber"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.LetterSerialNumber}
@@ -328,7 +328,7 @@ function DocumentDetails({ document }) {
               key={200}
               name="InwardOutwardReferenceDocumentId"
               id="InwardOutwardReferenceDocumentId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
@@ -355,13 +355,13 @@ function DocumentDetails({ document }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              SenderId
+              Sender
             </label>
             <select
               key={300}
               name="SenderId"
               id="SenderId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.SenderId}
@@ -385,13 +385,13 @@ function DocumentDetails({ document }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              ReceiverId
+              Receiver
             </label>
             <select
               key={400}
               name="ReceiverId"
               id="ReceiverId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.ReceiverId}
@@ -420,7 +420,7 @@ function DocumentDetails({ document }) {
               key={500}
               name="EndUserId"
               id="EndUserId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.EndUserId}
@@ -450,7 +450,7 @@ function DocumentDetails({ document }) {
               type="text"
               name="BillingInfo"
               id="BillingInfo"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.BillingInfo}
@@ -472,7 +472,7 @@ function DocumentDetails({ document }) {
               rows="2"
               name="Feedback"
               id="Feedback"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.Feedback}
@@ -486,7 +486,7 @@ function DocumentDetails({ document }) {
             )}
           </div>
 
-          <div>
+          <div hidden>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Attachment
             </label>

@@ -113,7 +113,7 @@ function AddOfficeForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="input input-sm w-full text-white border-gray-300 bg-blue-500 hover:border-blue-600 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-0 focus:ring-blue-500"
+            className="input input-sm btn w-full text-white border-gray-300 bg-blue-500 hover:border-blue-600 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-0 focus:ring-blue-500"
           >
             Add Office
           </button>

@@ -1,14 +1,26 @@
+
 import React, { useContext, useEffect, useRef, useState, useId } from "react";
 import Button from "./Button";
 import DocumentContext from "../context/document/documentContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DocumentViewer from "./DocumentViewer";
-
 export default function AddDocument() {
+  const location = useLocation();
+  const documentUrl = location.state?.documentUrl || "";
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
+  
+  const [dragActive, setDragActive] = useState(false);
+  const [file, setFile] = useState(null);
+  const [attachedDocumentUrl, setAttachedDocumentUrl] = useState(null);
+  const [attachedDocument, setAttachedDocument] = useState(null);
+  const [uploadState, setUploadState] = useState(0);
+  const [attachedDocumentUploadState, setAttachedDocumentUploadState] =
+    useState(0);
+  const inputRef = useRef();
+
   const {
     documents,
     documentTypes,
@@ -21,18 +33,13 @@ export default function AddDocument() {
     addAttachedDocument
   } = documentContext;
   useEffect(() => {
+    if(documentUrl){
+      setFile(documentUrl)
+      setUploadState(1);
+    }
     getAllDocumentType();
     getUsers();
   }, []);
-  const [dragActive, setDragActive] = useState(false);
-  const [file, setFile] = useState(null);
-  const [attachedDocumentUrl, setAttachedDocumentUrl] = useState(null);
-  const [attachedDocument, setAttachedDocument] = useState(null);
-  const [uploadState, setUploadState] = useState(0);
-  const [attachedDocumentUploadState, setAttachedDocumentUploadState] =
-    useState(0);
-  const inputRef = useRef();
-
   const formik = useFormik({
     initialValues: {
       IsInward: 0,
@@ -42,7 +49,7 @@ export default function AddDocument() {
       InwardOutwardReferenceDocumentId: "",
       EndUserId: "",
       DocumentDescription: "",
-      DocumentPath: "",
+      DocumentPath: documentUrl||"",
       SenderId: "",
       ReceiverId: "",
       BillingInfo: "",
@@ -85,7 +92,6 @@ export default function AddDocument() {
           console.log(response.message);
          
           if(values.AttachedDocumentPath!==""){
-
             const AttachedDocumentResponse = await addAttachedDocument(response.message,values.AttachedDocumentPath);
             console.log(AttachedDocumentResponse);
             if (response != null && AttachedDocumentResponse!==null) {
@@ -109,7 +115,6 @@ export default function AddDocument() {
       }
     },
   });
-
   const handleUpload = async () => {
     let uploadedDocumentPath = file;
     console.log(file);
@@ -118,7 +123,6 @@ export default function AddDocument() {
       formData.append("DocumentPath", file);
       // console.log(file);
       const uploadResponse = await uploadDocument(formData);
-
       if (uploadResponse) {
         setUploadState(1); // Set uploadState to 1 after successful upload
         uploadedDocumentPath =
@@ -128,7 +132,6 @@ export default function AddDocument() {
       }
     }
   };
-
   const handleAttachedDocuments = async () => {
     let attachedDocumentPath = attachedDocumentUrl;
     console.log(attachedDocument);
@@ -137,7 +140,6 @@ export default function AddDocument() {
       formData.append("AttachedDocumentPath", attachedDocument);
       // console.log(file);
       const uploadResponse = await uploadAttachedDocument(formData);
-
       if (uploadResponse) {
         setAttachedDocumentUploadState(1); // Set uploadState to 1 after successful upload
         attachedDocumentPath =
@@ -149,7 +151,6 @@ export default function AddDocument() {
       }
     }
   };
-
   const handleDragEnter = (event) => {
     event.preventDefault();
     if (event.type === "dragenter" || event.type === "dragover") {
@@ -158,17 +159,14 @@ export default function AddDocument() {
       setDragActive(false);
     }
   };
-
   const handleDragOver = (event) => {
     event.preventDefault();
   };
-
   const handleDrop = (event) => {
     event.preventDefault();
     setFile(event.dataTransfer.files[0]);
     // console.log(event.dataTransfer.files[0]);
   };
-
   return (
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
       <form
@@ -233,24 +231,22 @@ export default function AddDocument() {
                 </button>
               </div>
             </div>
-
             {uploadState === 1 && <DocumentViewer DocPath={file} />}
           </div>
         )}
-
         <div className="flex-1 bg-white rounded-2xl p-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-6">
             Document Details
           </h2>
-          <div className="flex justify-around my-2 form-control">
+          <div className="my-2 form-control">
             <div className="form-control">
-              <label className="label cursor-pointer hover:bg-gray-100 rounded p-2">
+              <label className="label cursor-pointer flex justify-between hover:bg-gray-100 rounded p-2">
                 <span className="label-text">Inward</span>
                 <input
                   type="radio"
                   name="IsInward"
                   value={0}
-                  className="radio checked:bg-blue-500"
+                  className="radio checked:text-blue-500"
                   checked={formik.values.IsInward === 0}
                   onChange={(e) =>
                     formik.setFieldValue(
@@ -263,13 +259,13 @@ export default function AddDocument() {
               </label>
             </div>
             <div className="form-control">
-              <label className="label cursor-pointer hover:bg-gray-100 rounded p-2">
+              <label className="label cursor-pointer flex justify-between hover:bg-gray-100 rounded p-2">
                 <span className="label-text">Outward</span>
                 <input
                   type="radio"
                   name="IsInward"
                   value={1}
-                  className="radio checked:bg-blue-500"
+                  className="radio checked:text-blue-500"
                   checked={formik.values.IsInward === 1}
                   onChange={(e) =>
                     formik.setFieldValue(
@@ -281,14 +277,12 @@ export default function AddDocument() {
                 />
               </label>
             </div>
-
             {formik.touched.IsInward && formik.errors.IsInward && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.IsInward}
               </div>
             )}
           </div>
-
           <div>
             <input
               type="file"
@@ -313,14 +307,12 @@ export default function AddDocument() {
               onBlur={formik.handleBlur}
               value={formik.values.DocumentName}
             />
-
             {formik.errors.DocumentName && formik.touched.DocumentName && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.DocumentName}
               </div>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Document Description
@@ -334,7 +326,6 @@ export default function AddDocument() {
               onBlur={formik.handleBlur}
               value={formik.values.DocumentDescription}
             ></textarea>
-
             {formik.errors.DocumentDescription &&
               formik.touched.DocumentDescription && (
                 <div className="text-red-500 text-xs mt-1">
@@ -342,7 +333,6 @@ export default function AddDocument() {
                 </div>
               )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tag (Document Type)
@@ -354,7 +344,7 @@ export default function AddDocument() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentTypeId}
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
             >
               {documentTypes.map((doctype, index) => {
                 return (
@@ -367,14 +357,12 @@ export default function AddDocument() {
                 );
               })}
             </select>
-
             {formik.errors.DocumentTypeId && formik.touched.DocumentTypeId && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.DocumentTypeId}
               </div>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Letter Number
@@ -383,12 +371,11 @@ export default function AddDocument() {
               type="text"
               name="LetterSerialNumber"
               id="latterNumber"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.LetterSerialNumber}
             />
-
             {formik.errors.LetterSerialNumber &&
               formik.touched.LetterSerialNumber && (
                 <div className="text-red-500 text-xs mt-1">
@@ -396,7 +383,6 @@ export default function AddDocument() {
                 </div>
               )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Reference Document
@@ -405,7 +391,7 @@ export default function AddDocument() {
               key={200}
               name="InwardOutwardReferenceDocumentId"
               id="InwardOutwardReferenceDocumentId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
@@ -419,7 +405,6 @@ export default function AddDocument() {
                 </option>
               ))}
             </select>
-
             {formik.errors.InwardOutwardReferenceDocumentId &&
               formik.touched.InwardOutwardReferenceDocumentId && (
                 <div className="text-red-500 text-xs mt-1">
@@ -427,16 +412,15 @@ export default function AddDocument() {
                 </div>
               )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              SenderId
+              Sender
             </label>
             <select
               key={300}
               name="SenderId"
               id="SenderId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.SenderId}
@@ -449,23 +433,21 @@ export default function AddDocument() {
                 );
               })}
             </select>
-
             {formik.errors.SenderId && formik.touched.SenderId && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.SenderId}
               </div>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              ReceiverId
+              Receiver
             </label>
             <select
               key={400}
               name="ReceiverId"
               id="ReceiverId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.ReceiverId}
@@ -484,7 +466,6 @@ export default function AddDocument() {
               </div>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Final Destination
@@ -493,7 +474,7 @@ export default function AddDocument() {
               key={500}
               name="EndUserId"
               id="EndUserId"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.EndUserId}
@@ -506,14 +487,12 @@ export default function AddDocument() {
                 );
               })}
             </select>
-
             {formik.errors.EndUserId && formik.touched.EndUserId && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.EndUserId}
               </div>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Billing Info
@@ -522,19 +501,17 @@ export default function AddDocument() {
               type="text"
               name="BillingInfo"
               id="BillingInfo"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.BillingInfo}
             />
-
             {formik.errors.BillingInfo && formik.touched.BillingInfo && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.BillingInfo}
               </div>
             )}
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Attachment
@@ -569,7 +546,6 @@ export default function AddDocument() {
               </div>
             </div>
             )}
-
             {formik.errors.AttachedDocumentPath &&
               formik.touched.AttachedDocumentPath && (
                 <div className="text-red-500 text-xs mt-1">
@@ -577,7 +553,6 @@ export default function AddDocument() {
                 </div>
               )}
           </div>
-
           <div className="flex justify-end mt-5">
             <button
               type="submit"

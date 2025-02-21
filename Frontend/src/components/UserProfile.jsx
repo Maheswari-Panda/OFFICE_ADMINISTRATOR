@@ -108,7 +108,7 @@ function UserProfile() {
     <div className="w-full mx-auto bg-blue-100 p-4 items-start justify-center h-full">
       {/* Profile Card */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
-      <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
+      <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -139,7 +139,7 @@ function UserProfile() {
                   type="file"
                   id="profileImg"
                   name="profileImg"
-                  className="input-sm border rounded-md w-full max-w-xs"
+                  className="input-sm border border-gray-300 p-2 rounded-md w-full max-w-xs"
                   onChange={(event) =>
                     formik.setFieldValue(
                       "profileImg",
@@ -160,7 +160,7 @@ function UserProfile() {
                     type="text"
                     id="ern"
                     name="ern"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.ern}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -178,7 +178,7 @@ function UserProfile() {
                     type="text"
                     id="firstName"
                     name="firstName"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -198,7 +198,7 @@ function UserProfile() {
                     type="text"
                     id="middleName"
                     name="middleName"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.middleName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -219,7 +219,7 @@ function UserProfile() {
                     type="text"
                     id="lastName"
                     name="lastName"
-                    className="input-sm border rounded-md w-full max-w-xs"
+                    className="input-sm border border-gray-300 p-2 rounded-md w-full max-w-xs"
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -242,7 +242,7 @@ function UserProfile() {
                   type="email"
                   id="email"
                   name="email"
-                  className="input-sm border rounded-md w-full"
+                  className="input-sm border border-gray-300 p-2 rounded-md w-full"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -262,7 +262,7 @@ function UserProfile() {
                   type="text"
                   id="role"
                   name="role"
-                  className="input-sm border rounded-md w-full"
+                  className="input-sm border border-gray-300 p-2 rounded-md w-full"
                   value={formik.values.role}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -279,7 +279,7 @@ function UserProfile() {
                   type="text"
                   id="office"
                   name="office"
-                  className="input-sm border rounded-md w-full"
+                  className="input-sm border border-gray-300 p-2 rounded-md w-full"
                   value={formik.values.office}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -311,7 +311,7 @@ function UserProfile() {
           </form>
         </div>
 
-        <div className="p-5 border-2 rounded-md border-dashed boreder-gray-300 w-1/2">
+        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2 lg:h-150">
           <UserActivity userLogs={userLogs} />
         </div>
       </div>

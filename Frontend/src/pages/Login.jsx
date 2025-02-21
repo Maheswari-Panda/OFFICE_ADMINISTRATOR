@@ -142,11 +142,11 @@ function Login() {
                 {/* Captcha Section */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <label className="input input-bordered w-32 sm:w-40 flex bg-blue-100 items-center mx-1">
+                    <label className="input input-bordered flex justify-between w-32 sm:w-40 bg-blue-100 items-center mx-1 rounded-md overflow-hidden">
                       <input
                         type="text"
                         value={captcha}
-                        className="w-20 sm:w-32"
+                        className="lg:w-30 sm:w-32"
                         readOnly
                       />
                       <i
@@ -155,7 +155,7 @@ function Login() {
                       ></i>
                     </label>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-sm rounded-md">
                     <input
                       type="text"
                       name="enteredCaptcha"

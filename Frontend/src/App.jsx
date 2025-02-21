@@ -1,5 +1,4 @@
 import './App.css'
-import { Button } from 'react-daisyui'
 import Login from './pages/Login'
 import {
   BrowserRouter as Router,
@@ -28,26 +27,25 @@ function App() {
   return (
     <>
     {/* <DocumentPreview/> */}
-    {/* <Sidebar/> */}
-    <Router>
+     <Router>
       <Routes>
       <Route exactpath="/dashboard/content" element={<Sidebar />} />
       <Route
       exact path="/"
       element={user === null ? <Login /> : <Navigate to="/dashboard" />}
-    />
+    /> 
     
     {/* Redirect to Login if the user is not logged in */}
-    <Route
+     <Route
       exact path="/dashboard/*"
       element={user !== null ? <Dashboard /> : <Navigate to="/" />}
-    />
-    <Route
+    /> 
+     <Route
       exact path="/forgetpassword/*"
       element={<ForgetPasswordForm />}
-    />
+    /> 
     
-    <Route
+     <Route
       exact path="/resetpassword/:token"
       element={<ChangePassword />}
     />

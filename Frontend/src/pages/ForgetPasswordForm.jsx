@@ -109,7 +109,7 @@ function ForgetPasswordForm() {
                       <input
                         type="text"
                         value={captcha}
-                        className="w-20 sm:w-32"
+                        className="lg:w-30 sm:w-32"
                         readOnly
                       />
                       <i

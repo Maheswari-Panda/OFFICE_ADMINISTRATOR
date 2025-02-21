@@ -14,7 +14,7 @@ function Navbar() {
   }
   return (
     <>
-      <div className="navbar bg-base-100 border-b">
+      <div className="navbar bg-base-100 border-b border-gray-300">
   {/* Logo Section */}
   <div className="flex-none">
     <button className="btn btn-square btn-ghost mx-2">
@@ -28,7 +28,7 @@ function Navbar() {
   </div>
 
   {/* User Info and Menu */}
-  <div className="flex-none gap-2">
+  <div className="flex items-center">
     <ul className="hidden lg:flex menu menu-horizontal px-1 text-base">
       <li>
         <a>{user.FirstName + " " + user.LastName}</a>

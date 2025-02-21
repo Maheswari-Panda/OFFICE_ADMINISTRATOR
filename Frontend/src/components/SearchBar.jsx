@@ -63,13 +63,13 @@ function SearchBar({ onSearch }) {
   ];
 
   return (
-    <div className="flex flex-col text-center w-full mb-8 border-b-2 border-dashed pb-3">
+    <div className="flex flex-col text-center w-full mb-8 border-b-2 border-dashed border-gray-300 pb-3">
       <div className="flex flex-wrap items-center justify-center p-4 space-y-2 lg:space-y-0 lg:space-x-4 bg-white rounded-lg w-full max-w-6xl mx-auto">
         {/* Search Bar */}
-        <div className="flex bg-gray-100 p-2 w-full lg:max-w-lg rounded-md hover:shadow-lg hover:border-blue-400 hover:bg-white border transition duration-300">
+        <div className="flex bg-gray-100 p-2 w-full lg:max-w-lg rounded-md hover:shadow-lg hover:border-blue-400 hover:bg-white border border-gray-300 transition duration-300">
           <i className="fa-solid fa-magnifying-glass text-blue-500 text-sm"></i>
           <input
-            className="bg-gray-100 outline-none flex-grow ml-2 text-sm text-gray-600 hover:bg-white"
+            className="bg-gray-100 outline-none border-0 flex-grow ml-2 text-sm text-gray-600 hover:bg-white"
             type="text"
             placeholder="Search Documents..."
             value={searchTerm}
@@ -89,9 +89,7 @@ function SearchBar({ onSearch }) {
         {/* Filters Dropdown */}
         <details className="dropdown">
           <summary
-            tabIndex={0}
-            role="button"
-            className={`flex items-center space-x-2 ${selectedFilter!==null?'bg-blue-500 text-white':'bg-gray-100 text-gray-400'}  py-2 px-4 rounded-md text-sm cursor-pointer hover:bg-blue-500 hover:text-white sm:mx-1 md:my-2`}
+            className={`btn-base m-1 flex items-center space-x-2 ${selectedFilter!==null?'bg-blue-500 text-white':'bg-gray-100 text-gray-400'}  py-2 px-4 rounded-md text-sm cursor-pointer hover:bg-blue-500 hover:text-white sm:mx-1 md:my-2`}
           >
             <i className="fa-solid fa-sliders"></i>
             <span>Filters</span>
@@ -130,7 +128,7 @@ function SearchBar({ onSearch }) {
 
           {/* Month Dropdown */}
           <select
-            className="bg-gray-100 p-2 rounded-md text-sm cursor-pointer hover:bg-blue-500 hover:text-white"
+            className="bg-gray-100 p-2 border-none rounded-md text-sm cursor-pointer hover:bg-blue-500 hover:text-white"
             value={selectedMonth}
             onChange={handleMonthChange}
             disabled={!selectedYear} // Enable only after selecting a year
@@ -145,7 +143,7 @@ function SearchBar({ onSearch }) {
 
           {/* Date Dropdown */}
           <select
-            className="bg-gray-100 p-2 rounded-md text-sm cursor-pointer hover:bg-blue-500 hover:text-white"
+            className="bg-gray-100 p-2 border-none rounded-md text-sm cursor-pointer hover:bg-blue-500 hover:text-white"
             value={selectedDate}
             onChange={handleDateChange}
             disabled={!selectedMonth} // Enable only after selecting a month

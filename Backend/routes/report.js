@@ -20,7 +20,7 @@ router.get("/excel", async (req, res) => {
     const worksheet = workbook.addWorksheet("Documents Report");
 
     worksheet.columns = [
-        { header: "Document ID", key: "DocumentId", width: 10 },
+        { header: "Srno.", key: "DocumentId", width: 10 },
         { header: "Type", key: "IsInward", width: 10 },
         { header: "DateTime", key: "DispatchedDateTime", width: 20 },
         { header: "Letter Serial", key: "LetterSerialNumber", width: 20 },

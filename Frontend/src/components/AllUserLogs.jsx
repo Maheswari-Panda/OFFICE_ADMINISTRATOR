@@ -21,8 +21,8 @@ function AllUserLogs() {
 
   // console.log(userLogs);
   return (
-    <div className="flex bg-blue-100 w-full p-3 h-full">
-        <div className="flex items-center justify-center rounded-md bg-white p-3 w-full">
+    <div className="flex bg-blue-100 w-full p-3 h-screen">
+        <div className="flex items-start rounded-md bg-white p-3 w-full">
             <UserActivity userLogs={userLogs}/>
         </div>
     </div>

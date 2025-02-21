@@ -90,7 +90,7 @@ function Sidebar() {
             htmlFor="my-drawer-2"
             className="drawer-overlay w-screen"
           ></label>
-          <ul className="menu bg-white text-base-content min-h-full lg:w-full p-4 border-r md:w-1/3">
+          <ul className="menu bg-white text-base-content min-h-full lg:w-full p-4 border-r border-gray-300 md:w-1/3">
             {/* Button to add document */}
             <Link to="/dashboard/addDocument">
               <Button

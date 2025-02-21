@@ -21,53 +21,28 @@ function DocumentItem(props) {
               <DocumentPreview docpath={document.DocumentPath}/>
 
         </div>
-        <div className='p-4 flex justify-between items-center border-t-2 group-hover:bg-blue-500  transition duration-300'>
+        <div className='p-4 flex justify-between items-center border-t border-gray-200 group-hover:bg-blue-500  transition duration-300'>
           <div className="">
             
-            <h2 className='text-gray-900 title-font text-sm my-2 font-semibold group-hover:text-white'>
+            <h2 className='text-gray-900 title-font text-sm font-semibold group-hover:text-white'>
               {document.DocumentName.length>30?(document.DocumentName).slice(0,27)+"..":document.DocumentName}
             </h2>
             <p className='text-gray-600 text-sm mt-1 group-hover:text-white hidden'>
             {document.DocumentTypeName}
             </p>
-            <p className='text-gray-600 text-sm mt-1 group-hover:text-white'>
-              reciever: {document.ReceiverName}
+            <p className='text-gray-400 text-sm group-hover:text-white'>
+              From : {document.SenderName}
             </p>
-            <p className='text-gray-600 text-sm mt-1 group-hover:text-white'>
-              sender: {document.SenderName}
+            <p className='text-gray-400 text-sm group-hover:text-white'>
+              To : {document.ReceiverName}
             </p>
-            <p className='text-gray-600 text-sm mt-1 group-hover:text-white'>
-              {document.DispatchedDateTime}
-            </p>
-            <p className='text-gray-600 text-sm mt-1 group-hover:text-white'>
-              status : {document.StatusName}
+            <p className='text-gray-400 text-sm group-hover:text-white'>
+              {new Date(document.DispatchedDateTime).toLocaleDateString()}
             </p>
 
             </div>
             <div>
-            <div className="dropdown dropdown-end dropdown-hover">
-              <button
-                tabIndex={0}
-                className="text-blue-500 hover:text-blue-600"
-              >
-                <i className="fa-solid fa-ellipsis-vertical text-xl group-hover:text-white"></i>
-              </button>
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu bg-white shadow-lg rounded-lg w-44 py-2 border border-gray-200 z-10"
-              >
-                <li>
-                  <a className="px-4 py-2 hover:bg-blue-100 text-gray-700">
-                    View Details
-                  </a>
-                </li>
-                <li>
-                  <a className="px-4 py-2 hover:bg-blue-100 text-gray-700">
-                    Add Comment
-                  </a>
-                </li>
-              </ul>
-            </div>
+           
             </div>
         </div>
       </div>

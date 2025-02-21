@@ -110,7 +110,7 @@ function DocumentContent() {
   const columns = useMemo(
     () => [
       {
-        name: "Document ID",
+        name: "Srno.",
         selector: (row, index ) => index + 1,
         sortable: true,
       },
@@ -120,7 +120,7 @@ function DocumentContent() {
         sortable: true,
       },
       {
-        name: "Date Inserted",
+        name: "Date",
         selector: (row) =>
           row?.DispatchedDateTime
             ? new Date(row?.DispatchedDateTime).toLocaleDateString()
@@ -128,7 +128,7 @@ function DocumentContent() {
         sortable: true,
       },
       {
-        name: "Document Name",
+        name: "Name",
         selector: (row) => row?.DocumentName || "N/A",
         sortable: true,
         cell: (row) => (
@@ -141,22 +141,22 @@ function DocumentContent() {
         ),
       },
       {
-        name: "Document Type",
+        name: "Type",
         selector: (row) => row?.DocumentTypeName || "N/A",
         sortable: true,
       },
       {
-        name: "Letter Serial Number",
+        name: "Letter Srno",
         selector: (row) => row?.LetterSerialNumber || "N/A",
         sortable: true,
       },
       {
-        name: "Inward/Outward Reference",
+        name: "I/O Reference",
         selector: (row) => row?.InwardOutwardReferenceDocumentId || "N/A",
         sortable: true,
       },
       {
-        name: "Document Path",
+        name: "Url",
         selector: (row) =>
           row?.DocumentPath ? (
             <a
@@ -172,17 +172,17 @@ function DocumentContent() {
           sortable: true,
         },
         {
-          name: "Sender Name",
+          name: "Sender",
           selector: (row) => row?.SenderName || "N/A",
           sortable: true,
         },
         {
-          name: "Receiver Name",
+          name: "Receiver",
           selector: (row) => row?.ReceiverName || "N/A",
           sortable: true,
         },
         {
-          name: "End User Name",
+          name: "End User",
           selector: (row) => row?.EndUserName || "N/A",
           sortable: true,
         },

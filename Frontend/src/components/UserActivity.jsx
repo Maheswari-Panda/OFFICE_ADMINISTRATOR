@@ -6,12 +6,12 @@ const UserActivity = ({userLogs}) => {
   // Define the columns for the DataTable
   const columns = [
     {
-      name: "Log Table ID",
+      name: "Srno.",
       selector: (row, index ) => index + 1,
       sortable: true,
     },
     {
-      name: "User ID",
+      name: "User Name",
       selector: (row) => (row.UserName),
       sortable: true,
     },
@@ -28,7 +28,7 @@ const UserActivity = ({userLogs}) => {
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-scroll h-full">
         <h2 className="mx-3">User Activity</h2>
       <DataTable
         columns={columns}
