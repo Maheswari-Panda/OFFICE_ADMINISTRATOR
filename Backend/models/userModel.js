@@ -25,7 +25,7 @@ exports.createUser = async (userEmail, userPassword, userERN,userFirstName, user
             .input('Email', sql.NVarChar(100), userEmail)
             .input('Password', sql.NVarChar(255), userPassword)
             .input('FirstName', sql.NVarChar(20), userFirstName)
-            .input('MiddleName', sql.NVarChar(20), userMiddleName)
+            .input('MiddleName', sql.NVarChar(20), (userMiddleName===""?NULL:userMiddleName))
             .input('LastName', sql.NVarChar(20), userLastName)
             .input('Role',  sql.NVarChar(20), userRole)
             .input('ERN', sql.Char(10), userERN)

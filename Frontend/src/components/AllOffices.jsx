@@ -6,7 +6,7 @@ import * as Yup from "yup";
 
 function AllOffices() {
   const officeContext = useContext(OfficeContext);
-  const { offices, getAllOffices, updateOffice,deleteOffice } = officeContext;
+  const {getAllOffices, updateOffice,deleteOffice } = officeContext;
   const [office, setOffice] = useState({});
   const editRef = useRef();
   const closeRef = useRef();
@@ -28,6 +28,9 @@ function AllOffices() {
 
     fetchData();
   }, []);
+
+  
+  const {offices} = officeContext;
 
   const handleView = async (row) => {
     setOffice(row);
@@ -175,7 +178,7 @@ function AllOffices() {
         ) : (
           <DataTable
             columns={columns}
-            data={offices}
+            data={offices[0]}
             fixedHeader
             highlightOnHover
           />
@@ -297,7 +300,7 @@ function AllOffices() {
     <div className="modal-action">
       <form method="dialog">
         {/* if there is a button in form, it will close the modal */}
-        <button className="btn btn-sm bg-red-500 text-white mx-2 hover:bg-red-600" onClick={()=>handleDeleteOffice(office.OfficeId)}>Delete</button>
+        <button className="btn btn-sm bg-red-500 text-white mx-2 hover:bg-red-600 cursor-pointer" onClick={()=>handleDeleteOffice(office.OfficeId)}>Delete</button>
         <button className="btn btn-sm bg-blue-500 text-white hover:bg-blue-600">Cencel</button>
       </form>
     </div>

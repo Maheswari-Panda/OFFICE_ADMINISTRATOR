@@ -152,12 +152,15 @@ const UserAuth = ({ children }) => {
         officeId,
         profileImgUrl,
       });
+      // console.log(response);
       return response.data;
     } catch (error) {
       console.error(
         "Error creating user",
         error.response?.data || error.message
       );
+      // console.log(error.message);
+      return error.response?.data || error.message;
     }
   };
 

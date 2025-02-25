@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useRef, useState, useId } from "react";
 import Button from "./Button";
 import DocumentContext from "../context/document/documentContext";
+import userContext from "../context/user/userContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +12,7 @@ export default function AddDocument() {
   const documentUrl = location.state?.documentUrl || "";
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
+  const {user} = useContext(userContext);
   
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
@@ -19,7 +21,18 @@ export default function AddDocument() {
   const [uploadState, setUploadState] = useState(0);
   const [attachedDocumentUploadState, setAttachedDocumentUploadState] =
     useState(0);
+  const [isLatter,setIsLatter]=useState(0); 
+  const signedInUserOfficeId = user.OfficeId; // Replace with actual signed-in user's office ID
   const inputRef = useRef();
+
+  const getOfficeCode = (officeName) => {
+    if (!officeName) return ""; // Handle cases where officeName might be empty
+    return officeName
+      .split(" ") // Split by spaces
+      .map(word => word.charAt(0).toUpperCase()) // Get first letter of each word and uppercase it
+      .join(""); // Join them to form initials
+  };
+  
 
   const {
     documents,
@@ -115,6 +128,19 @@ export default function AddDocument() {
       }
     },
   });
+  
+  const isInward = formik.values.IsInward === 1// Assuming you have a field to check
+  
+  const filteredUsersForSender = users.filter(user => 
+    isInward ? user.OfficeId === signedInUserOfficeId : user.OfficeId !== signedInUserOfficeId
+  );
+
+// Filtering users based on document type
+const filteredUsersForReceiver = users.filter(user => 
+  isInward ? user.OfficeId !== signedInUserOfficeId : user.OfficeId === signedInUserOfficeId
+);
+
+  
   const handleUpload = async () => {
     let uploadedDocumentPath = file;
     console.log(file);
@@ -168,7 +194,7 @@ export default function AddDocument() {
     // console.log(event.dataTransfer.files[0]);
   };
   return (
-    <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
+    <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-2 w-full">
       <form
         className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full"
         onSubmit={(e) => {
@@ -296,7 +322,7 @@ export default function AddDocument() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Document Name
+              Document Name <span className="text-blue-500">*</span>
             </label>
             <input
               type="text"
@@ -315,7 +341,7 @@ export default function AddDocument() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Document Description
+              Document Description <span className="text-blue-500">*</span>
             </label>
             <textarea
               rows="3"
@@ -335,17 +361,34 @@ export default function AddDocument() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tag (Document Type)
+              Tag (Document Type) <span className="text-blue-500">*</span>
             </label>
             <select
               key={100}
               name="DocumentTypeId"
               id="DocumentTypeId"
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                formik.handleChange(e); // Handle formik change
+                const selectedId = e.target.value;
+                
+                // Find the selected document type
+                const selectedDocType = documentTypes.find(
+                  (doctype) => doctype.DocumentTypeId.toString() === selectedId
+                );
+            
+                // Check if the selected document type is "Letter"
+                if (selectedDocType?.DocumentTypeName === "Latter") {
+                  setIsLatter(1);
+                } else {
+                  setIsLatter(0);
+                }
+              }}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentTypeId}
               className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
             >
+              
+              <option value="">-- Select Document Type --</option>
               {documentTypes.map((doctype, index) => {
                 return (
                   <option
@@ -365,16 +408,17 @@ export default function AddDocument() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Letter Number
+              Letter Number {isLatter===1 && <span className="text-blue-500">*</span>}
             </label>
             <input
               type="text"
               name="LetterSerialNumber"
               id="latterNumber"
-              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition disabled:bg-gray-100 disabled:cursor-not-allowed"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.LetterSerialNumber}
+              disabled={!isLatter}
             />
             {formik.errors.LetterSerialNumber &&
               formik.touched.LetterSerialNumber && (
@@ -396,6 +440,7 @@ export default function AddDocument() {
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
             >
+              <option value={0}>-- Select Reference Document --</option>
               {documents.map((document, index) => (
                 <option
                   value={document.DocumentId}
@@ -412,87 +457,88 @@ export default function AddDocument() {
                 </div>
               )}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sender
-            </label>
-            <select
-              key={300}
-              name="SenderId"
-              id="SenderId"
-              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.SenderId}
-            >
-              {users.map((user, index) => {
-                return (
-                  <option value={user.UserId} key={`${user.UserId}-${index}`}>
-                    {user.FirstName + " " + user.LastName}
-                  </option>
-                );
-              })}
-            </select>
-            {formik.errors.SenderId && formik.touched.SenderId && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.SenderId}
-              </div>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Receiver
-            </label>
-            <select
-              key={400}
-              name="ReceiverId"
-              id="ReceiverId"
-              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.ReceiverId}
-            >
-              {users.map((user, index) => {
-                return (
-                  <option value={user.UserId} key={`${user.UserId}-${index}`}>
-                    {user.FirstName + " " + user.LastName}
-                  </option>
-                );
-              })}
-            </select>
-            {formik.errors.ReceiverId && formik.touched.ReceiverId && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.ReceiverId}
-              </div>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Final Destination
-            </label>
-            <select
-              key={500}
-              name="EndUserId"
-              id="EndUserId"
-              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.EndUserId}
-            >
-              {users.map((user, index) => {
-                return (
-                  <option value={user.UserId} key={`${user.UserId}-${index}`}>
-                    {user.FirstName + " " + user.LastName}
-                  </option>
-                );
-              })}
-            </select>
-            {formik.errors.EndUserId && formik.touched.EndUserId && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.EndUserId}
-              </div>
-            )}
-          </div>
+         
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Sender <span className="text-blue-500">*</span>
+  </label>
+  <select
+    key={300}
+    name="SenderId"
+    id="SenderId"
+    className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+    onChange={formik.handleChange}
+    onBlur={formik.handleBlur}
+    value={formik.values.SenderId}
+  >
+    <option value="">-- Select Sender --</option>
+    {filteredUsersForSender.map((user, index) => (
+      <option value={user.UserId} key={`${user.UserId}-${index}`}>
+        {user.FirstName + " " + user.LastName +" - "} {getOfficeCode(user.OfficeName)}
+      </option>
+    ))}
+  </select>
+  {formik.errors.SenderId && formik.touched.SenderId && (
+    <div className="text-red-500 text-xs mt-1">
+      {formik.errors.SenderId}
+    </div>
+  )}
+</div>
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Receiver <span className="text-blue-500">*</span>
+  </label>
+  <select
+    key={400}
+    name="ReceiverId"
+    id="ReceiverId"
+    className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+    onChange={formik.handleChange}
+    onBlur={formik.handleBlur}
+    value={formik.values.ReceiverId}
+  >
+    <option value="">-- Select Receiver --</option>
+    {filteredUsersForReceiver.map((user, index) => (
+      <option value={user.UserId} key={`${user.UserId}-${index}`}>
+        {user.FirstName + " " + user.LastName+" - "} {getOfficeCode(user.OfficeName)}
+      </option>
+    ))}
+  </select>
+  {formik.errors.ReceiverId && formik.touched.ReceiverId && (
+    <div className="text-red-500 text-xs mt-1">
+      {formik.errors.ReceiverId}
+    </div>
+  )}
+</div>
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Final Destination <span className="text-blue-500">*</span>
+  </label>
+  <select
+    key={500}
+    name="EndUserId"
+    id="EndUserId"
+    className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+    onChange={formik.handleChange}
+    onBlur={formik.handleBlur}
+    value={formik.values.EndUserId}
+  >
+    <option value="">-- Select EndUser --</option>
+    {filteredUsersForReceiver.map((user, index) => (
+      <option value={user.UserId} key={`${user.UserId}-${index}`}>
+        {user.FirstName + " " + user.LastName+" - "} {getOfficeCode(user.OfficeName)}
+      </option>
+    ))}
+  </select>
+  {formik.errors.EndUserId && formik.touched.EndUserId && (
+    <div className="text-red-500 text-xs mt-1">
+      {formik.errors.EndUserId}
+    </div>
+  )}
+</div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Billing Info

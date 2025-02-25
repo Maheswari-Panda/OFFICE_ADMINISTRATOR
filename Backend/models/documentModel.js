@@ -9,7 +9,7 @@ exports.addDocument = async (documentData) => {
             .input('IsInward', sql.Bit, documentData.IsInward)
             .input('DocumentName',sql.VarChar(50),documentData.DocumentName)
             .input('DocumentTypeId', sql.Int, documentData.DocumentTypeId)
-            .input('LetterSerialNumber', sql.NVarChar(255), documentData.LetterSerialNumber)
+            .input('LetterSerialNumber', sql.NVarChar(255), (documentData.LetterSerialNumber===""?null:documentData.LetterSerialNumber))
             .input('InwardOutwardReferenceDocumentId', sql.Int, documentData.InwardOutwardReferenceDocumentId)
             .input('EndUserId', sql.Int, documentData.EndUserId)
             .input('DocumentDescription', sql.NVarChar(sql.MAX), documentData.DocumentDescription)
@@ -17,7 +17,6 @@ exports.addDocument = async (documentData) => {
             .input('SenderId', sql.Int, documentData.SenderId)
             .input('ReceiverId', sql.Int, documentData.ReceiverId)
             .input('BillingInfo', sql.NVarChar(sql.MAX), documentData.BillingInfo)
-            .input('StatusId', sql.Int, 1)
             .input('OfficeId', sql.SmallInt, 1)
             .execute('AddDocument');
 

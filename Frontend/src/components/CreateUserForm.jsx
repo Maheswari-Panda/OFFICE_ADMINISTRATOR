@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import userContext from "../context/user/userContext";
 import OfficeContext from "../context/office/officeContext";
+import ModalAlert from "./ModalAlert";
 
 function CreateUserForm() {
   const context = useContext(userContext);
@@ -10,6 +11,9 @@ function CreateUserForm() {
   const { offices, getAllOffices } = officeContext;
   const { user, createUser, uploadProfileImage } = context;
   const [imageUrl, setImageUrl] = useState("");
+  const [alertHeading,setAlertHeading]=useState("");
+  const [alertDiscription,setAlertDiscription]=useState("");
+  const modalRef=useRef();
 
   useEffect(() => {
     getAllOffices();
@@ -72,12 +76,24 @@ function CreateUserForm() {
           uploadedImageUrl
         );
 
-        console.log(response);
-        alert("User created successfully!");
+        // console.log(response);
+        // alert("User created successfully!");
+        if(response.accessToken){
+          setAlertHeading("User Created")
+          setAlertDiscription("Login credentials sent to the registered user email successfully");
+        }
+        else{
+          setAlertHeading("Error Creating User")
+          setAlertDiscription(response.error);
+        }
+       
+        modalRef.current.click();
         resetForm();
       } catch (error) {
         console.error("Error creating user:", error);
-        alert("Error creating user");
+        setAlertHeading("Error Creating User")
+        setAlertDiscription("Please Try Agian with correct values");
+        // alert("Error creating user");
       }
     },
   });
@@ -213,7 +229,6 @@ function CreateUserForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.role}
-              disabled={user.Role === "Admin"}
             >
               {user.Role==="Admin" || user.Role==="admin"?
               (<>
@@ -303,6 +318,7 @@ function CreateUserForm() {
           </button>
         </form>
       </div>
+      <ModalAlert modalRef={modalRef} heading={alertHeading} description={alertDiscription} btnText="Ok"/>
     </div>
   );
 }

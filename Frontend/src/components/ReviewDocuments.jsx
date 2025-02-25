@@ -12,8 +12,15 @@ function ReviewDocuments() {
     getAllDocuments();
   }, []);
   useEffect(() => {
-      setActiveDocuments(documents); // Reset filtered documents on initial render
-    }, [documents]);
+    // Filter documents where status is "Pending Review"
+    const filteredDocuments = documents.filter((doc) => doc.StatusName === "Pending Review");
+    setActiveDocuments(filteredDocuments); // Set only pending review documents
+  }, [documents]);
+
+
+  // useEffect(() => {
+  //     setActiveDocuments(documents); // Reset filtered documents on initial render
+  //   }, [documents]);
 
   const handleViewDocument = (row) => {
     // Navigate to the DocumentDetails component with the selected document

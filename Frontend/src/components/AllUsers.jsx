@@ -96,8 +96,8 @@ function AllUsers() {
   ], []);
 
   return (
-    <div className="w-full flex justify-center bg-blue-100 min-h-screen">
-      <div className="w-full bg-white p-6 m-2 rounded-lg shadow-lg">
+    <div className="w-full flex justify-center bg-blue-100 min-h-screen p-2">
+      <div className="w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">All Users</h2>
 
         {loading ? (
