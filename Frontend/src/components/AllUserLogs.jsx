@@ -4,7 +4,7 @@ import userContext from '../context/user/userContext';
 import Spinner from './Spinner';
 
 function AllUserLogs() {
-   const {getAllUserLogs} = useContext(userContext);
+   const {user,getAllUserLogs,getAllUserLogsByOfficeId} = useContext(userContext);
    const [userLogs,setUserLogs]=useState([]);
    
   const [isLoading, setIsLoading] = useState(true);
@@ -12,8 +12,14 @@ function AllUserLogs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const userLogs = await getAllUserLogs();  // Fetch logs for the specific user
-        setUserLogs(userLogs);
+        if(user.Role==="Admin" || user.Role==="admin"){
+          const userLogs = await getAllUserLogsByOfficeId(user.OfficeId);  // Fetch logs for the specific user
+          setUserLogs(userLogs);
+        }
+        else{
+          const userLogs = await getAllUserLogs();  // Fetch logs for the specific user
+          setUserLogs(userLogs);
+        }
       } catch (error) {
         console.error("Failed to load user logs:", error);
       }

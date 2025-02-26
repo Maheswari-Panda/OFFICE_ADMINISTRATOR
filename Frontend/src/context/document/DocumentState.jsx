@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { act, useState } from "react";
 import axios from "axios";
 import DocumentContext from "./documentContext";
 
@@ -194,6 +194,25 @@ const DocumentState = (props) => {
         );
       }
     };
+
+    const addDocumentLog = async (
+      userId,
+      documentId,
+      action
+    ) => {
+      try {
+        const response = await axios.post(`${host}/api/DocumentLog/add`, {
+          userId,
+          documentId,
+          action
+        });
+        const json = await response.data;
+        console.log(json);
+        return response.data;
+      } catch (error) {
+        console.log("error in edding attached document", error);
+      }
+    };
   
 
   return (
@@ -215,7 +234,8 @@ const DocumentState = (props) => {
         getStatusById,
         fetchPdfReport,
         fetchExcelReport,
-        getAllDocumentLogs
+        getAllDocumentLogs,
+        addDocumentLog
       }}
     >
       {props.children}

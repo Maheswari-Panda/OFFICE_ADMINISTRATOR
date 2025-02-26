@@ -1,4 +1,4 @@
-import React,{memo} from 'react'
+import React,{memo, useContext, useEffect} from 'react'
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import "@cyntler/react-doc-viewer/dist/index.css";
 

@@ -2,9 +2,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component'; // Import the DataTable component
 import DocumentContext from '../context/document/documentContext';
 import { useNavigate } from 'react-router-dom';
+import userContext from '../context/user/userContext';
+
 
 function ReviewDocuments() {
-  const { documents,getAllDocuments } = useContext(DocumentContext); // Get documents from the context
+  const { documents,getAllDocuments,addDocumentLog } = useContext(DocumentContext); // Get documents from the context
+  const {user} = useContext(userContext);
   const [activeDocuments, setActiveDocuments] = useState([]);
   const navigate = useNavigate();
 
@@ -26,7 +29,9 @@ function ReviewDocuments() {
     // Navigate to the DocumentDetails component with the selected document
     // history.push(`/document-details/${documentId}`);
     // console.log("Handle Review Document : ",row);
+    addDocumentLog(user.UserId, row.DocumentId,"Pending Document Viewed")
     navigate("/dashboard/reviewDocument", { state: { document: row } });
+
   };
 
   const handleApproveDocument = async (documentId) => {

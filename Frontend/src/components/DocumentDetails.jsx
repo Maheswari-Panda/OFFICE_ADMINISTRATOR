@@ -12,6 +12,7 @@ function DocumentDetails({ document }) {
   
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
+
   const {
     documents,
     documentTypes,
@@ -25,6 +26,7 @@ function DocumentDetails({ document }) {
     getAllDocumentType();
     getUsers();
   }, []);
+  
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [uploadState, setUploadState] = useState(1);

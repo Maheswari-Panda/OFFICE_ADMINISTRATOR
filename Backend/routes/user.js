@@ -365,4 +365,21 @@ router.post('/verify-reset-link', async (req, res) => {
     });
 });
 
+
+router.post('/getall/:officeId',fetchUser,authorizeRole("Admin","admin","SuperAdmin"), async (req, res) => {
+    try {
+        const user = await userModel.getUsersByOfficeId(req.params.officeId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User of this office not found' });
+        }
+
+        // Return the user details
+        res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to fetch user of this office' });
+    }
+});
+
 module.exports = router; // Export the router

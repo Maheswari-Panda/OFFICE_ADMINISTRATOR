@@ -37,6 +37,23 @@ router.get('/getall', async (req, res) => {
     }
 });
 
+
+router.get('/getall/:officeId', async (req, res) => {
+    try {
+        const userLogs = await userLogModel.getAllUserLogsByOfficeId(req.params.officeId);
+
+        if (!userLogs) {
+            return res.status(404).json({ message: 'User logs not found for gievn office' });
+        }
+
+        // Return the user details
+        res.status(200).json(userLogs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to fetch user logs for given office' });
+    }
+});
+
 router.post('/add', async (req, res) => {
     const {userId,action}=req.body;
     try {

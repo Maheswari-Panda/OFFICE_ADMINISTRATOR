@@ -239,6 +239,30 @@ console.log(response);
     }
   };
 
+  // Get all users by office Id
+  const getUsersByOfficeId = async (officeId) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.post(
+        `${host}/api/user/getall/${officeId}`,
+        {}, // Empty request body
+        {
+          headers: {
+            accessToken: `${accessToken}`,
+          },
+        }
+      );
+      const json = await response.data;
+      setUsers(json);
+      return json;
+    } catch (error) {
+      console.error(
+        "Error Getting all user details of this office",
+        error.response?.data || error.message
+      );
+    }
+  };
+
    // Get the logged-in user details
    const getUserLogs = async (userId) => {
     try {
@@ -267,6 +291,25 @@ console.log(response);
     } catch (error) {
       console.error(
         "Error fetching user log details:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+
+  // KAM BAKI HAI
+  const getAllUserLogsByOfficeId = async (officeId) => {
+    try {
+      // const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${host}/api/userLog/getall/${officeId}`,
+      );
+
+      // Return the user details
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching user log details of this office:",
         error.response?.data || error.message
       );
     }
@@ -333,7 +376,9 @@ console.log(response);
         forgetPassword,
         resetPassword,
         verifyResetPasswordToken,
-        deleteUser
+        deleteUser,
+        getUsersByOfficeId,
+        getAllUserLogsByOfficeId
       }}
     >
       {children}

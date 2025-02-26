@@ -7,10 +7,13 @@ import DataTable from "react-data-table-component";
 import "../style/DocumentTable.css";
 import ModalAlert from "./ModalAlert";
 import Spinner from "./Spinner";
+import userContext from '../context/user/userContext';
+
 
 function DocumentContent() {
   const documentContext = useContext(DocumentContext);
-  const { documents, getAllDocuments } = documentContext;
+  const {user} = useContext(userContext);
+  const { documents, getAllDocuments, addDocumentLog} = documentContext;
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -108,9 +111,10 @@ function DocumentContent() {
 
   const [selectedDocument, setSelectedDocument] = useState(null);
 
-  const handleRowClick = (row) => {
+  const handleRowClick = async (row) => {
     console.log("Row clicked:", row);
     setSelectedDocument(row);
+    await addDocumentLog(user.UserId,row.DocumentId,"Document Viewed");
   };
 
   const deleteRef = useRef();
@@ -341,7 +345,7 @@ function DocumentContent() {
                     <DocumentItem
                       key={document.DocumentId}
                       document={document}
-                      onSelect={setSelectedDocument}
+                      onSelect={()=>handleRowClick(document)}
                     />
                   ))
                 )}

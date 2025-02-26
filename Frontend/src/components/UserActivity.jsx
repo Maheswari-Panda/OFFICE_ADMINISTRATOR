@@ -11,7 +11,7 @@ const UserActivity = ({userLogs}) => {
       sortable: true,
     },
     {
-      name: "User Name",
+      name: "Username",
       selector: (row) => (row.UserName),
       sortable: true,
     },

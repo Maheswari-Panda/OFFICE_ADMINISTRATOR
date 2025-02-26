@@ -57,7 +57,7 @@ exports.getUserById = async (userId) => {
     }
 };
 
-// Function to get all user details without password admin login required
+// Function to get all user details without password Super admin login required
 exports.getAllUsers = async()=>{
     try {
         const pool = await db.getPool();
@@ -66,6 +66,20 @@ exports.getAllUsers = async()=>{
     } catch (error) {
         console.error('Error in getting Users:', error);
         throw new Error('Failed to fetch all users');
+    }
+}
+
+// Admin login required
+exports.getUsersByOfficeId = async(officeId)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+        .input('OfficeId',  sql.Int(10), officeId)
+        .execute('GetUsersByOfficeId');
+        return result.recordsets[0];
+    } catch (error) {
+        console.error('Error in getting Users of this Office : ', error);
+        throw new Error('Failed to fetch all users of this office');
     }
 }
 

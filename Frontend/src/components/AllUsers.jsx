@@ -7,7 +7,7 @@ import Spinner from "./Spinner";
 
 function AllUsers() {
   const navigate = useNavigate();
-  const { users, getAllUsers, deleteUser } = useContext(userContext);
+  const {user, users, getAllUsers, deleteUser,getUsersByOfficeId } = useContext(userContext);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -17,9 +17,14 @@ function AllUsers() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        await Promise.all([getAllUsers()]);
+        if(user.Role==="Admin" || user.Role==="admin"){
+          await Promise.all([getUsersByOfficeId(user.OfficeId)]);
+        }
+        else{
+          await Promise.all([getAllUsers()]);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching user data:", error);
       } finally {
         setTimeout(()=>{
           setLoading(false);
