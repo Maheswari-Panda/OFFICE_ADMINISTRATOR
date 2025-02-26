@@ -5,6 +5,7 @@ import userContext from "../context/user/userContext";
 import YearlyCalendar from "./YearlyCalander";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserActivity from "./UserActivity";
+import Spinner from "./Spinner";
 
 function ViewUser() {
   const location= useLocation();
@@ -16,6 +17,8 @@ function ViewUser() {
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(user.ProfileImageUrl);
   const [isOldImage, setIsOldImage] = useState(true);
+  
+  const [isLoading, setIsLoading] = useState(true);
 
   
   const [userLogs,setUserLogs]=useState([]);
@@ -28,6 +31,11 @@ function ViewUser() {
         setUserLogs(userLogs);
       } catch (error) {
         console.error("Failed to load user logs:", error);
+      }
+      finally{
+        setTimeout(()=>{
+          setIsLoading(false);
+        },500)
       }
     };
 
@@ -330,12 +338,12 @@ function ViewUser() {
           </form>
         </div>
 
-        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
-          <UserActivity userLogs={userLogs}/>
+        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2 h-130 overflow-scroll">
+          {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
         </div>
       </div>
       <div className="flex">
-            <YearlyCalendar userLog={userLogs} />
+          <YearlyCalendar userLog={userLogs} />
       </div>
     </div>
   );

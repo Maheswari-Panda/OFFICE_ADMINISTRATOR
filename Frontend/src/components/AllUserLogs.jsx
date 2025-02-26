@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import UserActivity from "./UserActivity";
 import userContext from '../context/user/userContext';
+import Spinner from './Spinner';
 
 function AllUserLogs() {
    const {getAllUserLogs} = useContext(userContext);
    const [userLogs,setUserLogs]=useState([]);
+   
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     const fetchLogs = async () => {
@@ -13,6 +16,11 @@ function AllUserLogs() {
         setUserLogs(userLogs);
       } catch (error) {
         console.error("Failed to load user logs:", error);
+      }
+      finally{
+        setTimeout(()=>{
+          setIsLoading(false);
+        },500);
       }
     };
 
@@ -23,7 +31,7 @@ function AllUserLogs() {
   return (
     <div className="flex bg-blue-100 w-full p-3 h-screen">
         <div className="flex items-start rounded-md bg-white p-3 w-full">
-            <UserActivity userLogs={userLogs}/>
+            {isLoading ? <Spinner/>:<UserActivity userLogs={userLogs}/>}
         </div>
     </div>
   )

@@ -318,7 +318,7 @@ function CreateUserForm() {
           </button>
         </form>
       </div>
-      <ModalAlert modalRef={modalRef} heading={alertHeading} description={alertDiscription} btnText="Ok"/>
+      <ModalAlert modalRef={modalRef} heading={alertHeading} description={alertDiscription} btnText1="Ok"/>
     </div>
   );
 }

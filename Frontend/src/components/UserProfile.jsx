@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import userContext from "../context/user/userContext";
 import YearlyCalendar from "./YearlyCalander";
 import UserActivity from "./UserActivity";
+import Spinner from "./Spinner";
 
 function UserProfile() {
 
@@ -13,6 +14,8 @@ function UserProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(user.ProfileImageUrl);
   const [isOldImage, setIsOldImage] = useState(true);
+  
+  const [isLoading, setIsLoading] = useState(true);
 
   
   const [userLogs,setUserLogs]=useState([]);
@@ -25,6 +28,11 @@ function UserProfile() {
         setUserLogs(userLogs);
       } catch (error) {
         console.error("Failed to load user logs:", error);
+      }
+      finally{
+        setTimeout(()=>{
+          setIsLoading(false);
+        },200);
       }
     };
 
@@ -312,7 +320,7 @@ function UserProfile() {
         </div>
 
         <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2 lg:h-150">
-          <UserActivity userLogs={userLogs} />
+        {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
         </div>
       </div>
       <div className="flex">

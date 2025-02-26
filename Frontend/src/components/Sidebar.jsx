@@ -101,7 +101,7 @@ function Sidebar() {
               />
             </Link>
 
-            <Link to="/dashboard/createDocument">
+            <Link to="/dashboard/createDocument" className="my-2">
               <Button
                 color="blue"
                 text="Create Document"
@@ -111,115 +111,128 @@ function Sidebar() {
             </Link>
 
             {/* Sidebar Links */}
-            <li>
+            <Link to="/dashboard/content">
+            <li className="w-full">
               <label htmlFor="my-drawer-2" className="cursor-pointer">
-                <Link to="/dashboard/content">
                   <i className="fa-solid fa-gauge"></i> Dashboard
-                </Link>
               </label>
             </li>
+            </Link>
             {user.Role === "Admin" || user.Role==="admin" || user.Role === "SuperAdmin" ? (
               <>
+              
+              <Link to="/dashboard/review">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/review">
                       <i className="fa-solid fa-folder"></i> Review Documents
-                    </Link>
                   </label>
                 </li>
-                <li>
-                  <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/alldocumentlogs">
-                      <i className="fa-solid fa-folder-open"></i> Document Logs
-                    </Link>
-                  </label>
-                </li>
-                <li>
-                  <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/createUser">
-                      <i className="fa-solid fa-user-plus"></i> Create User
-                    </Link>
-                  </label>
-                </li>
-                <li>
-                  <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/allUsers">
-                      <i className="fa-solid fa-users"></i> All Users
-                    </Link>
-                  </label>
-                </li>
+                </Link>
 
+                <Link to="/dashboard/alldocumentlogs">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/userActivity">
+                      <i className="fa-solid fa-folder-open"></i> Document Logs
+                  </label>
+                </li>
+                </Link>
+
+                <Link to="/dashboard/createUser">
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                      <i className="fa-solid fa-user-plus"></i> Create User
+                  </label>
+                </li>
+                </Link>
+
+                <Link to="/dashboard/allUsers">
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                      <i className="fa-solid fa-users"></i> All Users
+                  </label>
+                </li>
+                </Link>
+
+
+                <Link to="/dashboard/userActivity">
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
                       <i className="fa-solid fa-clock-rotate-left"></i> User
                       Activity
-                    </Link>
                   </label>
                 </li>
+                </Link>
                 {user.Role === "SuperAdmin" && 
                   <>
+                    <Link to="/dashboard/adminActivity">
+
                   <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/adminActivity">
                       <i className="fa-solid fa-clock-rotate-left"></i> Admin
                       Activity
-                    </Link>
                   </label>
                 </li>
+                </Link>
+
+                <Link to="/dashboard/addOffice">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/addOffice">
                     <i className="fa-solid fa-building-circle-check"></i> Add Offices
-                    </Link>
                   </label>
                 </li>
+                </Link>
+
+                <Link to="/dashboard/allOffices">
                   <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/allOffices">
                     <i className="fa-solid fa-building"></i> All Offices
-                    </Link>
                   </label>
                 </li>
+                </Link>
+
                   </>
                 }
               </>
             ) : (
               <>
+                    <Link to="/dashboard/pendingDocuments">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/pendingDocuments">
                       <i className="fa-solid fa-hourglass-end"></i> Pending
                       Documents
-                    </Link>
                   </label>
                 </li>
+                </Link>
+
+                <Link to="/dashboard/approvedDocuments">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/approvedDocuments">
                       <i className="fa-solid fa-file-circle-check"></i> Approved
                       Documents
-                    </Link>
                   </label>
                 </li>
+                </Link>
 
+
+                <Link to="/dashboard/myActivity">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                    <Link to="/dashboard/myActivity">
                       <i className="fa-solid fa-clock-rotate-left"></i> My
                       Activity
-                    </Link>
                   </label>
                 </li>
+                </Link>
+
               </>
             )}
+            <Link to="/dashboard/report">
             <li>
               <label htmlFor="my-drawer-2" className="cursor-pointer">
-                <Link to="/dashboard/report">
                   <i className="fa-solid fa-file-lines"></i> Reports
-                </Link>
               </label>
             </li>
+            </Link>
+
           </ul>
         </div>
       </div>
