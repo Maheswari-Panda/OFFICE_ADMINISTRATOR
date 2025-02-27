@@ -33,7 +33,7 @@ const DocumentActivity = ({documentLogs}) => {
   ];
 
   return (
-    <div className="w-full overflow-scroll h-full">
+    <div className="w-full overflow-scroll h-screen">
         {/* <h2 className="mx-3">Document Logs</h2> */}
       <DataTable
         columns={columns}

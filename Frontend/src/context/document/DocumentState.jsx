@@ -214,6 +214,45 @@ const DocumentState = (props) => {
       }
     };
   
+    const getDocumentLogsByDocumentId = async (documentId) => {
+      try {
+        const response = await axios.get(
+          `${host}/api/documentLog/get_by_document/${documentId}`,
+        );
+  
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error fetching document log details:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+  
+    const approveDocument = async (documentId,action) => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axios.post(
+          `${host}/api/document/approve/${documentId}`,
+          {action},
+          { 
+            headers: {
+              accessToken: `${accessToken}`,
+            },
+          }
+        );
+  
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error approving document by user:",
+          error.response?.data || error.message
+        );
+      }
+    };
 
   return (
     <DocumentContext.Provider
@@ -235,7 +274,9 @@ const DocumentState = (props) => {
         fetchPdfReport,
         fetchExcelReport,
         getAllDocumentLogs,
-        addDocumentLog
+        addDocumentLog,
+        getDocumentLogsByDocumentId,
+        approveDocument
       }}
     >
       {props.children}

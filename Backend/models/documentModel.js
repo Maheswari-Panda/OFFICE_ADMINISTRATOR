@@ -114,3 +114,19 @@ exports.getDocumentsByType = async (documentTypeId) => {
         throw err;
     }
 };
+
+exports.approveDocument = async(userId,documentId,action) =>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .input('DocumentId', sql.Int, documentId)
+            .input('ActionPerformed', sql.NVarChar(sql.MAX), action)
+            .execute('ApproveDocument');
+
+        return result.recordset; // Return documents of a specific type
+    } catch (err) {
+        console.error('Error Approving documents by document id:', err);
+        throw err;
+    }
+}

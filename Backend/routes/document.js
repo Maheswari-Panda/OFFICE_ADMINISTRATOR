@@ -102,4 +102,17 @@ router.post('/upload', upload.single('DocumentPath'), (req, res) => {
   res.json({ DocumentPath: `/uploads/Documents/${req.file.filename}` }); // Send image URL back
 });
 
+// approve document
+router.post('/approve/:documentId',fetchUser, async (req, res) => {
+  const documentId = req.params.documentId;
+  const userId = req.user.userId;
+  const action = req.body.action;
+  try {
+    const response = await documentModel.approveDocument(userId,documentId,action);
+    res.status(200).json(response); 
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while approving documents by documentId', details: err.message });
+  }
+});
+
 module.exports = router;

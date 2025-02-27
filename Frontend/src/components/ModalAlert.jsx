@@ -12,8 +12,8 @@ const ModalAlert = ({modalRef,heading,description,btnText1,btnText2}) => {
     <div className="modal-action">
       <form method="dialog" className="flex gap-1">
         {/* if there is a button in form, it will close the modal */}
-        <button className="btn btn-sm bg-blue-500 text-white hover:blue-600">{btnText1}</button>
-        <button className="btn btn-sm bg-red-500 text-white hover:red-600">{btnText2}</button>
+        <button className="btn btn-sm bg-red-500 text-white hover:blue-600">{btnText1}</button>
+        <button className="btn btn-sm bg-blue-500 text-white hover:red-600">{btnText2}</button>
       </form>
     </div>
   </div>

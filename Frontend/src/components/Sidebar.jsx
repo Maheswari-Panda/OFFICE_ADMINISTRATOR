@@ -19,6 +19,7 @@ import PendingDocuments from "./PendingDocuments";
 import ApprovedDocuments from "./ApprovedDocuments";
 import AllOffices from "./AllOffices";
 import AddOfficeForm from "./AddOfficeForm";
+import DocumentLog from "./DocumentLog";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -71,6 +72,7 @@ function Sidebar() {
             <Route path="userActivity" element={<AllUserLogs />} />
             <Route path="allOffices" element={<AllOffices/>} />
             <Route path="addOffice" element={<AddOfficeForm/>} />
+            <Route path="documentLogs" element={<DocumentLog/>} />
             <Route
               path="myActivity"
               element={<UserActivity userLogs={userLogs} />}

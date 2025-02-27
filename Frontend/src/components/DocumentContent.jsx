@@ -8,13 +8,16 @@ import "../style/DocumentTable.css";
 import ModalAlert from "./ModalAlert";
 import Spinner from "./Spinner";
 import userContext from '../context/user/userContext';
+import { useNavigate } from "react-router-dom";
 
 
 function DocumentContent() {
   const documentContext = useContext(DocumentContext);
   const {user} = useContext(userContext);
-  const { documents, getAllDocuments, addDocumentLog} = documentContext;
+  const { documents, getAllDocuments, addDocumentLog,getDocumentLogsByDocumentId} = documentContext;
   const [isLoading, setIsLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllDocuments();
@@ -125,6 +128,11 @@ function DocumentContent() {
     // deleteRef.current.click();
   };
 
+  const handleDocumentLogView = async(row) =>{
+    const documentLog = await getDocumentLogsByDocumentId(row.DocumentId)
+    navigate("/dashboard/documentLogs",{ state: { documentLog: documentLog } });
+  }
+
   const columns = useMemo(
     () => [
       {
@@ -214,7 +222,7 @@ function DocumentContent() {
             <button
             title="view document logs"
               className="p-1 text-gray-500 hover:text-gray-700"
-              onClick={() => handleDeleteModal(row)}
+              onClick={() => handleDocumentLogView(row)}
             >
               <i className="fas fa-file"></i>
             </button>
