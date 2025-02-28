@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import DocumentContext from "../context/document/documentContext";
 import DocumentActivity from "./DocumentActivity";
 import Spinner from "./Spinner";
+import userContext from "../context/user/userContext";
 
 function AllDocumentLogs() {
-  const { getAllDocumentLogs } = useContext(DocumentContext);
+  const {user} = useContext(userContext);
+  const { getAllDocumentLogs,getDocumentLogsByOfficeId } = useContext(DocumentContext);
   const [documentLogs, setDocumentLogs] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -12,10 +14,16 @@ function AllDocumentLogs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const docLogs = await getAllDocumentLogs(); // Fetch logs for the specific user
-        setDocumentLogs(docLogs);
+        if(user.Role === "Admin" || user.Role ==="admin"){
+          const docLogs = await getDocumentLogsByOfficeId(user.OfficeId); // Fetch logs for the specific user
+          setDocumentLogs(docLogs);
+        }
+        else{
+          const docLogs = await getAllDocumentLogs(); // Fetch logs for the specific user
+          setDocumentLogs(docLogs);
+        }
       } catch (error) {
-        console.error("Failed to load document logs:", error);
+        console.error("Failed to load document logs of this office:", error);
       } finally {
         setTimeout(()=>{
           setIsLoading(false);

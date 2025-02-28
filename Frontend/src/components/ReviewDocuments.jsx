@@ -7,7 +7,7 @@ import ModalAlert from './ModalAlert';
 
 
 function ReviewDocuments() {
-  const { documents,getAllDocuments,addDocumentLog,approveDocument } = useContext(DocumentContext); // Get documents from the context
+  const { documents,getAllDocuments,addDocumentLog,approveDocument,addFeedback,returnDocument } = useContext(DocumentContext); // Get documents from the context
   const {user} = useContext(userContext);
   const [activeDocuments, setActiveDocuments] = useState([]);
   const navigate = useNavigate();
@@ -16,6 +16,9 @@ function ReviewDocuments() {
   const [alertDescription,setAlertDescription] = useState("");
   const [alertBtnText1,setAlertBtnText1] = useState("");
   const [alertBtnText2,setAlertBtnText2] = useState("");
+
+  const [documentToApprove,setDocumentToApprove]=useState([]);
+  const [documentToReturn,setDocumentToReturn]=useState([]);
 
   useEffect(() => {
     getAllDocuments();
@@ -38,17 +41,52 @@ function ReviewDocuments() {
 
   const handleApproveDocument = async (document) => {
     // Call the API to approve the document
+    setDocumentToApprove(document);
+    setDocumentToReturn([]);
     setAlertHeading("Approve Document");
     setAlertDescription("Please Review the document carefully before approving it this action cannot be undone!");
     setAlertBtnText1("Cencel");
     setAlertBtnText2("Approve");
     modalRef.current.click();
-    // const response = await approveDocument(document.DocumentId,"Document Approved");
-    // // After approval, update the document status in the context or re-fetch the documents
-    // if(response){
-    //   alert("Document Approved");
-    // }
   };
+
+  const onClickApproveDocument = async (feedback)=>{
+    const response = await approveDocument(documentToApprove.DocumentId,"Document Approved");
+    if(response && feedback!==""){
+      const feedbackResponse = await addFeedback(documentToApprove.DocumentId,feedback,documentToApprove.ReceiverId);
+      if(feedbackResponse){
+        alert("Document approved with Feedback successfully");
+      }
+    }
+    // // After approval, update the document status in the context or re-fetch the documents
+    if(response){
+      alert("Document Approved");
+    }
+  }
+
+  const handleReturnDocument = async (document)=>{
+    setDocumentToReturn(document);
+    setDocumentToApprove([]);
+    setAlertHeading("Return Document");
+    setAlertDescription("Please Review the document carefully before returning it. This action cannot be undone!");
+    setAlertBtnText1("Cencel");
+    setAlertBtnText2("Return");
+    modalRef.current.click();
+  }
+
+  const onClickReturnDocument = async (feedback)=>{
+    const response = await returnDocument(documentToReturn.DocumentId,"Document Returned");
+    if(response && feedback!==""){
+      const feedbackResponse = await addFeedback(documentToReturn.DocumentId,feedback,documentToReturn.ReceiverId);
+      if(feedbackResponse){
+        alert("Document returned with Feedback successfully");
+      }
+    }
+    // // After approval, update the document status in the context or re-fetch the documents
+    if(response){
+      alert("Document Returned");
+    }
+  }
 
   // Columns definition for the DataTable
   const columns = [
@@ -97,7 +135,7 @@ function ReviewDocuments() {
           </button>
           <button
             className="h-8 w-8 text-white p-1 rounded-full  focus:outline-none hover:bg-gray-200"
-            onClick={() => handleApproveDocument(row)}
+            onClick={() => handleReturnDocument(row)}
             title='return document'
           >
             <i className="fa-solid fa-arrow-rotate-left text-red-500 hover:text-red-600"></i>
@@ -117,7 +155,7 @@ function ReviewDocuments() {
           data={activeDocuments} // Data for the table
         />
       </div>
-      <ModalAlert modalRef={modalRef} heading={alertHeading} description={alertDescription} btnText1={alertBtnText1} btnText2={alertBtnText2}/>
+      <ModalAlert modalRef={modalRef} heading={alertHeading} description={alertDescription} btnText1={alertBtnText1} btnText2={alertBtnText2} feedbackform={true} onClickBtn={documentToApprove.length===0? onClickReturnDocument : onClickApproveDocument}/>
     </div>
   );
 }

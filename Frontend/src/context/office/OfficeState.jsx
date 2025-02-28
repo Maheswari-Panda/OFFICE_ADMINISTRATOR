@@ -23,6 +23,7 @@ function OfficeState(props) {
       const response = await axios.get(`${host}/api/office/get/${officeId}`);
       const json = await response.data;
       setOffice(json);
+      return json;
     } catch (error) {
       console.log("error getting office By Id", error);
     }

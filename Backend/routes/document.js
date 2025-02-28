@@ -115,4 +115,16 @@ router.post('/approve/:documentId',fetchUser, async (req, res) => {
   }
 });
 
+// approve document
+router.post('/return/:documentId',fetchUser, async (req, res) => {
+  const documentId = req.params.documentId;
+  const userId = req.user.userId;
+  const action = req.body.action;
+  try {
+    const response = await documentModel.returnDocument(userId,documentId,action);
+    res.status(200).json(response); 
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while returned document by documentId', details: err.message });
+  }
+});
 module.exports = router;

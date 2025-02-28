@@ -70,6 +70,7 @@ function Sidebar() {
             <Route path="pendingDocuments" element={<PendingDocuments />} />
             <Route path="approvedDocuments" element={<ApprovedDocuments />} />
             <Route path="userActivity" element={<AllUserLogs />} />
+            <Route path="adminActivity" element={<AllUserLogs />} />
             <Route path="allOffices" element={<AllOffices/>} />
             <Route path="addOffice" element={<AddOfficeForm/>} />
             <Route path="documentLogs" element={<DocumentLog/>} />

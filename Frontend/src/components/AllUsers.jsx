@@ -4,6 +4,7 @@ import userContext from "../context/user/userContext";
 import OfficeContext from "../context/office/officeContext";
 import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
+import ModalAlert from "./ModalAlert";
 
 function AllUsers() {
   const navigate = useNavigate();
@@ -47,9 +48,10 @@ function AllUsers() {
   };
 
   const handelDeleteUser = async (userId) => {
-    console.log(selectedUser);
+    // console.log(selectedUser);
+    // console.log("INSIDE HANDLE DELETE USER",userId);
     const response = await deleteUser(userId);
-    console.log(response);
+    // console.log(response);
     if (response) {
       alert("User Deleted Successfuully!");
     } else {
@@ -148,40 +150,9 @@ function AllUsers() {
             )}
           </div>
           {/* Open the modal using document.getElementById('ID').showModal() method */}
-          <button
-            className="btn hidden"
-            onClick={() => document.getElementById("my_modal_6").showModal()}
-            ref={deleteRef}
-          >
-            open modal
-          </button>
-          <dialog
-            id="my_modal_6"
-            className="modal modal-bottom sm:modal-middle"
-          >
-            <div className="modal-box">
-              <h3 className="font-bold text-lg text-red-500">Delete User</h3>
-              <p className="py-4">
-                Are sure you want to delete this user once it gets deleted the
+          <ModalAlert modalRef={deleteRef} heading="Delete User" description="Are sure you want to delete this user once it gets deleted the
                 related data to this user will get deleted and you cannot
-                retrive it!
-              </p>
-              <div className="modal-action">
-                <form method="dialog">
-                  {/* if there is a button in form, it will close the modal */}
-                  <button
-                    className="btn btn-sm bg-red-500 text-white mx-2 hover:bg-red-600"
-                    onClick={() => handelDeleteUser(selectedUser.UserId)}
-                  >
-                    Delete
-                  </button>
-                  <button className="btn btn-sm bg-blue-500 text-white hover:bg-blue-600">
-                    Cencel
-                  </button>
-                </form>
-              </div>
-            </div>
-          </dialog>
+                retrive it!" btnText1="Cencel"  btnText2="Delete" onClickBtn={() =>handelDeleteUser(selectedUser.UserId)}/>
         </div>
       )}
     </>

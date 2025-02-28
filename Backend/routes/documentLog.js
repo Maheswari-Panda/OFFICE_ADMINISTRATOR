@@ -76,4 +76,22 @@ router.get('/getall', async (req, res) => {
     }
 });
 
+// Route to get document logs by DocumentId
+router.get('/get_by_office/:officeId', async (req, res) => {
+    const { officeId } = req.params;
+
+    try {
+        const documentLogs = await documentLogModel.getDocumentLogsByOfficeId(officeId);
+
+        if (!documentLogs.length) {
+            return res.status(404).json({ message: 'No document logs found for this office' });
+        }
+
+        res.status(200).json(documentLogs);
+    } catch (err) {
+        console.error('Error fetching document logs for this office:', err);
+        res.status(500).json({ message: 'Failed to fetch document logs for this office' });
+    }
+});
+
 module.exports = router;

@@ -231,6 +231,23 @@ const DocumentState = (props) => {
     };
 
   
+    const getDocumentLogsByOfficeId = async (officeId) => {
+      try {
+        const response = await axios.get(
+          `${host}/api/documentLog/get_by_office/${officeId}`,
+        );
+        console.log(response);
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error fetching document log details of this office:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+  
     const approveDocument = async (documentId,action) => {
       try {
         const accessToken = localStorage.getItem("accessToken");
@@ -254,6 +271,54 @@ const DocumentState = (props) => {
       }
     };
 
+    const addFeedback = async (documentId,feedbackDescription,receiverId) => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axios.post(
+          `${host}/api/feedback/add`,
+          {documentId,feedbackDescription,receiverId},
+          { 
+            headers: {
+              accessToken: `${accessToken}`,
+            },
+          }
+        );
+  
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error adding feedback by user:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    
+    const returnDocument = async (documentId,action) => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axios.post(
+          `${host}/api/document/return/${documentId}`,
+          {action},
+          { 
+            headers: {
+              accessToken: `${accessToken}`,
+            },
+          }
+        );
+  
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error returning document by user:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+
   return (
     <DocumentContext.Provider
       value={{
@@ -276,7 +341,10 @@ const DocumentState = (props) => {
         getAllDocumentLogs,
         addDocumentLog,
         getDocumentLogsByDocumentId,
-        approveDocument
+        approveDocument,
+        addFeedback,
+        returnDocument,
+        getDocumentLogsByOfficeId
       }}
     >
       {props.children}

@@ -60,3 +60,15 @@ exports.getAllDocumentLogs = async () => {
         throw new Error('Failed to fetch all document logs');
     }
 };
+
+exports.getDocumentLogsByOfficeId = async (officeId)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request().input('OfficeId', sql.SmallInt, officeId).execute('GetDocumentLogsByOfficeId');
+
+        return result.recordset; // Returns an array of logs
+    } catch (err) {
+        console.error('Error fetching all document logs of this office:', err);
+        throw new Error('Failed to fetch all document logs of this office');
+    }
+}
