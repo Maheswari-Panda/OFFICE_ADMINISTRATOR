@@ -114,8 +114,8 @@ export default function AddDocument() {
               alert("error in document adding");
             }
           }
-          
-            if (response != null) {
+          if (response != null) {
+              console.log(response);
               alert("Document added successfully!");
               navigate("/dashboard/content");
             } else {

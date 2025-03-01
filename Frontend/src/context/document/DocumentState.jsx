@@ -23,6 +23,56 @@ const DocumentState = (props) => {
     setDocumentTypes(json);
   };
 
+  const getAllDocumentsReceivedDispatched = async () => {
+    try{
+
+      const response = await axios.post(`${host}/api/document/getall_receieved_dispatched`);
+      const json = await response.data;
+      // console.log(response)
+      if(response){
+        setDocuments(json);
+      }
+      return json;
+    }
+    catch(err){
+      console.log("Error getting received or dispatched documents");
+    }
+  };
+
+  
+  const getPendingDocumentsForUserByUserId = async (userId) => {
+    try{
+
+      const response = await axios.post(`${host}/api/document/getpending_foruser/${userId}`);
+      const json = await response.data;
+      // console.log(response)
+      if(response){
+        setDocuments(json);
+      }
+      return json;
+    }
+    catch(err){
+      console.log("Error getting pending documents for logged in user",err);
+    }
+  };
+
+  const getApprovedDocumentsForUserByUserId = async (userId) => {
+    try{
+
+      const response = await axios.post(`${host}/api/document/getapproved_foruser/${userId}`);
+      const json = await response.data;
+      // console.log(response)
+      if(response){
+        setDocuments(json);
+      }
+      return json;
+    }
+    catch(err){
+      console.log("Error getting approved documents for logged in user",err);
+    }
+  };
+  
+
   const getUsers = async () => {
     const accessToken = localStorage.getItem("accessToken");
     const response = await axios.post(
@@ -344,7 +394,10 @@ const DocumentState = (props) => {
         approveDocument,
         addFeedback,
         returnDocument,
-        getDocumentLogsByOfficeId
+        getDocumentLogsByOfficeId,
+        getAllDocumentsReceivedDispatched,
+        getPendingDocumentsForUserByUserId,
+        getApprovedDocumentsForUserByUserId
       }}
     >
       {props.children}

@@ -2,14 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component'; // Import the DataTable component
 import DocumentContext from '../context/document/documentContext';
 import { useNavigate } from 'react-router-dom';
+import userContext from '../context/user/userContext';
 
 function ApprovedDocuments() {
-  const { documents,getAllDocuments } = useContext(DocumentContext); // Get documents from the context
+  const {user} = useContext(userContext);
+  const { documents,getApprovedDocumentsForUserByUserId } = useContext(DocumentContext); // Get documents from the context
   const [approvedDocuments, setApprovedDocuments] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllDocuments();
+    getApprovedDocumentsForUserByUserId(user.UserId);
   }, []);
   useEffect(() => {
       setApprovedDocuments(documents); // Reset filtered documents on initial render
@@ -22,16 +24,31 @@ function ApprovedDocuments() {
     navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
-  const handleApproveDocument = async (documentId) => {
-    // Call the API to approve the document
-    await getAllDocuments(documentId);
-    // After approval, update the document status in the context or re-fetch the documents
-    setApprovedDocuments((prevDocs) =>
-      prevDocs.map((doc) =>
-        doc.id === documentId ? { ...doc, status: 'Approved' } : doc
-      )
-    );
+  const handleDocumentPrint = async (documentPath) => {
+    if (!documentPath) {
+      console.error("Document path is missing!");
+      return;
+    }
+  
+    try {
+      console.log("Opening document for printing: ", documentPath);
+      
+      // Open the document in a new tab
+      const newWindow = window.open(documentPath, "_blank");
+  
+      // If the new window opens successfully, attempt to print
+      if (newWindow) {
+        newWindow.onload = () => {
+          newWindow.print();
+        };
+      } else {
+        console.error("Popup blocked! Allow pop-ups for this site.");
+      }
+    } catch (error) {
+      console.error("Error while opening document:", error);
+    }
   };
+  
 
   // Columns definition for the DataTable
   const columns = [
@@ -68,13 +85,20 @@ function ApprovedDocuments() {
     {
       name: 'Actions',
       cell: row => (
-        <div>
+        <div className='flex gap-2'>
           <button
-            className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600 focus:outline-none"
+            title='view document'
+            className="h-8 w-8 text-white p-1 rounded-full hover:bg-gray-200"
             onClick={() => handleViewDocument(row)}
           >
-            <i className="fas fa-eye text-xs mr-1 text-white"></i>
-            View
+            <i className="fas fa-eye text-xs text-blue-500 hover:text-blue-600"></i>
+          </button>
+          <button
+            title='download document'
+            className="h-8 w-8 p-1 rounded-full hover:bg-gray-200"
+            onClick={() => handleDocumentPrint(row.DocumentPath)}
+          >
+            <i className="fa-solid fa-print text-xs text-black-500 hover:text-black-600"></i>
           </button>
         </div>
       ),

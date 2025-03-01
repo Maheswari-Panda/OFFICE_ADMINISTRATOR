@@ -146,3 +146,44 @@ exports.returnDocument = async(userId,documentId,action) =>{
         throw err;
     }
 }
+
+exports.getAllDocumentsReceivedOrDispatched = async ()=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .execute('GetAllDocumentsReceivedOrDispatched');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all documents recived or returned :', err);
+        throw err;
+    }
+}
+
+exports.getPendingDocumentsForUserByUserId = async (userId)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .execute('GetPendingDocumentsForUserByUserId');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all pending documents for logged in user :', err);
+        throw err;
+    }
+}
+
+exports.getApprovedDocumentsForUserByUserId = async (userId)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .execute('GetApprovedDocumentsForUserByUserId');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all approved documents for logged in user :', err);
+        throw err;
+    }
+}

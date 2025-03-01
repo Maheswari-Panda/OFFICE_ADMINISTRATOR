@@ -25,6 +25,7 @@ router.post('/add',fetchUser, async (req, res) => {
   console.log(req.body);
   try {
     const message = await documentModel.addDocument(documentData); // Call the addDocument model function
+    console.log(message);
    if(message){
      const result = await documentLogModel.addDocumentLog(userId,message,'Document Added');
    }
@@ -125,6 +126,36 @@ router.post('/return/:documentId',fetchUser, async (req, res) => {
     res.status(200).json(response); 
   } catch (err) {
     res.status(500).json({ error: 'An error occurred while returned document by documentId', details: err.message });
+  }
+});
+
+// Get all documents
+router.post('/getall_receieved_dispatched', async (req, res) => {
+  try {
+    const documents = await documentModel.getAllDocumentsReceivedOrDispatched(); // Call the getAllDocuments model function
+    res.status(200).json(documents); // Return the list of documents
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching documents recived or dispatched', details: err.message });
+  }
+});
+
+router.post('/getpending_foruser/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const documents = await documentModel.getPendingDocumentsForUserByUserId(userId); // Call the getAllDocuments model function
+    res.status(200).json(documents); // Return the list of documents
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching pending documents for logged in user', details: err.message });
+  }
+});
+
+router.post('/getapproved_foruser/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const documents = await documentModel.getApprovedDocumentsForUserByUserId(userId); // Call the getAllDocuments model function
+    res.status(200).json(documents); // Return the list of documents
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching approved documents for logged in user', details: err.message });
   }
 });
 module.exports = router;

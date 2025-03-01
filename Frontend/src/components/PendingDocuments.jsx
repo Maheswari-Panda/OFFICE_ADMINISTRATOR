@@ -2,14 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component'; // Import the DataTable component
 import DocumentContext from '../context/document/documentContext';
 import { useNavigate } from 'react-router-dom';
+import userContext from '../context/user/userContext';
 
 function PendingDocuments() {
-  const { documents,getAllDocuments } = useContext(DocumentContext); // Get documents from the context
+  const {user} = useContext(userContext);
+  const { documents,getPendingDocumentsForUserByUserId } = useContext(DocumentContext); // Get documents from the context
   const [pendingDocuments, setPendingDocuments] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllDocuments();
+    getPendingDocumentsForUserByUserId(user.UserId);
   }, []);
   useEffect(() => {
       setPendingDocuments(documents); // Reset filtered documents on initial render
@@ -38,6 +40,11 @@ function PendingDocuments() {
       sortable: true,
     },
     {
+      name: 'CreatedBy',
+      selector: row=> row?.FirstName || user.FirstName +" "+ user.LastName,
+      sortable: true,
+    },
+    {
       name: 'Sender',
       selector: row => row.SenderName,
       sortable: true,
@@ -49,7 +56,7 @@ function PendingDocuments() {
     },
     {
       name: 'Status',
-      selector: row => <div className="badge bg-red-100 text-red-500">pending</div>,
+      selector: row => <div className="badge bg-red-100 text-red-500">{row.StatusName}</div>,
       sortable: true,
     },
     {
@@ -57,11 +64,10 @@ function PendingDocuments() {
       cell: row => (
         <div>
           <button
-            className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600 focus:outline-none"
+            className="h-8 w-8 text-white p-1 rounded-full hover:bg-gray-200"
             onClick={() => handleViewDocument(row)}
           >
-            <i className="fas fa-eye text-xs mr-1 text-white"></i>
-            View
+            <i className="fas fa-eye text-xs text-blue-500 hover:text-blue-600"></i>
           </button>
         </div>
       ),

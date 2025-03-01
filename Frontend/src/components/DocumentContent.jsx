@@ -14,13 +14,14 @@ import { useNavigate } from "react-router-dom";
 function DocumentContent() {
   const documentContext = useContext(DocumentContext);
   const {user} = useContext(userContext);
-  const { documents, getAllDocuments, addDocumentLog,getDocumentLogsByDocumentId} = documentContext;
+  const { documents, getAllDocuments, addDocumentLog,getDocumentLogsByDocumentId,getAllDocumentsReceivedDispatched} = documentContext;
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllDocuments();
+    // getAllDocuments();
+    getAllDocumentsReceivedDispatched();
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
@@ -177,11 +178,6 @@ function DocumentContent() {
         sortable: true,
       },
       {
-        name: "I/O Reference",
-        selector: (row) => row?.InwardOutwardReferenceDocumentId || "N/A",
-        sortable: true,
-      },
-      {
         name: "Sender",
         selector: (row) => row?.SenderName || "N/A",
         sortable: true,
@@ -189,11 +185,6 @@ function DocumentContent() {
       {
         name: "Receiver",
         selector: (row) => row?.ReceiverName || "N/A",
-        sortable: true,
-      },
-      {
-        name: "End User",
-        selector: (row) => row?.EndUserName || "N/A",
         sortable: true,
       },
       {

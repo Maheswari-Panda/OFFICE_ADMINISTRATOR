@@ -11,7 +11,19 @@ const ModalAlert = ({
 }) => {
   const [feedback, setFeedback] = useState("");
 
-  // console.log(feedback);
+  // Reset feedback when modal opens or closes
+  useEffect(() => {
+    const modal = document.getElementById("my_modal_1");
+
+    const handleModalClose = () => setFeedback(""); // Reset feedback when modal closes
+
+    modal.addEventListener("close", handleModalClose);
+    
+    return () => {
+      modal.removeEventListener("close", handleModalClose);
+    };
+  }, []);
+
   return (
     <div>
       <button
@@ -31,21 +43,25 @@ const ModalAlert = ({
               rows={3}
               className="border border-gray-300 hover:border-blue-500 focus:border-blue-500 focus:ring-0 focus:ring-blue-500 p-2 rounded w-full resize-none"
               style={{ outline: "none" }}
-              placeholder="write some feebback..."
+              placeholder="Write some feedback..."
+              value={feedback} // Controlled input
               onChange={(e) => setFeedback(e.target.value)}
             ></textarea>
           )}
           <div className="modal-action">
             <form method="dialog" className="flex gap-1">
-              {/* if there is a button in form, it will close the modal */}
+              {/* Close button */}
               <button className="btn btn-sm bg-red-500 text-white hover:blue-600">
                 {btnText1}
               </button>
+              {/* Approve/Return button */}
               <button
+                type="button"
                 className="btn btn-sm bg-blue-500 text-white hover:red-600"
                 onClick={() => {
                   onClickBtn(feedback); // Call the function to handle feedback
                   setFeedback(""); // Reset textarea after submission
+                  document.getElementById("my_modal_1").close(); // Manually close the modal
                 }}
               >
                 {btnText2}
