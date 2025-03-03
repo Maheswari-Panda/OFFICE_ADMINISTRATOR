@@ -20,6 +20,7 @@ import ApprovedDocuments from "./ApprovedDocuments";
 import AllOffices from "./AllOffices";
 import AddOfficeForm from "./AddOfficeForm";
 import DocumentLog from "./DocumentLog";
+import ReturnedDocuments from "./ReturnedDocuments";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -69,6 +70,7 @@ function Sidebar() {
             <Route path="review" element={<ReviewDocuments />} />
             <Route path="pendingDocuments" element={<PendingDocuments />} />
             <Route path="approvedDocuments" element={<ApprovedDocuments />} />
+            <Route path="returnedDocuments" element={<ReturnedDocuments />} />
             <Route path="userActivity" element={<AllUserLogs />} />
             <Route path="adminActivity" element={<AllUserLogs />} />
             <Route path="allOffices" element={<AllOffices/>} />
@@ -216,6 +218,14 @@ function Sidebar() {
                 </li>
                 </Link>
 
+                <Link to="/dashboard/returnedDocuments">
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                    <i className="fa-solid fa-file-excel"></i> Returned
+                      Documents
+                  </label>
+                </li>
+                </Link>
 
                 <Link to="/dashboard/myActivity">
                 <li>

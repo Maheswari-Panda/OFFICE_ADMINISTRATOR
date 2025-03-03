@@ -14,14 +14,19 @@ import { useNavigate } from "react-router-dom";
 function DocumentContent() {
   const documentContext = useContext(DocumentContext);
   const {user} = useContext(userContext);
-  const { documents, getAllDocuments, addDocumentLog,getDocumentLogsByDocumentId,getAllDocumentsReceivedDispatched} = documentContext;
+  const { documents, getAllDocuments, addDocumentLog,getDocumentLogsByDocumentId,getAllDocumentsReceivedDispatched,getAllDocumentsReceivedDispatchedByOfficeId} = documentContext;
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     // getAllDocuments();
-    getAllDocumentsReceivedDispatched();
+    if(user.Role==="Admin" || user.Role==="admin" || user.Role==="user" || user.Role==="User"){
+      getAllDocumentsReceivedDispatchedByOfficeId(user.OfficeId);
+    }
+    else{
+      getAllDocumentsReceivedDispatched();
+    }
     setTimeout(() => {
       setIsLoading(false);
     }, 500);

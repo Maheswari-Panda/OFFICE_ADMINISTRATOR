@@ -8,6 +8,7 @@ const ModalAlert = ({
   btnText2,
   feedbackform,
   onClickBtn,
+  extraComponent,
 }) => {
   const [feedback, setFeedback] = useState("");
 
@@ -38,6 +39,7 @@ const ModalAlert = ({
         <div className="modal-box">
           <h3 className="font-bold text-lg text-blue-500">{heading}</h3>
           <p className="py-4">{description}</p>
+          {extraComponent}
           {feedbackform && (
             <textarea
               rows={3}
@@ -51,21 +53,25 @@ const ModalAlert = ({
           <div className="modal-action">
             <form method="dialog" className="flex gap-1">
               {/* Close button */}
-              <button className="btn btn-sm bg-red-500 text-white hover:blue-600">
+              {btnText1 && <button className="btn btn-sm bg-red-500 text-white hover:blue-600" >
                 {btnText1}
-              </button>
+              </button>}
               {/* Approve/Return button */}
-              <button
+              {btnText2 && <button
                 type="button"
                 className="btn btn-sm bg-blue-500 text-white hover:red-600"
                 onClick={() => {
-                  onClickBtn(feedback); // Call the function to handle feedback
-                  setFeedback(""); // Reset textarea after submission
-                  document.getElementById("my_modal_1").close(); // Manually close the modal
+                  if(feedbackform){
+                    onClickBtn(feedback); // Call the function to handle feedback
+                    setFeedback(""); // Reset textarea after submission
+                    document.getElementById("my_modal_1").close(); // Manually close the modal
+                  }else{
+                    document.getElementById("my_modal_1").close();
+                  }
                 }}
               >
                 {btnText2}
-              </button>
+              </button>}
             </form>
           </div>
         </div>

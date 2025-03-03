@@ -160,6 +160,20 @@ exports.getAllDocumentsReceivedOrDispatched = async ()=>{
     }
 }
 
+exports.getAllDocumentsReceivedOrDispatchedByOfficeId = async (officeId)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('OfficeId', sql.SmallInt, officeId)
+            .execute('GetAllDocumentsReceivedOrDispatchedByOfficeId');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all documents recived or returned by office id :', err);
+        throw err;
+    }
+}
+
 exports.getPendingDocumentsForUserByUserId = async (userId)=>{
     try {
         const pool = await db.getPool();
@@ -184,6 +198,21 @@ exports.getApprovedDocumentsForUserByUserId = async (userId)=>{
         return result.recordset; // Return all documents
     } catch (err) {
         console.error('Error fetching all approved documents for logged in user :', err);
+        throw err;
+    }
+}
+
+exports.getDocumentsByStatusName = async (officeId,StatusName)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('OfficeId', sql.SmallInt, officeId)
+            .input('StatusName', sql.NVarChar(255), StatusName)
+            .execute('GetDocumentsByStatusName');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all documents for given officeid and status name :', err);
         throw err;
     }
 }

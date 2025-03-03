@@ -39,6 +39,20 @@ const DocumentState = (props) => {
     }
   };
 
+  const getAllDocumentsReceivedDispatchedByOfficeId = async (officeId) => {
+    try{
+      const response = await axios.post(`${host}/api/document/getall_receieved_dispatched/${officeId}`);
+      const json = await response.data;
+      // console.log(response)
+      if(response){
+        setDocuments(json);
+      }
+      return json;
+    }
+    catch(err){
+      console.log("Error getting received or dispatched documents by office id");
+    }
+  };
   
   const getPendingDocumentsForUserByUserId = async (userId) => {
     try{
@@ -368,6 +382,36 @@ const DocumentState = (props) => {
       }
     };
 
+    const getDocumentsByStatusName = async (officeId,statusName) => {
+      try {
+        const response = await axios.post(
+          `${host}/api/document/get_by_status/${officeId}`,
+          {statusName},
+        );
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error getting document by given officeid or statusName :",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    const getFeedBacksByDocumentId = async (documentId) => {
+      try {
+        const response = await axios.get(
+          `${host}/api/feedback/document/${documentId}`,
+        );
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error getting feedback by given documentId : ",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+
 
   return (
     <DocumentContext.Provider
@@ -397,7 +441,10 @@ const DocumentState = (props) => {
         getDocumentLogsByOfficeId,
         getAllDocumentsReceivedDispatched,
         getPendingDocumentsForUserByUserId,
-        getApprovedDocumentsForUserByUserId
+        getApprovedDocumentsForUserByUserId,
+        getAllDocumentsReceivedDispatchedByOfficeId,
+        getDocumentsByStatusName,
+        getFeedBacksByDocumentId
       }}
     >
       {props.children}

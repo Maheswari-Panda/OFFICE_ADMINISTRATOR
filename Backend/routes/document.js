@@ -139,6 +139,17 @@ router.post('/getall_receieved_dispatched', async (req, res) => {
   }
 });
 
+// Get all documents
+router.post('/getall_receieved_dispatched/:officeId', async (req, res) => {
+  try {
+    const offieId = req.params.officeId;
+    const documents = await documentModel.getAllDocumentsReceivedOrDispatchedByOfficeId(offieId); // Call the getAllDocuments model function
+    res.status(200).json(documents); // Return the list of documents
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching documents recived or dispatched by office Id', details: err.message });
+  }
+});
+
 router.post('/getpending_foruser/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -158,4 +169,16 @@ router.post('/getapproved_foruser/:userId', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching approved documents for logged in user', details: err.message });
   }
 });
+
+router.post('/get_by_status/:officeId', async (req, res) => {
+  try {
+    const officeId = req.params.officeId;
+    const statusName = req.body.statusName;
+    const documents = await documentModel.getDocumentsByStatusName(officeId,statusName); 
+    res.status(200).json(documents); // Return the list of documents
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching documents by status name and office id', details: err.message });
+  }
+});
+
 module.exports = router;

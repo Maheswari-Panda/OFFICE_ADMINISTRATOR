@@ -4,6 +4,7 @@ import DocumentContext from "../context/document/documentContext";
 import { useNavigate } from "react-router-dom";
 import userContext from "../context/user/userContext";
 import ModalAlert from "./ModalAlert";
+import Feedback from "./feedback";
 
 function ReviewDocuments() {
   const {
@@ -13,6 +14,7 @@ function ReviewDocuments() {
     approveDocument,
     addFeedback,
     returnDocument,
+    getDocumentsByStatusName
   } = useContext(DocumentContext);
   const { user } = useContext(userContext);
 
@@ -24,40 +26,40 @@ function ReviewDocuments() {
   
   const [alertHeading, setAlertHeading] = useState("");
   const [alertDescription, setAlertDescription] = useState(null);
+  const [extraComponent, setExtraComponent] = useState(null);
   const [alertBtnText1, setAlertBtnText1] = useState("");
   const [alertBtnText2, setAlertBtnText2] = useState("");
 
   const [documentToApprove, setDocumentToApprove] = useState([]);
   const [documentToReturn, setDocumentToReturn] = useState([]);
+  const [isfeedbackform,setIsfeedbackform] = useState(true);
 
   useEffect(() => {
-    getAllDocuments();
-  }, []);
-
-  useEffect(() => {
-    // Filter documents based on the selected tab
-    const filterDocs = () => {
-      switch (activeTab) {
-        case "Pending Review":
-          return documents.filter((doc) => doc.StatusName === "Pending Review");
-        case "Approved":
-          return documents.filter((doc) => doc.StatusName === "Approved");
-        case "Returned":
-          return documents.filter((doc) => doc.StatusName === "Rejected");
-        default:
-          return documents;
+    const fetchDocuments = async () => {
+      const statusMap = {
+        "Pending Review": "Pending Review",
+        "Approved": "Approved",
+        "Returned": "Rejected",
+      };
+      
+      const statusName = statusMap[activeTab] || "Pending Review";
+      const docs = await getDocumentsByStatusName(user.OfficeId,statusName);
+      
+      if (docs) {
+        setFilteredDocuments(docs);
       }
     };
+  
+    fetchDocuments();
+  }, [activeTab, getDocumentsByStatusName]);
+  
 
-    setFilteredDocuments(filterDocs());
-  }, [documents, activeTab]);
-
-  const handleViewDocument = (row) => {
-    addDocumentLog(user.UserId, row.DocumentId, "Pending Document Viewed");
+  const handleViewDocument = async (row) => {
+    await addDocumentLog(user.UserId, row.DocumentId, "Pending Document Viewed");
     navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
-  const handleApproveDocument = (document) => {
+  const handleApproveDocument = async (document) => {
     setDocumentToApprove(document);
     setDocumentToReturn([]);
     setAlertHeading("Approve Document");
@@ -105,6 +107,19 @@ function ReviewDocuments() {
     modalRef.current.click();
   };
 
+  const handleFeedbackModal = async (document)=>{
+    setIsfeedbackform(false);
+    setAlertHeading("Document Feedback");
+    setAlertDescription(
+      <>
+        <span className="font-bold">{document.DocumentName} </span>
+      </>
+    );
+    setExtraComponent(<Feedback documentId={document.DocumentId}/>);
+    setAlertBtnText1("Cancel");
+    modalRef.current.click();
+  }
+
   const onClickReturnDocument = async (feedback) => {
     const response = await returnDocument(
       documentToReturn.DocumentId,
@@ -140,6 +155,11 @@ function ReviewDocuments() {
       sortable: true,
     },
     {
+      name: "CreatedBy",
+      selector: (row) => row.CreatedByUserName,
+      sortable: true,
+    },
+    {
       name: "Sender",
       selector: (row) => row.SenderName,
       sortable: true,
@@ -147,6 +167,11 @@ function ReviewDocuments() {
     {
       name: "Final Receiver",
       selector: (row) => row.EndUserName,
+      sortable: true,
+    },
+    {
+      name: "Status",
+      selector: (row) => row.StatusName,
       sortable: true,
     },
     {
@@ -159,6 +184,14 @@ function ReviewDocuments() {
             title="View Document"
           >
             <i className="fas fa-eye text-xs text-blue-500 hover:text-blue-600"></i>
+          </button>
+          
+          <button
+            className="h-8 w-8 text-white p-1 rounded-full hover:bg-gray-200"
+            onClick={() => handleFeedbackModal(row)}
+            title="Document Feedback"
+          >
+            <i className="fas fa-comments text-xs text-gray-500 hover:text-gray-600"></i>
           </button>
           {activeTab === "Pending Review" && (
             <>
@@ -216,10 +249,11 @@ function ReviewDocuments() {
         description={alertDescription}
         btnText1={alertBtnText1}
         btnText2={alertBtnText2}
-        feedbackform={true}
+        feedbackform={isfeedbackform}
         onClickBtn={
           documentToApprove.length === 0 ? onClickReturnDocument : onClickApproveDocument
         }
+        extraComponent={extraComponent}
       />
     </div>
   );

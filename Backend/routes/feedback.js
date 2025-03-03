@@ -59,7 +59,7 @@ router.delete('/delete/:feedbackId', fetchUser, async (req, res) => {
 });
 
 // Get Feedback by DocumentId
-router.get('/document/:documentId', fetchUser, async (req, res) => {
+router.get('/document/:documentId', async (req, res) => {
     const { documentId } = req.params;
 
     try {

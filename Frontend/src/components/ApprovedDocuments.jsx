@@ -1,14 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import DataTable from 'react-data-table-component'; // Import the DataTable component
 import DocumentContext from '../context/document/documentContext';
 import { useNavigate } from 'react-router-dom';
 import userContext from '../context/user/userContext';
+import ModalAlert from './ModalAlert';
+import Feedback from './feedback';
 
 function ApprovedDocuments() {
   const {user} = useContext(userContext);
   const { documents,getApprovedDocumentsForUserByUserId } = useContext(DocumentContext); // Get documents from the context
   const [approvedDocuments, setApprovedDocuments] = useState([]);
   const navigate = useNavigate();
+
+  
+    const modalRef = useRef();
+    
+    const [alertHeading, setAlertHeading] = useState("");
+    const [alertDescription, setAlertDescription] = useState(null);
+    const [extraComponent, setExtraComponent] = useState(null);
+    const [alertBtnText1, setAlertBtnText1] = useState("");
+    const [alertBtnText2, setAlertBtnText2] = useState("");
 
   useEffect(() => {
     getApprovedDocumentsForUserByUserId(user.UserId);
@@ -49,6 +60,18 @@ function ApprovedDocuments() {
     }
   };
   
+  const handleViewFeedbacks= async(document)=>{
+    setAlertHeading("Document Feedback");
+    setAlertDescription(
+      <>
+        <span className="font-bold">{document.DocumentName} </span>
+      </>
+    );
+    setExtraComponent(<Feedback documentId={document.DocumentId}/>);
+    setAlertBtnText2("Cancel");
+    modalRef.current.click();
+    console.log("Clicked on view feedback");
+  }
 
   // Columns definition for the DataTable
   const columns = [
@@ -68,6 +91,11 @@ function ApprovedDocuments() {
       sortable: true,
     },
     {
+      name: 'CreatedBy',
+      selector: row => <div>{row?.CreatedUserId || user.FirstName +" " + user.LastName}</div>,
+      sortable: true,
+    },
+    {
       name: 'Sender',
       selector: row => row.SenderName,
       sortable: true,
@@ -79,7 +107,7 @@ function ApprovedDocuments() {
     },
     {
       name: 'Status',
-      selector: row => <div className="badge bg-green-100 text-green-500">Approved</div>,
+      selector: row => <div className="badge bg-green-100 text-green-500">{row.StatusName}</div>,
       sortable: true,
     },
     {
@@ -92,6 +120,13 @@ function ApprovedDocuments() {
             onClick={() => handleViewDocument(row)}
           >
             <i className="fas fa-eye text-xs text-blue-500 hover:text-blue-600"></i>
+          </button>
+          <button
+            title='view feedbacks'
+            className="h-8 w-8 text-white p-1 rounded-full hover:bg-gray-200"
+            onClick={() => handleViewFeedbacks(row)}
+          >
+            <i className="fas fa-comments text-xs text-gray-500 hover:text-gray-600"></i>
           </button>
           <button
             title='download document'
@@ -115,6 +150,13 @@ function ApprovedDocuments() {
           data={approvedDocuments} // Data for the table
         />
       </div>
+      <ModalAlert
+        modalRef={modalRef}
+        heading={alertHeading}
+        description={alertDescription}
+        btnText2={alertBtnText2}
+        extraComponent={extraComponent}
+      />
     </div>
   );
 }
