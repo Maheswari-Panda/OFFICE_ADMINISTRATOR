@@ -67,10 +67,12 @@ function DocumentItem(props) {
               <div className="dropdown dropdown-end group-hover:text-white">
                 <div tabIndex={0} role="button" className="cursor-pointer"><i className="fa-solid fa-ellipsis-vertical"></i></div>
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                  <li className="text-black"><a> <i className="fas fa-edit text-blue-500"></i> Edit</a></li>
-                  <li className="text-black" onClick={handleDeleteModal}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>
-                  <li className="text-black" onClick={handleDocumentLogView}><div> <i className="fas fa-file text-blue-500"></i> View Logs</div></li>
                   <li className="text-black" onClick={handleRowClick}><a> <i className="fas fa-eye text-blue-500"></i> View Details</a></li>
+                  <li className="text-black"><a> <i className="fas fa-edit text-blue-500"></i> Edit</a></li>
+                  <li className="text-black" onClick={handleDocumentLogView}><div> <i className="fas fa-file text-blue-500"></i> View Logs</div></li>
+                  <li className="text-black" onClick={handleDeleteModal}><a> <i className="fas fa-comments text-blue-500"></i> Feedbacks</a></li>
+                  <li className="text-black" onClick={handleDeleteModal}><a><i className="fa-solid fa-download text-blue-500"></i>Download</a></li>
+                  <li className="text-black" onClick={handleDeleteModal}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>
                 </ul>
               </div>
             </div>

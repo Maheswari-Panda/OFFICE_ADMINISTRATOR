@@ -8,7 +8,7 @@ import Feedback from './feedback';
 
 function ApprovedDocuments() {
   const {user} = useContext(userContext);
-  const { documents,getApprovedDocumentsForUserByUserId } = useContext(DocumentContext); // Get documents from the context
+  const { documents,getApprovedDocumentsForUserByUserId ,dispatchDocument} = useContext(DocumentContext); // Get documents from the context
   const [approvedDocuments, setApprovedDocuments] = useState([]);
   const navigate = useNavigate();
 
@@ -35,17 +35,18 @@ function ApprovedDocuments() {
     navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
-  const handleDocumentPrint = async (documentPath) => {
-    if (!documentPath) {
+  const handleDocumentPrint = async (document) => {
+    if (!document.DocumentPath) {
       console.error("Document path is missing!");
       return;
     }
   
     try {
-      console.log("Opening document for printing: ", documentPath);
+      await dispatchDocument(document.DocumentId,"Document Downloaded");
+      console.log("Opening document for printing: ", document.DocumentPath);
       
       // Open the document in a new tab
-      const newWindow = window.open(documentPath, "_blank");
+      const newWindow = window.open(document.DocumentPath, "_blank");
   
       // If the new window opens successfully, attempt to print
       if (newWindow) {
@@ -131,7 +132,7 @@ function ApprovedDocuments() {
           <button
             title='download document'
             className="h-8 w-8 p-1 rounded-full hover:bg-gray-200"
-            onClick={() => handleDocumentPrint(row.DocumentPath)}
+            onClick={() => handleDocumentPrint(row)}
           >
             <i className="fa-solid fa-print text-xs text-black-500 hover:text-black-600"></i>
           </button>

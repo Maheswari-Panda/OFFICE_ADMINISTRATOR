@@ -85,6 +85,22 @@ const DocumentState = (props) => {
       console.log("Error getting approved documents for logged in user",err);
     }
   };
+
+  const getReturnedDocumentsForUserByUserId = async (userId) => {
+    try{
+
+      const response = await axios.post(`${host}/api/document/getreturned_foruser/${userId}`);
+      const json = await response.data;
+      // console.log(response)
+      if(response){
+        setDocuments(json);
+      }
+      return json;
+    }
+    catch(err){
+      console.log("Error getting returned documents for logged in user",err);
+    }
+  };
   
 
   const getUsers = async () => {
@@ -411,6 +427,28 @@ const DocumentState = (props) => {
       }
     };
 
+    const dispatchDocument = async (documentId,action) => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axios.post(
+          `${host}/api/document/dispatch/${documentId}`,
+          {action},
+          { 
+            headers: {
+              accessToken: `${accessToken}`,
+            },
+          }
+        );
+  
+        // Return the document log details
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error dispatch documents by user:",
+          error.response?.data || error.message
+        );
+      }
+    };
 
 
   return (
@@ -444,7 +482,9 @@ const DocumentState = (props) => {
         getApprovedDocumentsForUserByUserId,
         getAllDocumentsReceivedDispatchedByOfficeId,
         getDocumentsByStatusName,
-        getFeedBacksByDocumentId
+        getFeedBacksByDocumentId,
+        getReturnedDocumentsForUserByUserId,
+        dispatchDocument
       }}
     >
       {props.children}

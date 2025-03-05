@@ -170,6 +170,16 @@ router.post('/getapproved_foruser/:userId', async (req, res) => {
   }
 });
 
+router.post('/getreturned_foruser/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const documents = await documentModel.getReturnedDocumentsForUserByUserId(userId); // Call the getAllDocuments model function
+    res.status(200).json(documents); // Return the list of documents
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching returned documents for logged in user', details: err.message });
+  }
+});
+
 router.post('/get_by_status/:officeId', async (req, res) => {
   try {
     const officeId = req.params.officeId;
@@ -178,6 +188,19 @@ router.post('/get_by_status/:officeId', async (req, res) => {
     res.status(200).json(documents); // Return the list of documents
   } catch (err) {
     res.status(500).json({ error: 'An error occurred while fetching documents by status name and office id', details: err.message });
+  }
+});
+
+// approve document
+router.post('/dispatch/:documentId',fetchUser, async (req, res) => {
+  const documentId = req.params.documentId;
+  const userId = req.user.userId;
+  const action = req.body.action;
+  try {
+    const response = await documentModel.dispatchDocument(userId,documentId,action);
+    res.status(200).json(response); 
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while dispatching documents by documentId', details: err.message });
   }
 });
 

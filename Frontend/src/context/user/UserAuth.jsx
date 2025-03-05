@@ -60,9 +60,9 @@ const UserAuth = ({ children }) => {
       alert("Session expired, please log in again");
     } else {
       // Set a timeout to log out the user when the token expires
-      setTimeout(() => {
+      setTimeout(async () => {
         console.log("Sesssion expired");
-        logout();
+        await logout();
         alert("Session expired, please log in again");
       }, timeLeft); // Log out when the token expires
     }

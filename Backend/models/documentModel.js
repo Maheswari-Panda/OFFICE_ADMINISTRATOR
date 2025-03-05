@@ -147,6 +147,24 @@ exports.returnDocument = async(userId,documentId,action) =>{
     }
 }
 
+
+exports.dispatchDocument = async(userId,documentId,action) =>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .input('DocumentId', sql.Int, documentId)
+            .input('ActionPerformed', sql.NVarChar(sql.MAX), action)
+            .execute('DispatchDocument');
+
+        return result.recordset; // Return documents of a specific type
+    } catch (err) {
+        console.error('Error Dispatching documents by document id:', err);
+        throw err;
+    }
+}
+
+
 exports.getAllDocumentsReceivedOrDispatched = async ()=>{
     try {
         const pool = await db.getPool();
@@ -198,6 +216,20 @@ exports.getApprovedDocumentsForUserByUserId = async (userId)=>{
         return result.recordset; // Return all documents
     } catch (err) {
         console.error('Error fetching all approved documents for logged in user :', err);
+        throw err;
+    }
+}
+
+exports.getReturnedDocumentsForUserByUserId = async (userId)=>{
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .execute('GetReturnedDocumentsForUserByUserId');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all returned documents for logged in user :', err);
         throw err;
     }
 }
