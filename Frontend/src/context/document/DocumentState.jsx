@@ -228,10 +228,15 @@ const DocumentState = (props) => {
   }
 
     // Fetch the PDF report
-    const fetchPdfReport = async () => {
+    const fetchPdfReport = async (startDate,endDate) => {
       try {
-        const response = await axios.get(`${host}/api/report/pdf`, {
+        const response = await axios.get(`${host}/api/report/pdf`,
+        {
           responseType: 'blob',  // This ensures the response is treated as a file
+          params: {
+            startDate: startDate,  // Format in YYYY-MM-DD
+            endDate: endDate
+          }
         });
         // Create a URL for the blob (PDF)
         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -242,11 +247,17 @@ const DocumentState = (props) => {
       }
     };
     
-    const fetchExcelReport = async () => {
+    const fetchExcelReport = async (startDate,endDate) => {
       try {
-        const response = await axios.get(`${host}/api/report/excel`, {
-          responseType: 'blob',  // This ensures the response is treated as a file
-        });
+        const response = await axios.get(`${host}/api/report/excel`,
+           {
+              responseType: 'blob',  // This ensures the response is treated as a file
+              params: {
+                startDate: startDate,  // Format in YYYY-MM-DD
+                endDate: endDate
+              }
+            }
+      );
     
         // Create a URL for the blob (Excel)
         const url = window.URL.createObjectURL(new Blob([response.data]));

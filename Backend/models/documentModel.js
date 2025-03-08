@@ -248,3 +248,19 @@ exports.getDocumentsByStatusName = async (officeId,StatusName)=>{
         throw err;
     }
 }
+
+// Model for getting all documents
+exports.getCompleteDocumentReport = async (startDate,endDate) => {
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('StartDate',sql.Date,startDate)
+            .input('EndDate',sql.Date,endDate)
+            .execute('GetCompleteDocumentReport');
+
+        return result.recordset; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all documents:', err);
+        throw err;
+    }
+};

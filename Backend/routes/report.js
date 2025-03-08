@@ -10,7 +10,13 @@ const path = require("path");
 // 📌 API to Generate Excel Report
 router.get("/excel", async (req, res) => {
   try {
-    const documents = await documentModel.getAllDocuments();
+    let { startDate, endDate } = req.query;
+    startDate = new Date(startDate).toISOString().split('T')[0];
+    endDate = new Date(endDate).toISOString().split('T')[0];
+    
+    console.log(startDate);
+    console.log(endDate);
+    const documents = await documentModel.getCompleteDocumentReport(startDate,endDate);
 
     if (!documents || documents.length === 0) {
       return res.status(404).json({ error: "No documents found" });
@@ -66,7 +72,13 @@ router.get("/excel", async (req, res) => {
 
 router.get("/pdf", async (req, res) => {
     try {
-      const documents = await documentModel.getAllDocuments();
+      let { startDate, endDate } = req.query;
+      startDate = new Date(startDate).toISOString().split('T')[0];
+      endDate = new Date(endDate).toISOString().split('T')[0];
+      
+      console.log(startDate);
+      console.log(endDate);
+      const documents = await documentModel.getCompleteDocumentReport(startDate,endDate);
   
       if (!documents || documents.length === 0) {
         return res.status(404).json({ error: "No documents found" });
@@ -92,6 +104,8 @@ router.get("/pdf", async (req, res) => {
       // Add title
       doc.fontSize(20).text("Documents Report", { align: "center" });
       doc.moveDown(1);
+      doc.fontSize(15).text(`Report Generated for date from: ${new Date(startDate).toLocaleDateString()} | to : ${new Date(endDate).toLocaleDateString()}`, { align: "center" });
+      doc.moveDown(1);
   
       // Add introductory paragraph with a professional tone
       doc.fontSize(11).text(
@@ -101,22 +115,37 @@ router.get("/pdf", async (req, res) => {
       doc.moveDown(2);
   
       // Add paragraph with counts of different document types
-      const circulars = documents.filter(doc => doc.DocumentTypeName === 'Circular').length;
-      const notices = documents.filter(doc => doc.DocumentTypeName === 'Notice').length;
-      const latters = documents.filter(doc => doc.DocumentTypeName === 'Latter').length;
-      const bills = documents.filter(doc => doc.DocumentTypeName === 'Bill').length;
+      const circulars = documents.filter(doc => doc.DocumentTypeName === 'Circular' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
+      const notices = documents.filter(doc => doc.DocumentTypeName === 'Notice' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
+      const latters = documents.filter(doc => doc.DocumentTypeName === 'Latter' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
+      const bills = documents.filter(doc => doc.DocumentTypeName === 'Bill' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
       const inward = documents.filter(doc => doc.IsInward).length;
-      const outward = documents.filter(doc => !doc.IsInward).length;
-      const pending = documents.filter(doc => doc.StatusName === 'Pending').length;
+      const outward = documents.filter(doc => !doc.IsInward && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
+      const pending = documents.filter(doc => doc.StatusName === 'Pending Review').length;
+      const approved = documents.filter(doc => doc.StatusName === 'Approved').length;
+      const returned = documents.filter(doc => doc.StatusName === 'Rejected').length;
   
       doc.fontSize(10);
+      
+      doc.text(`Document Counts for dispatched or recieved Documents : `);
       doc.text(`Total Circulars: ${circulars}`);
       doc.text(`Total Notices: ${notices}`);
       doc.text(`Total Latters: ${latters}`);
       doc.text(`Total Bills: ${bills}`);
+      
+      doc.moveDown(0.5);
+
+      doc.text(`Document Type Counts for dispatched or recieved Documents : `);
       doc.text(`Total Inward Documents: ${inward}`);
       doc.text(`Total Outward Documents: ${outward}`);
+
+      
+      doc.moveDown(0.5);
+      
+      doc.text(`Document Status Counts : `);
       doc.text(`Pending Documents: ${pending}`);
+      doc.text(`Approved Documents: ${approved}`);
+      doc.text(`Rejected Documents: ${returned}`);
       doc.moveDown(1);
   
       // Add document details in a table format
