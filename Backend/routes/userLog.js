@@ -54,6 +54,22 @@ router.get('/getall/:officeId', async (req, res) => {
     }
 });
 
+router.get('/getAdminLogs', async (req, res) => {
+    try {
+        const adminLogs = await userLogModel.getAllAdminLogs();
+
+        if (!adminLogs) {
+            return res.status(404).json({ message: 'Admin logs not found' });
+        }
+
+        // Return the user details
+        res.status(200).json(adminLogs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to fetch admin logs' });
+    }
+});
+
 router.post('/add', async (req, res) => {
     const {userId,action}=req.body;
     try {

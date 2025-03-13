@@ -3,6 +3,8 @@ import OfficeContext from "../context/office/officeContext";
 import DataTable from "react-data-table-component";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Spinner from "./Spinner";
+import ModalAlert from "./ModalAlert";
 
 function AllOffices() {
   const officeContext = useContext(OfficeContext);
@@ -14,6 +16,11 @@ function AllOffices() {
 
   const [loading, setLoading] = useState(true);
 
+  const modalRef = useRef();
+  const [alertHeading, setAlertHeading] = useState("");
+  const [alertDescription, setAlertDescription] = useState(null);
+  const [alertBtnText2, setAlertBtnText2] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,7 +29,9 @@ function AllOffices() {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
+       setTimeout(()=>{
         setLoading(false);
+       },500);
       }
     };
 
@@ -49,12 +58,20 @@ function AllOffices() {
     const response = await deleteOffice(officeId);
     console.log(response);
     if(response){
-        alert("Office Deleted Successfully!");
+        setAlertHeading("Office Deleted Successfully!");
+        setAlertDescription("All the related information to thid office has been deleted!");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+        // alert("Office Deleted Successfully!");
         officeContext.setOffices((prevOffices) =>
             prevOffices.filter((office) => office.OfficeId !== officeId)
           );
     }else{
-        alert("Error Deleting Office");
+        setAlertHeading("Error Deleting Office");
+        setAlertDescription("Something went wrong!");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+        // alert("Error Deleting Office");
     }
   };
   const columns = useMemo(
@@ -132,6 +149,7 @@ function AllOffices() {
       OfficeContact: Yup.string().required("OfficeContact is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
+      setLoading(true);
       console.log(values);
       try {
         // Step 2: Create User with Image URL
@@ -145,19 +163,41 @@ function AllOffices() {
         if (response) {
           console.log(response);
           closeRef.current.click();
-          alert("Office Updated successfully!");
-          officeContext.setOffices((prevOffices) =>
-            prevOffices.map((office) =>
-              office.OfficeId === values.OfficeId ? { ...office, ...values } : office
-            )
-          );
+          
+          setAlertHeading("Office Updated Successfully!");
+          setAlertDescription("All the related information to thid office has been updated!");
+          setAlertBtnText2("Ok");
+            setTimeout(()=>{
+              setLoading(false);
+              modalRef.current.click();
+            },500);
+            // alert("Office Updated successfully!");
+            officeContext.setOffices((prevOffices) =>
+              prevOffices.map((office) =>
+                office.OfficeId === values.OfficeId ? { ...office, ...values } : office
+              )
+            );
           resetForm();
         } else {
-          alert("Error in Updating office!");
+          setAlertHeading("Error Updating Office!");
+          setAlertDescription("Something went wrong!");
+          setAlertBtnText2("Ok");
+            setTimeout(()=>{
+              setLoading(false);
+              modalRef.current.click();
+            },500);
+          // alert("Error in Updating office!");
         }
       } catch (error) {
+        setAlertHeading("Error Updating Office!");
+          setAlertDescription(error);
+          setAlertBtnText2("Ok");
+            setTimeout(()=>{
+              setLoading(false);
+              modalRef.current.click();
+            },500);
         console.error("Error Updating Office:", error);
-        alert("Error Updating Office");
+        // alert("Error Updating Office");
       }
     },
   });
@@ -168,9 +208,7 @@ function AllOffices() {
         <h2 className="text-2xl font-bold text-blue-600 mb-4">All Offices</h2>
 
         {loading ? (
-          <div className="text-center text-blue-600 font-bold text-xl">
-            Loading...
-          </div>
+          <Spinner/>
         ) : offices.length === 0 ? (
           <div className="text-center text-gray-500 font-bold text-xl">
             No Offices Found
@@ -306,6 +344,12 @@ function AllOffices() {
     </div>
   </div>
 </dialog>
+<ModalAlert 
+        modalRef={modalRef}
+        heading={alertHeading}
+        description={alertDescription}
+        btnText2={alertBtnText2}
+        />
     </div>
   );
 }

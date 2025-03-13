@@ -2,13 +2,12 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import DocumentPreview from "./DocumentPreview";
 import { useNavigate } from "react-router-dom";
 import DocumentContext from "../context/document/documentContext";
-import ModalAlert from "./ModalAlert";
 
 function DocumentItem(props) {
-  const {document,onSelect} = props;
+  const {document,onSelect,handleDeleteModal,handleFeedbackModal,handleDownload} = props;
   const {getDocumentLogsByDocumentId}=useContext(DocumentContext);
   const navigate = useNavigate();
-  
+
   const handleDocumentLogView = async() =>{
     const documentLog = await getDocumentLogsByDocumentId(document.DocumentId)
     navigate("/dashboard/documentLogs",{ state: { documentLog: documentLog } });
@@ -20,19 +19,18 @@ function DocumentItem(props) {
     await addDocumentLog(user.UserId,document.DocumentId,"Document Viewed");
   };
 
-   const deleteRef = useRef();
-    const handleDeleteModal = async () => {
-      deleteRef.current.click();
-    };
-  
 
   return (
     <div className='lg:w-1/5 md:w-1/2 p-2'>
       <div className='shadow-md border-2 border-gray-200 bg-white rounded-lg  hover:shadow-lg hover:border-blue-500 transition duration-300 group'>
         <div className='block relative h-32 rounded-t-lg overflow-hidden cursor-pointer' onClick={() => onSelect(document)}>
           {/* Badge */}
-          <span className='absolute top-2 right-2 bg-blue-50 text-blue-400 text-xs font-semibold px-2 py-1 rounded-full shadow-md z-10'>
-            {document.DocumentTypeName}
+          <span className='absolute top-2 right-2 bg-blue-50 text-blue-400 text-xs font-semibold px-2 py-1 rounded-full shadow-md z-10'>   
+           {document.StatusName==="Received" && <div className="inline-grid *:[grid-area:1/1] mr-2" title="new document">
+              <div className="status status-error animate-ping"></div>
+              <div className="status status-error"></div>
+            </div>}
+          {document.DocumentTypeName}
           </span>
           {/* <img
             alt="Document Preview"
@@ -70,21 +68,14 @@ function DocumentItem(props) {
                   <li className="text-black" onClick={handleRowClick}><a> <i className="fas fa-eye text-blue-500"></i> View Details</a></li>
                   <li className="text-black"><a> <i className="fas fa-edit text-blue-500"></i> Edit</a></li>
                   <li className="text-black" onClick={handleDocumentLogView}><div> <i className="fas fa-file text-blue-500"></i> View Logs</div></li>
-                  <li className="text-black" onClick={handleDeleteModal}><a> <i className="fas fa-comments text-blue-500"></i> Feedbacks</a></li>
-                  <li className="text-black" onClick={handleDeleteModal}><a><i className="fa-solid fa-download text-blue-500"></i>Download</a></li>
-                  <li className="text-black" onClick={handleDeleteModal}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>
+                  <li className="text-black" onClick={()=>handleFeedbackModal(document)}><a> <i className="fas fa-comments text-blue-500"></i> Feedbacks</a></li>
+                  <li className="text-black" onClick={()=>handleDownload(document)}><a><i className="fa-solid fa-download text-blue-500"></i>Download</a></li>
+                  <li className="text-black" onClick={()=>handleDeleteModal(document)}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>
                 </ul>
               </div>
             </div>
         </div>
       </div>
-      <ModalAlert
-            modalRef={deleteRef}
-            heading="Are you sure?"
-            description="Once you delete a document it cannot be retrive!"
-            btnText2="Delete"
-            btnText1="Cencel"
-          />
     </div>
   );
 }

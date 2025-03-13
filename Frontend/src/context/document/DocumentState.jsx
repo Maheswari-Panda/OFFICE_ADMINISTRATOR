@@ -197,6 +197,44 @@ const DocumentState = (props) => {
     }
   };
 
+  const updateDocument = async (
+    documentId,
+    IsInward,
+    DocumentName,
+    DocumentTypeId,
+    LetterSerialNumber,
+    InwardOutwardReferenceDocumentId,
+    EndUserId,
+    DocumentDescription,
+    DocumentPath,
+    SenderId,
+    ReceiverId,
+    BillingInfo,
+    OfficeId
+  ) => {
+    try {
+      const response = await axios.put(`${host}/api/document/update/${documentId}`, {
+        IsInward,
+        DocumentName,
+        DocumentTypeId,
+        LetterSerialNumber,
+        InwardOutwardReferenceDocumentId,
+        EndUserId,
+        DocumentDescription,
+        DocumentPath,
+        SenderId,
+        ReceiverId,
+        BillingInfo,
+        OfficeId
+      });
+      const json = await response.data;
+      console.log(json);
+      return json;
+    } catch (error) {
+      console.log("error in updating document", error);
+    }
+  };
+
   const addAttachedDocument = async (
     DocumentId,
     AttachedDocumentPath
@@ -495,7 +533,8 @@ const DocumentState = (props) => {
         getDocumentsByStatusName,
         getFeedBacksByDocumentId,
         getReturnedDocumentsForUserByUserId,
-        dispatchDocument
+        dispatchDocument,
+        updateDocument
       }}
     >
       {props.children}

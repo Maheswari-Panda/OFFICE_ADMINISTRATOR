@@ -2,26 +2,21 @@ import React, { useContext, useEffect, useState } from 'react'
 import UserActivity from "./UserActivity";
 import userContext from '../context/user/userContext';
 import Spinner from './Spinner';
+import AdminActivity from './AdminActivity';
 
-function AllUserLogs() {
-   const {user,getAllUserLogs,getAllUserLogsByOfficeId} = useContext(userContext);
-   const [userLogs,setUserLogs]=useState([]);
+function AllAdminLogs() {
+   const {user,getAllAdminLogs} = useContext(userContext);
+   const [adminLogs,setAdminLogs]=useState([]);
    
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        if(user.Role==="Admin" || user.Role==="admin"){
-          const userLogs = await getAllUserLogsByOfficeId(user.OfficeId);  // Fetch logs for the specific office
-          setUserLogs(userLogs);
-        }
-        else{
-          const userLogs = await getAllUserLogs();  // Fetch logs for the specific office
-          setUserLogs(userLogs);
-        }
+          const adminlogs = await getAllAdminLogs();  
+          setAdminLogs(adminlogs);
       } catch (error) {
-        console.error("Failed to load user logs:", error);
+        console.error("Failed to load admin logs:", error);
       }
       finally{
         setTimeout(()=>{
@@ -37,10 +32,11 @@ function AllUserLogs() {
   return (
     <div className="flex bg-blue-100 w-full p-3 h-screen">
         <div className="flex items-start rounded-md bg-white p-3 w-full">
-            {isLoading ? <Spinner/>:<UserActivity userLogs={userLogs}/>}
+            {isLoading ? <Spinner/>:<AdminActivity adminLogs={adminLogs}/>}
         </div>
     </div>
   )
 }
 
-export default AllUserLogs
+
+export default AllAdminLogs

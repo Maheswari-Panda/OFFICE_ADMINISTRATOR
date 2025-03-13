@@ -1,10 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import OfficeContext from "../context/office/officeContext";
+import Spinner from "./Spinner";
+import ModalAlert from "./ModalAlert";
 
 function AddOfficeForm() {
   const {addOffice}= useContext(OfficeContext);
+  const [loading, setLoading] = useState(false);
+
+   const modalRef = useRef();
+      
+      const [alertHeading, setAlertHeading] = useState("");
+      const [alertDescription, setAlertDescription] = useState(null);
+      const [alertBtnText2, setAlertBtnText2] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -18,6 +27,7 @@ function AddOfficeForm() {
       OfficeContact: Yup.string().required("OfficeContact is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
+      setLoading(true);
         console.log(values);
       try {
         // Step 2: Create User with Image URL
@@ -29,12 +39,26 @@ function AddOfficeForm() {
 
         if(response){
             console.log(response);
-        alert("Office Added successfully!");
+            setAlertHeading("Office Added Successfully!");
+            setAlertDescription("You can view the added office in all Office option on the sidebar");
+            setAlertBtnText2("Ok");
+            setTimeout(()=>{
+              setLoading(false);
+              modalRef.current.click();
+;            },500);
+        // alert("Office Added successfully!");
         resetForm();
         }
         else{
             
-        alert("Error in Adding office!");
+          setAlertHeading("Error Adding Office");
+          setAlertDescription("Error adding office try again with correct inputs");
+          setAlertBtnText2("Ok");
+          setTimeout(()=>{
+            setLoading(false);
+            modalRef.current.click();
+;            },500);
+        // alert("Error in Adding office!");
         }
       } catch (error) {
         console.error("Error Adding Office:", error);
@@ -45,7 +69,7 @@ function AddOfficeForm() {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-blue-100 w-full">
-      <div className="bg-white m-2 p-8 rounded-2xl shadow-md w-1/2">
+      {!loading ? <div className="bg-white m-2 p-8 rounded-2xl shadow-md w-1/2">
         <h2 className="text-xl font-semibold text-start text-blue-500 mb-6">
           Add Office
         </h2>
@@ -113,12 +137,20 @@ function AddOfficeForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="input input-sm btn w-full text-white border-gray-300 bg-blue-500 hover:border-blue-600 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-0 focus:ring-blue-500"
+            className="input input-sm btn w-full text-white border-gray-300 bg-blue-500 hover:border-blue-600 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-0 focus:ring-blue-500 cursor-pointer"
           >
             Add Office
           </button>
         </form>
-      </div>
+      </div> : (
+        <Spinner/>
+      )}
+      <ModalAlert
+        modalRef={modalRef}
+        heading={alertHeading}
+        description={alertDescription}
+        btnText2={alertBtnText2}
+      />
     </div>
   );
 }

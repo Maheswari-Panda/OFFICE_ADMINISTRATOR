@@ -9,6 +9,7 @@ import ModalAlert from "./ModalAlert";
 import Spinner from "./Spinner";
 import userContext from '../context/user/userContext';
 import { useNavigate } from "react-router-dom";
+import Feedback from "./feedback";
 
 
 function DocumentContent() {
@@ -18,6 +19,16 @@ function DocumentContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  
+  const modalRef = useRef();
+  const [alertHeading, setAlertHeading] = useState("");
+  const [alertDescription, setAlertDescription] = useState(null);
+  const [alertBtnText2, setAlertBtnText2] = useState("");
+  const [alertBtnText1, setAlertBtnText1] = useState("");
+  const [extraComponent,setExtraComponent] = useState(null);
+  const [isfeedbackform,setIsfeedbackform] = useState(false);
+  
 
   useEffect(() => {
     // getAllDocuments();
@@ -35,9 +46,16 @@ function DocumentContent() {
   const [viewType, setViewType] = useState("grid"); // 'grid' for current view, 'list' for list view
   const [filteredDocuments, setFilteredDocuments] = useState(documents); // State to hold filtered documents
   const [selectedTab, setSelectedTab] = useState("All"); // Track selected tab
+  const [isUnread,setIsUnread] = useState(false);
 
   useEffect(() => {
     setFilteredDocuments(documents); // Reset filtered documents on initial render
+    let unreadDocuments = documents.filter(
+      (document) => document.StatusName === "Received"
+    );
+    if(unreadDocuments.length>0){
+      setIsUnread(true);
+    }
   }, [documents]);
 
   const handleSearch = (
@@ -120,18 +138,11 @@ function DocumentContent() {
 
   const [selectedDocument, setSelectedDocument] = useState(null);
 
+  
   const handleRowClick = async (row) => {
     console.log("Row clicked:", row);
     setSelectedDocument(row);
     await addDocumentLog(user.UserId,row.DocumentId,"Document Viewed");
-  };
-
-  const deleteRef = useRef();
-  const handleDeleteModal = async (row) => {
-    // setOffice(row);
-    deleteRef.current.click();
-    console.log(row);
-    // deleteRef.current.click();
   };
 
   const handleDocumentLogView = async(row) =>{
@@ -139,16 +150,52 @@ function DocumentContent() {
     navigate("/dashboard/documentLogs",{ state: { documentLog: documentLog } });
   }
 
+  const handleDeleteModal = async (document) => {
+    setAlertHeading("Are you Sure you want to delete this document?");
+    setAlertDescription(<span>Once you delete this <b>{document.DocumentName} </b> then you cannot retrive it.</span>);
+    setExtraComponent(null);
+    setAlertBtnText1("Cencel");
+    setAlertBtnText2("Delete");
+    modalRef.current.click();
+  };
+
+  const handleFeedbackModal = async (document)=>{
+    setAlertHeading("Document Feedback");
+    setAlertDescription(
+      <>
+        <span className="font-bold">{document.DocumentName} </span>
+      </>
+    );
+    setExtraComponent(<Feedback documentId={document.DocumentId}/>);
+    setAlertBtnText1("");
+    setAlertBtnText2("Ok");
+    modalRef.current.click();
+  }
+
+  const handleDownload = (document) => {
+    console.log("Downloading...",document);
+  };
+
   const columns = useMemo(
     () => [
       {
         name: "Srno.",
         selector: (row, index) => index + 1,
         sortable: true,
+        width: "80px"
       },
       {
         name: "Inward/Outward",
-        selector: (row) => (row?.IsInward ? "Outward" : "Inward") || "N/A",
+        selector: (row) => (
+          <span>
+          {row.StatusName==="Received" && 
+            <div className="inline-grid *:[grid-area:1/1] p-2">
+              <div className="status status-error animate-ping"></div>
+              <div className="status status-error"></div>
+            </div>}
+            {row?.IsInward ? "Outward" : "Inward" || "N/A"}
+        
+        </span>),
         sortable: true,
       },
       {
@@ -171,6 +218,7 @@ function DocumentContent() {
             {row?.DocumentName || "N/A"}
           </span>
         ),
+        width: "200px"
       },
       {
         name: "Type",
@@ -199,6 +247,7 @@ function DocumentContent() {
       },
       {
         name: "Actions",
+        width:"200px",
         cell: (row) => (
           <div className="flex space-x-2">
             <button
@@ -221,6 +270,20 @@ function DocumentContent() {
               onClick={() => handleDocumentLogView(row)}
             >
               <i className="fas fa-file"></i>
+            </button>
+            <button
+            title="view feedbacks"
+              className="p-1 text-pink-500 hover:text-pink-700"
+              onClick={() => handleFeedbackModal(row)}
+            >
+              <i className="fas fa-comments"></i>
+            </button>
+            <button
+            title="download document"
+              className="p-1 text-black hover:text-black"
+              onClick={() => handleDownload(row)}
+            >
+              <i className="fas fa-download"></i>
             </button>
             <button
             title="delete document"
@@ -257,6 +320,12 @@ function DocumentContent() {
                       }`}
                       onClick={() => handleDocumentTab("All")}
                     >
+                      
+                      {isUnread && 
+            <div className="inline-grid *:[grid-area:1/1] p-2">
+              <div className="status status-error animate-ping"></div>
+              <div className="status status-error"></div>
+            </div>}
                       <i
                         className={`fa-${
                           selectedTab === "All" ? "solid" : "regular"
@@ -277,6 +346,12 @@ function DocumentContent() {
                       }`}
                       onClick={() => handleDocumentTab("Inward")}
                     >
+                      
+                      {isUnread && 
+            <div className="inline-grid *:[grid-area:1/1] p-2">
+              <div className="status status-error animate-ping"></div>
+              <div className="status status-error"></div>
+            </div>}
                       <i
                         className={`fa-${
                           selectedTab === "Inward" ? "solid" : "regular"
@@ -297,6 +372,7 @@ function DocumentContent() {
                       }`}
                       onClick={() => handleDocumentTab("Outward")}
                     >
+                    
                       <i
                         className={`fa-${
                           selectedTab === "Outward" ? "solid" : "regular"
@@ -350,6 +426,9 @@ function DocumentContent() {
                       key={document.DocumentId}
                       document={document}
                       onSelect={()=>handleRowClick(document)}
+                      handleDeleteModal={()=>handleDeleteModal(document)}
+                      handleFeedbackModal={()=>handleFeedbackModal(document)}
+                      handleDownload={()=>handleDownload(document)}
                     />
                   ))
                 )}
@@ -369,12 +448,13 @@ function DocumentContent() {
             </div>
           )}
 
-          <ModalAlert
-            modalRef={deleteRef}
-            heading="Are you sure?"
-            description="Once you delete a document it cannot be retrive!"
-            btnText2="Delete"
-            btnText1="Cencel"
+      <ModalAlert
+        modalRef={modalRef}
+        heading={alertHeading}
+        description={alertDescription}
+        btnText1={alertBtnText1}
+        btnText2={alertBtnText2}
+        extraComponent={extraComponent}
           />
         </section>
       )}

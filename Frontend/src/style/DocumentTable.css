@@ -9,12 +9,12 @@
   .data-table .rdt_TableHeadRow{
     text-align: left;
     border-bottom: 1px solid #ddd;
-    background-color: #7fb0ff41;
-    color: #3b82f6;
+    background-color: #3b82f6;
+    color: white;
   }
   .data-table .rdt_TableCol:hover{
     font-weight: bold;
-    color: #3b82f6;
+    color: white;
   }
   
   .data-table .rdt_TableRow:hover {

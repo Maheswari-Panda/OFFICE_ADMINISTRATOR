@@ -46,6 +46,20 @@ exports.getAllUserLogsByOfficeId = async (officeId) => {
   }
 };
 
+exports.getAllAdminLogs = async () => {
+  const pool = await db.getPool();
+
+  try {
+    const result = await pool
+      .request()
+      .execute("GetAllAdminLogs"); // Assuming the stored procedure is named GetUserById
+    return result.recordset; // Return the user details
+  } catch (err) {
+    console.error("Error in GetAllAdminLogs :", err);
+    throw new Error("Failed to fetch all admin logs");
+  }
+};
+
 exports.addUserLog = async (userId, action) => {
   try {
     const pool = await db.getPool();

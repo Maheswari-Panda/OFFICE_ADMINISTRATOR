@@ -28,27 +28,37 @@ exports.addDocument = async (documentData) => {
 };
 
 // Model for updating a document
-exports.updateDocument = async (documentId,documentData) => {
+exports.updateDocument = async (documentId,IsInward,
+    DocumentName,
+    DocumentTypeId,
+    LetterSerialNumber,
+    InwardOutwardReferenceDocumentId,
+    EndUserId,
+    DocumentDescription,
+    DocumentPath,
+    SenderId,
+    ReceiverId,
+    BillingInfo,
+    OfficeId
+    ) => {
     try {
         const pool = await db.getPool();
         const result = await pool.request()
             .input('DocumentId', sql.Int, documentId)
-            .input('IsInward', sql.Bit, documentData.IsInward)
-            .input('DocumentName',sql.VarChar(50),documentData.DocumentName)
-            .input('DispatchedDateTime', sql.DateTime, documentData.DispatchedDateTime)
-            .input('DocumentTypeId', sql.Int, documentData.DocumentTypeId)
-            .input('LetterSerialNumber', sql.NVarChar(255), documentData.LetterSerialNumber)
-            .input('InwardOutwardReferenceDocumentId', sql.Int, documentData.InwardOutwardReferenceDocumentId)
-            .input('EndUserId', sql.Int, documentData.EndUserId)
-            .input('DocumentDescription', sql.NVarChar(sql.MAX), documentData.DocumentDescription)
-            .input('DocumentPath', sql.NVarChar(255), documentData.DocumentPath)
-            .input('SenderId', sql.Int, documentData.SenderId)
-            .input('ReceiverId', sql.Int, documentData.ReceiverId)
-            .input('BillingInfo', sql.NVarChar(sql.MAX), documentData.BillingInfo)
-            .input('StatusId', sql.Int, documentData.StatusId)
-            .input('OfficeId', sql.SmallInt, documentData.OfficeId)
+            .input('IsInward', sql.Bit, IsInward)
+            .input('DocumentName',sql.VarChar(50),DocumentName)
+            .input('DocumentTypeId', sql.Int, DocumentTypeId)
+            .input('LetterSerialNumber', sql.NVarChar(255), LetterSerialNumber)
+            .input('InwardOutwardReferenceDocumentId', sql.Int, InwardOutwardReferenceDocumentId)
+            .input('EndUserId', sql.Int, EndUserId)
+            .input('DocumentDescription', sql.NVarChar(sql.MAX), DocumentDescription)
+            .input('DocumentPath', sql.NVarChar(255), DocumentPath)
+            .input('SenderId', sql.Int, SenderId)
+            .input('ReceiverId', sql.Int, ReceiverId)
+            .input('BillingInfo', sql.NVarChar(sql.MAX), BillingInfo)
+            .input('OfficeId', sql.SmallInt,OfficeId)
             .execute('UpdateDocument');
-
+        console.log(result);
         return result.recordset[0].Message;
     } catch (err) {
         console.error('Error updating document:', err);

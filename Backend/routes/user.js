@@ -170,12 +170,16 @@ router.put('/update/:userId', [
     }
 
     const userId = req.user.userId;
+    let givenUserId = userId;
+    if(req.params.userId!==userId){
+        givenUserId = req.params.userId;
+    }
     const { email, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl } = req.body;
 
     try {
 
         // Call the updateUser function from the model
-        const message = await userModel.updateUser(userId, email, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl);
+        const message = await userModel.updateUser(givenUserId, email, ERN,firstName, middleName, lastName, role,officeId,profileImgUrl);
 
         const data = {
             user: {
@@ -188,7 +192,7 @@ router.put('/update/:userId', [
             // set new access token 
             const accessToken = await userModel.generateAccessToken(data);
             
-            const result = await addUserLog(userId,'Profile Updated');
+            const result = await addUserLog(givenUserId,'Profile Updated');
             // Return success response
             res.status(200).json({ accessToken });
 

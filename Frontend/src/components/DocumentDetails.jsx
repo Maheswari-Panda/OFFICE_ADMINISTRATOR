@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useRef, useState, useId } from "react";
+import React, { useContext, useEffect, useRef, useState, useId, use } from "react";
 import Button from "./Button";
 import DocumentContext from "../context/document/documentContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import DocumentViewer from "./DocumentViewer";
+import userContext from "../context/user/userContext";
 
 function DocumentDetails({ document }) {
     const location= useLocation();
@@ -12,6 +13,9 @@ function DocumentDetails({ document }) {
   
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
+  const {user} = useContext(userContext);
+
+  const [editMode,setEditMode] = useState(false);
 
   const {
     documents,
@@ -20,7 +24,7 @@ function DocumentDetails({ document }) {
     users,
     getUsers,
     uploadDocument,
-    addDocument,
+    updateDocument,
   } = documentContext;
   useEffect(() => {
     getAllDocumentType();
@@ -37,16 +41,15 @@ function DocumentDetails({ document }) {
     initialValues: {
       IsInward: document.IsInward,
       DocumentName: document.DocumentName,
-      DocumentTypeId: document.DocumentTypeName,
+      DocumentTypeId: document.DocumentTypeId,
       LetterSerialNumber: document.LetterSerialNumber,
-      InwardOutwardReferenceDocumentId: document.InwardOutwardReferenceDocumentName,
-      EndUserId: document.EndUserName,
+      InwardOutwardReferenceDocumentId: document.InwardOutwardReferenceDocumentId,
+      EndUserId: document.EndUserId,
       DocumentDescription: document.DocumentDescription,
       DocumentPath: document.DocumentPath,
-      SenderId: document.SenderName,
-      ReceiverId: document.ReceiverName,
+      SenderId: document.SenderId,
+      ReceiverId: document.ReceiverId,
       BillingInfo: document.BillingInfo,
-      Feedback: "",
       AttachedDocumentPath: "",
     },
     validationSchema: Yup.object({
@@ -67,8 +70,8 @@ function DocumentDetails({ document }) {
       console.log(values);
       try {
         if (uploadState === 1) {
-          values.DocumentPath = file;
-          const response = await addDocument(
+          const response = await updateDocument(
+            document.DocumentId,
             values.IsInward,
             values.DocumentName,
             values.DocumentTypeId,
@@ -80,20 +83,19 @@ function DocumentDetails({ document }) {
             values.SenderId,
             values.ReceiverId,
             values.BillingInfo,
-            values.Feedback,
-            values.AttachedDocumentPath
+            user.OfficeId
           );
           console.log(response);
-          if (response != null) {
-            alert("Document added successfully!");
+          if (response !== null) {
+            alert("Document updated successfully!");
             navigate("/dashboard/content");
           } else {
-            alert("error in document adding");
+            alert("error in updating document");
           }
         }
       } catch (error) {
-        console.error("Error adding  user:", error);
-        alert("Error adding Document");
+        console.error("Error updating document:", error);
+        alert("Error updating Document");
       }
     },
   });
@@ -121,12 +123,12 @@ function DocumentDetails({ document }) {
   }
   return (
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
-      <button
+      {<button
         onClick={handleBackClick}
         className="absolute z-10 btn btn-sm bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
       >
         <i className="fa-solid fa-arrow-left"></i>
-      </button>
+      </button>}
         <div
           className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
         >
@@ -173,10 +175,10 @@ function DocumentDetails({ document }) {
                   name="IsInward"
                   value="0"
                   className="radio checked:text-blue-500"
-                  checked={formik.values.IsInward} // ✅ Correctly bind checked state
+                  checked={!formik.values.IsInward} // ✅ Correctly bind checked state
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  disabled
+                  disabled={!editMode}
                 />
               </label>
             </div>
@@ -191,7 +193,7 @@ function DocumentDetails({ document }) {
                   checked={formik.values.IsInward} // ✅ Correctly bind checked state
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  disabled
+                  disabled={!editMode}
                 />
               </label>
             </div>
@@ -232,7 +234,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentName}
-              readOnly
+              readOnly={!editMode}
             />
 
             {formik.errors.DocumentName && formik.touched.DocumentName && (
@@ -254,7 +256,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.DocumentDescription}
-              readOnly
+              readOnly={!editMode}
             ></textarea>
 
             {formik.errors.DocumentDescription &&
@@ -277,8 +279,7 @@ function DocumentDetails({ document }) {
               onBlur={formik.handleBlur}
               value={formik.values.DocumentTypeId}
               className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50  focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              readOnly
-              disabled
+              disabled={!editMode}
             >
               {documentTypes.map((doctype, index) => {
                 return (
@@ -310,8 +311,8 @@ function DocumentDetails({ document }) {
               className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.LetterSerialNumber}
-              readOnly
+              value={formik.values.LetterSerialNumber} 
+              readOnly={!editMode}
             />
 
             {formik.errors.LetterSerialNumber &&
@@ -334,8 +335,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.InwardOutwardReferenceDocumentId}
-              disabled
-              readOnly
+              disabled={!editMode}
             >
               {documents.map((document, index) => (
                 <option
@@ -367,7 +367,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.SenderId}
-              disabled
+              disabled={!editMode}
             >
               {users.map((user, index) => {
                 return (
@@ -397,7 +397,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.ReceiverId}
-              disabled
+              disabled={!editMode}
             >
               {users.map((user, index) => {
                 return (
@@ -426,7 +426,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.EndUserId}
-              disabled
+              disabled={!editMode}
             >
               {users.map((user, index) => {
                 return (
@@ -456,7 +456,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.BillingInfo}
-              readOnly
+              readOnly={!editMode}
             />
 
             {formik.errors.BillingInfo && formik.touched.BillingInfo && (
@@ -468,28 +468,6 @@ function DocumentDetails({ document }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Feedback
-            </label>
-            <textarea
-              rows="2"
-              name="Feedback"
-              id="Feedback"
-              className="p-2 input-sm w-full rounded-md border border-gray-300 bg-gray-50 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.Feedback}
-              readOnly
-            ></textarea>
-
-            {formik.errors.Feedback && formik.touched.Feedback && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.Feedback}
-              </div>
-            )}
-          </div>
-
-          <div hidden>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
               Attachment
             </label>
             <input
@@ -500,7 +478,7 @@ function DocumentDetails({ document }) {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.AttachedDocumentPath}
-              disabled
+              disabled={!editMode}
             />
 
             {formik.errors.AttachedDocumentPath &&
@@ -511,17 +489,21 @@ function DocumentDetails({ document }) {
               )}
           </div>
 
-          <div className="flex justify-end mt-5">
+          {(user.Role === "admin" || user.Role==="Admin" || user.Role==="SuperAdmin") &&
+            <div className="flex justify-between mt-5 gap-2">
+            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-blue-200">
+              <i className={`fas fa-edit text-${!editMode ? 'blue' : 'gray'}-500 rounded-full hover:text-${!editMode ? 'blue' : 'gray'}-600`} title="toggle edit mode" onClick={()=>setEditMode(!editMode)}></i>
+            </div>
             <button
               type="submit"
-              disabled
+              disabled={!editMode}
               // disabled={uploadState !== 1}
-              className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 transition"
+              className="btn btn-base bg-gradient-to-r from-blue-500 to-blue-700 text-white px-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 transition"
             >
-              Update Document
+              Update Document Details
             </button>
             {/* <Button color="blue" text="Save Document" /> */}
-          </div>
+          </div>}
         </div>
       </form>
     </div>

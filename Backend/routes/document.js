@@ -38,10 +38,33 @@ router.post('/add',fetchUser, async (req, res) => {
 // Update a document by ID
 router.put('/update/:id', async (req, res) => {
   const documentId = req.params.id; // Get the DocumentId from the URL parameter
-  const documentData = req.body; // Expecting updated document data in the request body
-
+  const {IsInward,
+    DocumentName,
+    DocumentTypeId,
+    LetterSerialNumber,
+    InwardOutwardReferenceDocumentId,
+    EndUserId,
+    DocumentDescription,
+    DocumentPath,
+    SenderId,
+    ReceiverId,
+    BillingInfo,
+    OfficeId
+  } = req.body; // Expecting updated document data in the request body
   try {
-    const message = await documentModel.updateDocument(documentId, documentData); // Call the updateDocument model function
+    const message = await documentModel.updateDocument(documentId, IsInward,
+      DocumentName,
+      DocumentTypeId,
+      LetterSerialNumber,
+      InwardOutwardReferenceDocumentId,
+      EndUserId,
+      DocumentDescription,
+      DocumentPath,
+      SenderId,
+      ReceiverId,
+      BillingInfo,
+      OfficeId); // Call the updateDocument model function
+    console.log(message);
     res.status(200).json({ message }); // Return success message
   } catch (err) {
     res.status(500).json({ error: 'An error occurred while updating the document', details: err.message });

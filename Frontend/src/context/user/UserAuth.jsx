@@ -315,6 +315,22 @@ console.log(response);
     }
   };
 
+  const getAllAdminLogs = async () => {
+    try {
+      const response = await axios.get(
+        `${host}/api/userLog/getAdminLogs`,
+      );
+
+      // Return the user details
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching admin logs details:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   const forgetPassword = async(email)=>{
     try{
       const response = await axios.post(`${host}/api/user/forgetpassword`,{email});
@@ -378,7 +394,8 @@ console.log(response);
         verifyResetPasswordToken,
         deleteUser,
         getUsersByOfficeId,
-        getAllUserLogsByOfficeId
+        getAllUserLogsByOfficeId,
+        getAllAdminLogs
       }}
     >
       {children}
