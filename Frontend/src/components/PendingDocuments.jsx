@@ -3,6 +3,7 @@ import DataTable from 'react-data-table-component'; // Import the DataTable comp
 import DocumentContext from '../context/document/documentContext';
 import { useNavigate } from 'react-router-dom';
 import userContext from '../context/user/userContext';
+import SearchBox from './SearchBox';
 
 function PendingDocuments() {
   const {user} = useContext(userContext);
@@ -15,7 +16,32 @@ function PendingDocuments() {
   }, []);
   useEffect(() => {
       setPendingDocuments(documents); // Reset filtered documents on initial render
+      setFilteredData(documents);
     }, [documents]);
+
+  
+    const [searchText, setSearchText] = useState("");
+    const [filteredData, setFilteredData] = useState(pendingDocuments);
+  
+    // Handle Search
+    const handleSearch = (event) => {
+      const value = event.target.value.toLowerCase();
+      setSearchText(value);
+  
+      const filtered = pendingDocuments.filter((document) =>
+        document.DocumentName.toLowerCase().includes(value) ||
+        user.FirstName.toLowerCase().includes(value) ||
+        user.LastName.toLowerCase().includes(value) ||
+        document.DocumentTypeName.toLowerCase().includes(value) ||
+        document.SenderName.toLowerCase().includes(value) ||
+        document.EndUserName.toLowerCase().includes(value) ||
+        document.StatusName.toLowerCase().includes(value) ||
+        new Date(document.DispatchedDateTime).toLocaleDateString().includes(value)
+      );
+  
+      setFilteredData(filtered);
+    };
+  
 
   const handleViewDocument = (row) => {
     console.log("Handle Review Document : ",row);
@@ -76,12 +102,18 @@ function PendingDocuments() {
 
   return (
     <div className="min-h-screen bg-blue-100 p-4 w-full">
+      <div className="flex justify-between items-center p-2">
       <h2 className="text-blue-500 text-2xl font-bold mb-4">Pending Documents</h2>
+        {/* Reusable Search Box */}
+        <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Documents..." />
+     </div>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+      <div className="overflow-x-hidden bg-white rounded-lg shadow-md">
         <DataTable
           columns={columns} // Columns for the table
-          data={pendingDocuments} // Data for the table
+          data={filteredData} // Data for the table
+          highlightOnHover
+          pagination
         />
       </div>
     </div>

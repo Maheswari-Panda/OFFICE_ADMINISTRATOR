@@ -319,7 +319,7 @@ function UserProfile() {
           </form>
         </div>
 
-        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2 lg:h-150">
+        <div className=" border-2 rounded-md border-dashed border-gray-300 w-1/2 lg:h-165">
         {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
         </div>
       </div>

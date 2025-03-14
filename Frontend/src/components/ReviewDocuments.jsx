@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import userContext from "../context/user/userContext";
 import ModalAlert from "./ModalAlert";
 import Feedback from "./feedback";
+import SearchBox from "./SearchBox";
 
 function ReviewDocuments() {
   const {
@@ -47,12 +48,35 @@ function ReviewDocuments() {
       
       if (docs) {
         setFilteredDocuments(docs);
+        setFilteredData(docs);
       }
     };
   
     fetchDocuments();
   }, [activeTab, getDocumentsByStatusName]);
+
   
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState(filteredDocuments);
+
+  // Handle Search
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchText(value);
+
+    const filtered = filteredDocuments.filter((document) =>
+      document.DocumentName.toLowerCase().includes(value) ||
+    document.DocumentTypeName.toLowerCase().includes(value) ||
+    document.SenderName.toLowerCase().includes(value) ||
+    document.ReceiverName.toLowerCase().includes(value) ||
+    document.StatusName.toLowerCase().includes(value) ||
+      document.StatusName.toLowerCase().includes(value) ||
+      new Date(document.DispatchedDateTime).toLocaleDateString().includes(value)
+    );
+
+    setFilteredData(filtered);
+  };
+
 
   const handleViewDocument = async (row) => {
     await addDocumentLog(user.UserId, row.DocumentId, "Pending Document Viewed");
@@ -218,7 +242,11 @@ function ReviewDocuments() {
 
   return (
     <div className="min-h-screen bg-blue-100 p-4 w-full">
-      <h2 className="text-blue-500 text-2xl font-bold mb-4">Review Documents</h2>
+       <div className="flex justify-between items-center p-2">
+        <h2 className="text-blue-500 text-2xl font-bold mb-4">Review Documents</h2>
+        {/* Reusable Search Box */}
+        <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Documents..." />
+     </div>
 
       {/* Tabs */}
       <div className="flex justify-around border-b border-gray-300 mb-4">
@@ -239,7 +267,7 @@ function ReviewDocuments() {
 
       {/* Data Table */}
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-        <DataTable columns={columns} data={filteredDocuments} />
+        <DataTable columns={columns} data={filteredData} pagination highlightOnHover />
       </div>
 
       {/* Modal Alert */}

@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Spinner from "./Spinner";
 import ModalAlert from "./ModalAlert";
+import SearchBox from "./SearchBox";
 
 function AllOffices() {
   const officeContext = useContext(OfficeContext);
@@ -38,8 +39,26 @@ function AllOffices() {
     fetchData();
   }, []);
 
-  
   const {offices} = officeContext;
+  
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState(offices[0]);
+
+  // Handle Search
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchText(value);
+
+    const filtered = offices[0].filter((office) =>
+      office.OfficeName.toLowerCase().includes(value) ||
+      office.OfficeLocation.toLowerCase().includes(value) ||
+      office.OfficeContact.includes(value) ||
+      new Date(office.CreatedAt).toLocaleDateString().includes(value)
+    );
+
+    setFilteredData(filtered);
+  };
+
 
   const handleView = async (row) => {
     setOffice(row);
@@ -205,7 +224,11 @@ function AllOffices() {
   return (
     <div className="w-full flex justify-center bg-blue-100 min-h-screen">
       <div className="w-full bg-white p-6 m-2 rounded-lg shadow-lg">
+      <div className="flex justify-between items-center p-2">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">All Offices</h2>
+        {/* Reusable Search Box */}
+        <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Offices..." />
+     </div>
 
         {loading ? (
           <Spinner/>
@@ -216,9 +239,10 @@ function AllOffices() {
         ) : (
           <DataTable
             columns={columns}
-            data={offices[0]}
+            data={filteredData}
             fixedHeader
             highlightOnHover
+            pagination
           />
         )}
       </div>

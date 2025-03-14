@@ -72,6 +72,11 @@ function DocumentContent() {
         const documentName = document.DocumentName.toLowerCase();
         const documentDescription = document.DocumentDescription.toLowerCase();
         return (
+          document.StatusName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          document.SenderName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          document.ReceiverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          document.EndUserName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          new Date(document.DispatchedDateTime).toLocaleDateString().includes(searchTerm.toLowerCase()) ||
           documentName.includes(searchTerm.toLowerCase()) ||
           documentDescription.includes(searchTerm.toLowerCase())
         );
@@ -419,6 +424,7 @@ function DocumentContent() {
                     onRowClicked={handleRowClick}
                     fixedHeader
                     className="data-table rounded-lg table-auto w-full text-sm text-gray-700 border-separate border-spacing-2 shadow-lg bg-white hover:bg-blue-100 hover:text-blue-500"
+                    pagination
                   />
                 ) : (
                   filteredDocuments.map((document) => (

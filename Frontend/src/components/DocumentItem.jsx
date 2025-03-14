@@ -16,7 +16,6 @@ function DocumentItem(props) {
   const handleRowClick = async () => {
     console.log("Row clicked:", document);
     onSelect(document);
-    await addDocumentLog(user.UserId,document.DocumentId,"Document Viewed");
   };
 
 

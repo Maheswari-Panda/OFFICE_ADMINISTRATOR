@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import userContext from '../context/user/userContext';
 import ModalAlert from './ModalAlert';
 import Feedback from './feedback';
+import SearchBox from './SearchBox';
 
 function ReturnedDocuments() {
   const {user} = useContext(userContext);
@@ -24,8 +25,31 @@ function ReturnedDocuments() {
     getReturnedDocumentsForUserByUserId(user.UserId);
   }, []);
   useEffect(() => {
-    setReturnedDocuments(documents); // Reset filtered documents on initial render
+    setReturnedDocuments(documents); // Reset filtered documents on initial render'
+    setFilteredData(documents);
     }, [documents]);
+
+    const [searchText, setSearchText] = useState("");
+    const [filteredData, setFilteredData] = useState(returnedDocuments);
+  
+    // Handle Search
+    const handleSearch = (event) => {
+      const value = event.target.value.toLowerCase();
+      setSearchText(value);
+  
+      const filtered = returnedDocuments.filter((document) =>
+        document.DocumentName.toLowerCase().includes(value) ||
+        user.FirstName.toLowerCase().includes(value) ||
+        user.LastName.toLowerCase().includes(value) ||
+        document.DocumentTypeName.toLowerCase().includes(value) ||
+        document.SenderName.toLowerCase().includes(value) ||
+        document.EndUserName.toLowerCase().includes(value) ||
+        document.StatusName.toLowerCase().includes(value) ||
+        new Date(document.DispatchedDateTime).toLocaleDateString().includes(value)
+      );
+  
+      setFilteredData(filtered);
+    };
 
   const handleViewDocument = (row) => {
     console.log("Handle Review Document : ",row);
@@ -107,12 +131,18 @@ function ReturnedDocuments() {
 
   return (
     <div className="min-h-screen bg-blue-100 p-4 w-full">
+      <div className="flex justify-between items-center p-2">
       <h2 className="text-blue-500 text-2xl font-bold mb-4">Returned Documents</h2>
+        {/* Reusable Search Box */}
+        <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Admin Activity..." />
+     </div>
 
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <DataTable
           columns={columns} // Columns for the table
-          data={returnedDocuments} // Data for the table
+          data={filteredData} // Data for the table
+          highlightOnHover
+          pagination
         />
       </div>
       <ModalAlert

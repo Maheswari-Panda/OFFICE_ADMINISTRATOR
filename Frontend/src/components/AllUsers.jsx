@@ -5,6 +5,7 @@ import OfficeContext from "../context/office/officeContext";
 import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
 import ModalAlert from "./ModalAlert";
+import SearchBox from "./SearchBox";
 
 function AllUsers() {
   const navigate = useNavigate();
@@ -35,6 +36,30 @@ function AllUsers() {
 
     fetchData();
   }, []);
+
+  
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState(users);
+
+  // Handle Search
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchText(value);
+
+    const filtered = users.filter((user) =>
+      user.ERN.includes(value) ||
+      user.FirstName.toLowerCase().includes(value) ||
+      user.MiddleName.toLowerCase().includes(value) ||
+      user.LastName.toLowerCase().includes(value) ||
+      user.Email.toLowerCase().includes(value) ||
+      user.Role.toLowerCase().includes(value) ||
+      user.OfficeName.toLowerCase().includes(value) ||
+      new Date(user.CreatedAt).toLocaleDateString().includes(value)
+    );
+
+    setFilteredData(filtered);
+  };
+
 
   const handleView = (row) => {
     console.log("View clicked:", row);
@@ -134,8 +159,12 @@ function AllUsers() {
       {!loading && (
         <div className="w-full flex justify-center bg-blue-100 min-h-screen p-2">
           <div className="w-full bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-blue-600 mb-4">All Users</h2>
+          <div className="flex justify-between items-center p-2">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">All Users</h2>
 
+        {/* Reusable Search Box */}
+        <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Users..." />
+     </div>
             {users.length === 0 ? (
               <div className="text-center text-gray-500 font-bold text-xl">
                 No Users Found
@@ -143,9 +172,10 @@ function AllUsers() {
             ) : (
               <DataTable
                 columns={columns}
-                data={users}
+                data={filteredData}
                 fixedHeader
                 highlightOnHover
+                pagination
               />
             )}
           </div>

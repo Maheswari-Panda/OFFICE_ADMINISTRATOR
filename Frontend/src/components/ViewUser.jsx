@@ -338,7 +338,7 @@ function ViewUser() {
           </form>
         </div>
 
-        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2 h-130 overflow-scroll">
+        <div className="p-2 border-2 rounded-md border-dashed border-gray-300 w-1/2 h-auto">
           {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
         </div>
       </div>

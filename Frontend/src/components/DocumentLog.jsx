@@ -41,6 +41,7 @@ function DocumentLog() {
       <DataTable
         columns={columns}
         data={documentLogs}
+        pagination
       />
     </div>
     </div>
