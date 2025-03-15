@@ -252,6 +252,18 @@ const DocumentState = (props) => {
     }
   };
 
+  const getAttachedDocument = async (
+    DocumentId
+  ) => {
+    try {
+      const response = await axios.get(`${host}/api/attachedDocument/get/${DocumentId}`);
+      const json = await response.data;
+      // console.log(json);
+      return json.data[0];
+    } catch (error) {
+      console.log("error in getting attached document", error);
+    }
+  };
 
   // Status
   const getStatusById= async(statusId)=>{
@@ -534,7 +546,8 @@ const DocumentState = (props) => {
         getFeedBacksByDocumentId,
         getReturnedDocumentsForUserByUserId,
         dispatchDocument,
-        updateDocument
+        updateDocument,
+        getAttachedDocument
       }}
     >
       {props.children}

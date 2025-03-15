@@ -16,6 +16,8 @@ function DocumentDetails({ document }) {
   const {user} = useContext(userContext);
 
   const [editMode,setEditMode] = useState(false);
+  
+  const [attachedDocumentPath,setAttachedDocumentPath] = useState(null);
 
   const {
     documents,
@@ -25,11 +27,31 @@ function DocumentDetails({ document }) {
     getUsers,
     uploadDocument,
     updateDocument,
+    getAttachedDocument
   } = documentContext;
   useEffect(() => {
     getAllDocumentType();
     getUsers();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const attachedDoc = await Promise.all([getAttachedDocument(document.DocumentId)]);
+        if(attachedDoc[0]!==undefined){
+          setAttachedDocumentPath(attachedDoc[0].AttachedDocumentPath);
+        }
+        else{
+          setAttachedDocumentPath(null);
+        }
+      } catch (error) {
+        console.error("Error fetching attached document:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
   
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
@@ -151,7 +173,7 @@ function DocumentDetails({ document }) {
             </div>
           </div> */}
 
-          {<DocumentViewer DocPath={document.DocumentPath} />}
+          {<DocumentViewer DocPath={document.DocumentPath} attachedDocPath={attachedDocumentPath}/>}
         </div>
 
         <form

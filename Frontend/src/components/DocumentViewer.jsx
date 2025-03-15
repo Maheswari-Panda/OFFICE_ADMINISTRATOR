@@ -9,13 +9,20 @@ import '../style/DocumentViewer.css'
 
 
 const DocumentViewer=(props)=> {
-    console.log("The pdf is rendering again");
+    // console.log("The pdf is rendering again");
     const docs = [
         { uri: props.DocPath,
           fileType: props.DocPath.split('.').pop().toLowerCase(),
           fileName: "Uploaded File"
         },
       ];
+      if (props.attachedDocPath) {
+        docs.push({
+          uri: props.attachedDocPath,
+          fileType: props.attachedDocPath.split('.').pop().toLowerCase(),
+          fileName: "Attached Document",
+        });
+      }
       return (
         <>
            <DocViewer
