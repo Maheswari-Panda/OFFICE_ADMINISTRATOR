@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useRef, useState, useId, use } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useId,
+  use,
+} from "react";
 import Button from "./Button";
 import DocumentContext from "../context/document/documentContext";
 import { useFormik } from "formik";
@@ -8,16 +15,17 @@ import DocumentViewer from "./DocumentViewer";
 import userContext from "../context/user/userContext";
 
 function DocumentDetails({ document }) {
-    const location= useLocation();
-    document = (document===undefined)?location.state.document:document;
-  
+  const location = useLocation();
+  document = document === undefined ? location.state.document : document;
+
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
-  const {user} = useContext(userContext);
+  const { user } = useContext(userContext);
+  const signedInUserOfficeId = user.OfficeId;
 
-  const [editMode,setEditMode] = useState(false);
-  
-  const [attachedDocumentPath,setAttachedDocumentPath] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+
+  const [attachedDocumentPath, setAttachedDocumentPath] = useState("");
 
   const {
     documents,
@@ -27,7 +35,9 @@ function DocumentDetails({ document }) {
     getUsers,
     uploadDocument,
     updateDocument,
-    getAttachedDocument
+    getAttachedDocument,
+    updateAttachedDocument,
+    uploadAttachedDocument
   } = documentContext;
   useEffect(() => {
     getAllDocumentType();
@@ -37,11 +47,13 @@ function DocumentDetails({ document }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const attachedDoc = await Promise.all([getAttachedDocument(document.DocumentId)]);
-        if(attachedDoc[0]!==undefined){
+        const attachedDoc = await Promise.all([
+          getAttachedDocument(document.DocumentId),
+        ]);
+        console.log(attachedDoc[0].AttachedDocumentPath);
+        if (attachedDoc[0] !== undefined) {
           setAttachedDocumentPath(attachedDoc[0].AttachedDocumentPath);
-        }
-        else{
+        } else {
           setAttachedDocumentPath(null);
         }
       } catch (error) {
@@ -51,13 +63,13 @@ function DocumentDetails({ document }) {
 
     fetchData();
   }, []);
-  
-  
+
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [uploadState, setUploadState] = useState(1);
+  const [attachedDocument, setAttachedDocument] = useState(null);
+  const [attachedDocumentUploadState, setAttachedDocumentUploadState] =useState(0);
   const inputRef = useRef();
-  const [formEditable,setFormEditable]= useState(0);
 
   const formik = useFormik({
     initialValues: {
@@ -65,14 +77,15 @@ function DocumentDetails({ document }) {
       DocumentName: document.DocumentName,
       DocumentTypeId: document.DocumentTypeId,
       LetterSerialNumber: document.LetterSerialNumber,
-      InwardOutwardReferenceDocumentId: document.InwardOutwardReferenceDocumentId,
+      InwardOutwardReferenceDocumentId:
+        document.InwardOutwardReferenceDocumentId,
       EndUserId: document.EndUserId,
       DocumentDescription: document.DocumentDescription,
       DocumentPath: document.DocumentPath,
       SenderId: document.SenderId,
       ReceiverId: document.ReceiverId,
       BillingInfo: document.BillingInfo,
-      AttachedDocumentPath: "",
+      AttachedDocumentPath: attachedDocumentPath,
     },
     validationSchema: Yup.object({
       DocumentPath: Yup.string().required("Document Url required"),
@@ -91,7 +104,8 @@ function DocumentDetails({ document }) {
       console.log("clicked on submit");
       console.log(values);
       try {
-        if (uploadState === 1) {
+        if ((uploadState===1 && values.AttachedDocumentPath==="") || (values.AttachedDocumentPath!=="" && uploadState === 1 && attachedDocumentUploadState === 1)) {
+          console.log(Number(values.IsInward));
           const response = await updateDocument(
             document.DocumentId,
             values.IsInward,
@@ -105,15 +119,26 @@ function DocumentDetails({ document }) {
             values.SenderId,
             values.ReceiverId,
             values.BillingInfo,
-            user.OfficeId
+            document.OfficeId
           );
           console.log(response);
-          if (response !== null) {
-            alert("Document updated successfully!");
-            navigate("/dashboard/content");
-          } else {
-            alert("error in updating document");
+          console.log(response.message);
+         
+          if(values.AttachedDocumentPath!==""){
+            const AttachedDocumentResponse = await updateAttachedDocument(document.DocumentId,values.AttachedDocumentPath);
+            console.log(AttachedDocumentResponse);
+            if (response !== null && AttachedDocumentResponse!==null) {
+              alert("Document updated successfully!");
+            } else {
+              alert("error in updating document with attached document");
+            }
           }
+          if (response != null) {
+              console.log(response);
+              alert("Document updated successfully!");
+            } else {
+              alert("error in updating document without attached document");
+            }
         }
       } catch (error) {
         console.error("Error updating document:", error);
@@ -121,6 +146,29 @@ function DocumentDetails({ document }) {
       }
     },
   });
+
+  const isInward = formik.values.IsInward === 1; // Assuming you have a field to check
+
+  const filteredUsersForSender = users.filter((user) =>
+    isInward
+      ? user.OfficeId === signedInUserOfficeId
+      : user.OfficeId !== signedInUserOfficeId
+  );
+
+  // Filtering users based on document type
+  const filteredUsersForReceiver = users.filter((user) =>
+    isInward
+      ? user.OfficeId !== signedInUserOfficeId
+      : user.OfficeId === signedInUserOfficeId
+  );
+
+  const getOfficeCode = (officeName) => {
+    if (!officeName) return ""; // Handle cases where officeName might be empty
+    return officeName
+      .split(" ") // Split by spaces
+      .map((word) => word.charAt(0).toUpperCase()) // Get first letter of each word and uppercase it
+      .join(""); // Join them to form initials
+  };
 
   const handleUpload = async () => {
     let uploadedDocumentPath = file;
@@ -140,43 +188,50 @@ function DocumentDetails({ document }) {
       }
     }
   };
-  const handleBackClick=()=>{
+  const handleAttachedDocuments = async () => {
+    let attachedDocumentUrl = attachedDocumentPath;
+    console.log(attachedDocument);
+    if (attachedDocument) {
+      const formData = new FormData();
+      formData.append("AttachedDocumentPath", attachedDocument);
+      // console.log(file);
+      const uploadResponse = await uploadAttachedDocument(formData);
+      if (uploadResponse) {
+        setAttachedDocumentUploadState(1); // Set uploadState to 1 after successful upload
+        attachedDocumentUrl =
+          `http://localhost:3000` + uploadResponse.AttachedDocumentPath;
+        setAttachedDocumentPath(attachedDocumentUrl);
+        formik.setFieldValue("AttachedDocumentPath", attachedDocumentUrl);
+        console.log(attachedDocumentUrl);
+        console.log("Attached Document updated successfully");
+      }
+    }
+  };
+  const handleBackClick = () => {
     navigate("/dashboard/review");
-  }
+  };
   return (
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
-      {<button
-        onClick={handleBackClick}
-        className="absolute z-10 btn btn-sm bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-      >
-        <i className="fa-solid fa-arrow-left"></i>
-      </button>}
-        <div
-          className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
+      {
+        <button
+          onClick={handleBackClick}
+          className="absolute z-10 btn btn-sm bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
         >
-          {/* <div className={`${uploadState === 0 ? "text-center" : "hidden"}`}>
-            <span>{file.name}</span>
-            <div>
-              <button
-                className="btn btn-sm bg-red-500 text-white"
-                onClick={() => setFile(null)}
-              >
-                Cencel
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm bg-blue-500 text-white"
-                onClick={handleUpload}
-              >
-                Upload
-              </button>
-            </div>
-          </div> */}
+          <i className="fa-solid fa-arrow-left"></i>
+        </button>
+      }
+      <div
+        className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
+      >
+        {
+          <DocumentViewer
+            DocPath={document.DocumentPath}
+            attachedDocPath={attachedDocumentPath}
+          />
+        }
+      </div>
 
-          {<DocumentViewer DocPath={document.DocumentPath} attachedDocPath={attachedDocumentPath}/>}
-        </div>
-
-        <form
+      <form
         className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen w-1/4"
         onSubmit={(e) => {
           e.preventDefault();
@@ -226,8 +281,13 @@ function DocumentDetails({ document }) {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2" hidden>
+          <div
+            hidden={
+              user.Role.toLowerCase() !== "user" ||
+              document.StatusName !== "Rejected"
+            }
+          >
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Update Document
             </label>
             <input
@@ -235,9 +295,48 @@ function DocumentDetails({ document }) {
               multiple
               name="DocumentPath"
               id="DocumentPath"
-              onChange={(event) => setFile(event.currentTarget.files[0])}
-              hidden
+              className="w-full text-sm text-gray-500 border border-gray-300 rounded-md p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+              onBlur={formik.handleBlur}
+              onChange={(event) => {
+                setFile(event.currentTarget.files[0]);
+                setUploadState(0);
+              }}
+              disabled={!editMode}
+              hidden={file !== null}
             />
+            {file !== null && (
+              <input
+                className={`${
+                  uploadState === 1 ? "text-center" : "hidden"
+                }
+                input input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition`}
+                value={formik.values.DocumentPath}
+              />
+            )}
+            {file !== null && (
+              <div
+                className={`${
+                  uploadState === 0 ? "text-center" : "hidden"
+                } flex gap-2 border border-gray-300 rounded-md p-2 justify-center items-center`}
+              >
+                <span className="text-sm">{file.name}</span>
+                <div>
+                  <button
+                    className="btn btn-xs bg-red-500 text-white"
+                    onClick={() => setFile(null)}
+                  >
+                    <i className="fa-solid fa-close text-white"></i>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-xs bg-blue-500 text-white"
+                    onClick={handleUpload}
+                  >
+                    <i className="fa-solid fa-arrow-up-from-bracket text-white"></i>
+                  </button>
+                </div>
+              </div>
+            )}
             {formik.errors.DocumentPath && formik.touched.DocumentPath && (
               <div className="text-red-500 text-xs mt-1">
                 {formik.errors.DocumentPath}
@@ -333,7 +432,7 @@ function DocumentDetails({ document }) {
               className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.LetterSerialNumber} 
+              value={formik.values.LetterSerialNumber === null ? "" : formik.values.LetterSerialNumber}
               readOnly={!editMode}
             />
 
@@ -391,10 +490,11 @@ function DocumentDetails({ document }) {
               value={formik.values.SenderId}
               disabled={!editMode}
             >
-              {users.map((user, index) => {
+              {filteredUsersForSender.map((user, index) => {
                 return (
                   <option value={user.UserId} key={`${user.UserId}-${index}`}>
-                    {user.FirstName + " " + user.LastName}
+                    {user.FirstName + " " + user.LastName + " - "}{" "}
+                    {getOfficeCode(user.OfficeName)}
                   </option>
                 );
               })}
@@ -421,10 +521,11 @@ function DocumentDetails({ document }) {
               value={formik.values.ReceiverId}
               disabled={!editMode}
             >
-              {users.map((user, index) => {
+              {filteredUsersForReceiver.map((user, index) => {
                 return (
                   <option value={user.UserId} key={`${user.UserId}-${index}`}>
-                    {user.FirstName + " " + user.LastName}
+                    {user.FirstName + " " + user.LastName + " - "}{" "}
+                    {getOfficeCode(user.OfficeName)}
                   </option>
                 );
               })}
@@ -450,10 +551,11 @@ function DocumentDetails({ document }) {
               value={formik.values.EndUserId}
               disabled={!editMode}
             >
-              {users.map((user, index) => {
+              {filteredUsersForReceiver.map((user, index) => {
                 return (
                   <option value={user.UserId} key={`${user.UserId}-${index}`}>
-                    {user.FirstName + " " + user.LastName}
+                    {user.FirstName + " " + user.LastName + " - "}{" "}
+                    {getOfficeCode(user.OfficeName)}
                   </option>
                 );
               })}
@@ -492,17 +594,36 @@ function DocumentDetails({ document }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Attachment
             </label>
-            <input
+            {attachedDocument === null ? 
+            (<input
               type="file"
               name="AttachedDocumentPath"
               id="AttachedDocumentPath"
               className="w-full text-sm text-gray-500 border border-gray-300 rounded-md p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
-              onChange={formik.handleChange}
+              multiple
+              onChange={(event) => setAttachedDocument(event.currentTarget.files[0])}
               onBlur={formik.handleBlur}
-              value={formik.values.AttachedDocumentPath}
-              disabled={!editMode}
-            />
-
+            />)
+            :(
+              <div className={`${attachedDocumentUploadState === 0 ? "text-center" : "hidden"}`}>
+              <span>{attachedDocument.name}</span>
+              <div>
+                <button
+                  className="btn btn-sm bg-red-500 text-white"
+                  onClick={() => setAttachedDocument(null)}
+                >
+                  Cencel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm bg-blue-500 text-white"
+                  onClick={handleAttachedDocuments}
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+            )}
             {formik.errors.AttachedDocumentPath &&
               formik.touched.AttachedDocumentPath && (
                 <div className="text-red-500 text-xs mt-1">
@@ -511,21 +632,34 @@ function DocumentDetails({ document }) {
               )}
           </div>
 
-          {(user.Role === "admin" || user.Role==="Admin" || user.Role==="SuperAdmin") &&
+          {(user.Role === "admin" ||
+            user.Role === "Admin" ||
+            user.Role === "SuperAdmin" ||
+            (user.Role.toLowerCase() === "user" &&
+              document.StatusName === "Rejected")) && (
             <div className="flex justify-between mt-5 gap-2">
-            <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-blue-200">
-              <i className={`fas fa-edit text-${!editMode ? 'blue' : 'gray'}-500 rounded-full hover:text-${!editMode ? 'blue' : 'gray'}-600`} title="toggle edit mode" onClick={()=>setEditMode(!editMode)}></i>
+              <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-blue-200">
+                <i
+                  className={`fas fa-edit text-${
+                    !editMode ? "blue" : "gray"
+                  }-500 rounded-full hover:text-${
+                    !editMode ? "blue" : "gray"
+                  }-600`}
+                  title="toggle edit mode"
+                  onClick={() => setEditMode(!editMode)}
+                ></i>
+              </div>
+              <button
+                type="submit"
+                disabled={!editMode}
+                // disabled={uploadState !== 1}
+                className="btn btn-base bg-gradient-to-r from-blue-500 to-blue-700 text-white px-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 transition"
+              >
+                Update Document Details
+              </button>
+              {/* <Button color="blue" text="Save Document" /> */}
             </div>
-            <button
-              type="submit"
-              disabled={!editMode}
-              // disabled={uploadState !== 1}
-              className="btn btn-base bg-gradient-to-r from-blue-500 to-blue-700 text-white px-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 transition"
-            >
-              Update Document Details
-            </button>
-            {/* <Button color="blue" text="Save Document" /> */}
-          </div>}
+          )}
         </div>
       </form>
     </div>

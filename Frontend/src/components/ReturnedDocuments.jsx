@@ -9,7 +9,7 @@ import SearchBox from './SearchBox';
 
 function ReturnedDocuments() {
   const {user} = useContext(userContext);
-  const { documents,getReturnedDocumentsForUserByUserId } = useContext(DocumentContext); // Get documents from the context
+  const { documents,getReturnedDocumentsForUserByUserId,addDocumentLog} = useContext(DocumentContext); // Get documents from the context
   const [returnedDocuments, setReturnedDocuments] = useState([]);
   const navigate = useNavigate();
 
@@ -31,6 +31,8 @@ function ReturnedDocuments() {
 
     const [searchText, setSearchText] = useState("");
     const [filteredData, setFilteredData] = useState(returnedDocuments);
+    
+    const [isfeedbackform,setIsfeedbackform] = useState(true);
   
     // Handle Search
     const handleSearch = (event) => {
@@ -51,22 +53,45 @@ function ReturnedDocuments() {
       setFilteredData(filtered);
     };
 
-  const handleViewDocument = (row) => {
+  const handleViewDocument = async (row) => {
     console.log("Handle Review Document : ",row);
-    // navigate("/dashboard/reviewDocument", { state: { document: row } });
+    await addDocumentLog(user.UserId, row.DocumentId, "Returned Document Viewed");
+    navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
   const handleViewFeedbacks= async(document)=>{
+    setIsfeedbackform(false);
     setAlertHeading("Document Feedback");
     setAlertDescription(
       <>
         <span className="font-bold">{document.DocumentName} </span>
       </>
     );
+    
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
     setAlertBtnText2("Cancel");
     modalRef.current.click();
     console.log("Clicked on view feedback");
+  }
+
+  const handleSendDocumentForApproval = async (row)=>{
+    setIsfeedbackform(false);
+    setAlertHeading("Document Approval");
+    setAlertDescription(
+      <>
+        Read this <span className="font-bold">{document.DocumentName} </span> document carefully before sending it for approval. This action
+        cannot be undone!
+      </>
+    );
+    setExtraComponent(null);
+    // setAlertBtnText1("Cancel");
+    setAlertBtnText2("Ok");
+    modalRef.current.click();
+    console.log("Sending document for approval...",row);
+  }
+
+  const updateDocumentStatusToPending =()=>{
+    console.log("Updating document Status");
   }
 
 
@@ -112,6 +137,7 @@ function ReturnedDocuments() {
       cell: row => (
         <div>
           <button
+            title='view document'
             className="h-8 w-8 text-white p-1 rounded-full hover:bg-gray-200"
             onClick={() => handleViewDocument(row)}
           >
@@ -123,6 +149,13 @@ function ReturnedDocuments() {
             onClick={() => handleViewFeedbacks(row)}
           >
             <i className="fas fa-comments text-xs text-gray-500 hover:text-gray-600"></i>
+          </button>
+          <button
+            title='resend for approval'
+            className="h-8 w-8 text-white p-1 rounded-full hover:bg-gray-200"
+            onClick={() => handleSendDocumentForApproval(row)}
+          >
+            <i className="fa-solid fa-paper-plane text-xs text-green-500 hover:text-green-600"></i>
           </button>
         </div>
       ),
@@ -149,6 +182,7 @@ function ReturnedDocuments() {
         modalRef={modalRef}
         heading={alertHeading}
         description={alertDescription}
+        feedbackform={isfeedbackform}
         btnText2={alertBtnText2}
         extraComponent={extraComponent}
       />

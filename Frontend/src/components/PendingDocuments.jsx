@@ -7,7 +7,7 @@ import SearchBox from './SearchBox';
 
 function PendingDocuments() {
   const {user} = useContext(userContext);
-  const { documents,getPendingDocumentsForUserByUserId } = useContext(DocumentContext); // Get documents from the context
+  const { documents,getPendingDocumentsForUserByUserId,addDocumentLog } = useContext(DocumentContext); // Get documents from the context
   const [pendingDocuments, setPendingDocuments] = useState([]);
   const navigate = useNavigate();
 
@@ -43,9 +43,10 @@ function PendingDocuments() {
     };
   
 
-  const handleViewDocument = (row) => {
+  const handleViewDocument = async (row) => {
     console.log("Handle Review Document : ",row);
-    // navigate("/dashboard/reviewDocument", { state: { document: row } });
+    await addDocumentLog(user.UserId, row.DocumentId, "Pending Document Viewed");
+    navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
   // Columns definition for the DataTable

@@ -140,7 +140,7 @@ function ReviewDocuments() {
       </>
     );
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
-    setAlertBtnText1("Cancel");
+    setAlertBtnText1("Ok");
     modalRef.current.click();
   }
 

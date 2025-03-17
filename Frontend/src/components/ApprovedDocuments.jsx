@@ -9,7 +9,7 @@ import SearchBox from './SearchBox';
 
 function ApprovedDocuments() {
   const {user} = useContext(userContext);
-  const { documents,getApprovedDocumentsForUserByUserId ,dispatchDocument} = useContext(DocumentContext); // Get documents from the context
+  const { documents,getApprovedDocumentsForUserByUserId ,dispatchDocument,addDocumentLog} = useContext(DocumentContext); // Get documents from the context
   const [approvedDocuments, setApprovedDocuments] = useState([]);
   const navigate = useNavigate();
 
@@ -52,10 +52,11 @@ function ApprovedDocuments() {
       setFilteredData(filtered);
     };
 
-  const handleViewDocument = (row) => {
+  const handleViewDocument = async (row) => {
     // Navigate to the DocumentDetails component with the selected document
     // history.push(`/document-details/${documentId}`);
     console.log("Handle Review Document : ",row);
+    await addDocumentLog(user.UserId, row.DocumentId, "Approved Document Viewed");
     navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 

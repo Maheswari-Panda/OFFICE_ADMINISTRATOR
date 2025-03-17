@@ -265,6 +265,20 @@ const DocumentState = (props) => {
     }
   };
 
+  const updateAttachedDocument = async (
+    DocumentId,
+    AttachedDocumentPath
+  ) => {
+    try {
+      const response = await axios.put(`${host}/api/attachedDocument/update/${DocumentId}`,{attachedDocumentPath: AttachedDocumentPath});
+      const json = await response.data;
+      console.log(json);
+      return json;
+    } catch (error) {
+      console.log("error in updating attached document", error);
+    }
+  };
+
   // Status
   const getStatusById= async(statusId)=>{
     try{
@@ -547,7 +561,8 @@ const DocumentState = (props) => {
         getReturnedDocumentsForUserByUserId,
         dispatchDocument,
         updateDocument,
-        getAttachedDocument
+        getAttachedDocument,
+        updateAttachedDocument
       }}
     >
       {props.children}

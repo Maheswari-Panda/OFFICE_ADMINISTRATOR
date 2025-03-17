@@ -9,7 +9,8 @@ exports.getUserLogById = async (userId) => {
     const result = await pool
       .request()
       .input("UserId", sql.Int, userId)
-      .execute("GetUserLogById"); // Assuming the stored procedure is named GetUserById
+      .execute("GetCombinedUserLogs"); // Assuming the stored procedure is named GetUserById
+      // .execute("GetUserLogById"); // Assuming the stored procedure is named GetUserById
     return result.recordset; // Return the user details
   } catch (err) {
     console.error("Error in GetUserLogById:", err);
