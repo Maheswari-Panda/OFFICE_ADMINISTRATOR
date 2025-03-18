@@ -9,8 +9,9 @@ import SearchBox from './SearchBox';
 
 function ReturnedDocuments() {
   const {user} = useContext(userContext);
-  const { documents,getReturnedDocumentsForUserByUserId,addDocumentLog} = useContext(DocumentContext); // Get documents from the context
+  const { documents,getReturnedDocumentsForUserByUserId,addDocumentLog,resendDocumentForApproval,addFeedback} = useContext(DocumentContext); // Get documents from the context
   const [returnedDocuments, setReturnedDocuments] = useState([]);
+  const [documentToResend,setDocumentToResend] = useState(null);
   const navigate = useNavigate();
 
       const modalRef = useRef();
@@ -69,30 +70,46 @@ function ReturnedDocuments() {
     );
     
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
-    setAlertBtnText2("Cancel");
+    setAlertBtnText1("");
+    setAlertBtnText2("Close");
     modalRef.current.click();
     console.log("Clicked on view feedback");
   }
 
   const handleSendDocumentForApproval = async (row)=>{
-    setIsfeedbackform(false);
-    setAlertHeading("Document Approval");
+    setDocumentToResend(row);
+    setIsfeedbackform(true);
+    setAlertHeading("Send Document For Approval");
     setAlertDescription(
       <>
-        Read this <span className="font-bold">{document.DocumentName} </span> document carefully before sending it for approval. This action
+        Read this <span className="font-bold">{row.DocumentName} </span> document carefully before sending it for approval. This action
         cannot be undone!
       </>
     );
     setExtraComponent(null);
-    // setAlertBtnText1("Cancel");
-    setAlertBtnText2("Ok");
+    setAlertBtnText1("Cancel");
+    setAlertBtnText2("Resend Document");
     modalRef.current.click();
     console.log("Sending document for approval...",row);
   }
 
-  const updateDocumentStatusToPending =()=>{
-    console.log("Updating document Status");
-  }
+  const onClickResendDocument = async (feedback) => {
+    const response = await resendDocumentForApproval(
+      documentToResend.DocumentId,
+      "Resend for Approval"
+    );
+    if (response) {
+      if (feedback) {
+        await addFeedback(documentToResend.DocumentId, feedback, documentToResend.SenderId);
+        alert("Document sent for approval with Feedback successfully");
+      } else {
+        alert("Document sent for approval without feedback!");
+      }
+      getAllDocuments();
+    } else {
+      alert("Error re-sending document for approval");
+    }
+  };
 
 
   // Columns definition for the DataTable
@@ -183,7 +200,9 @@ function ReturnedDocuments() {
         heading={alertHeading}
         description={alertDescription}
         feedbackform={isfeedbackform}
+        btnText1={alertBtnText1}
         btnText2={alertBtnText2}
+        onClickBtn={onClickResendDocument}
         extraComponent={extraComponent}
       />
     </div>

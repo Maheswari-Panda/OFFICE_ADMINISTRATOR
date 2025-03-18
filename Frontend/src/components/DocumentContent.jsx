@@ -173,7 +173,7 @@ function DocumentContent() {
     );
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
     setAlertBtnText1("");
-    setAlertBtnText2("Ok");
+    setAlertBtnText2("Cencel");
     modalRef.current.click();
   }
 
@@ -256,18 +256,25 @@ function DocumentContent() {
         cell: (row) => (
           <div className="flex space-x-2">
             <button
-              title="view document details"
+              title="view/edit document details"
               className="p-1 text-green-500 hover:text-green-600"
               onClick={() => handleRowClick(row)}
             >
               <i className="fas fa-eye"></i>
             </button>
-            <button
+            {/* <button
               title="edit document"
               className="p-1 text-blue-500 hover:text-blue-700"
               onClick={() => handleRowClick(row)}
             >
               <i className="fas fa-edit"></i>
+            </button> */}
+            <button
+            title="view feedbacks"
+              className="p-1 text-blue-500 hover:text-blue-700"
+              onClick={() => handleFeedbackModal(row)}
+            >
+              <i className="fas fa-comments"></i>
             </button>
             <button
             title="view document logs"
@@ -277,13 +284,6 @@ function DocumentContent() {
               <i className="fas fa-file"></i>
             </button>
             <button
-            title="view feedbacks"
-              className="p-1 text-pink-500 hover:text-pink-700"
-              onClick={() => handleFeedbackModal(row)}
-            >
-              <i className="fas fa-comments"></i>
-            </button>
-            <button
             title="download document"
               className="p-1 text-black hover:text-black"
               onClick={() => handleDownload(row)}
@@ -291,6 +291,7 @@ function DocumentContent() {
               <i className="fas fa-download"></i>
             </button>
             <button
+            hidden={user.Role.toLowerCase()==="user"}
             title="delete document"
               className="p-1 text-red-500 hover:text-red-700"
               onClick={() => handleDeleteModal(row)}

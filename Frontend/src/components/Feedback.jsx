@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import DocumentContext from "../context/document/documentContext";
+import userContext from "../context/user/userContext";
 
 const Feedback = ({ documentId }) => {
   const { getFeedBacksByDocumentId } = useContext(DocumentContext);
+  const {user} = useContext(userContext);
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
@@ -16,30 +18,32 @@ const Feedback = ({ documentId }) => {
   }, [documentId]);
 
   return (
-    <div className="p-2 w-full flex justify-start items-start"> {/* Align content to the left */}
-    <ul className="timeline timeline-vertical w-fit !ml-0"> {/* Ensure no left margin */}
-      {feedbacks.length > 0 ? (
-        feedbacks.map((feedback, index) => (
-          <li key={index} className="items-start">
-            <div className="timeline-start text-xs text-gray-500 w-fit"> {/* Prevent expansion */}
-              {new Date(feedback.DateTime).toLocaleDateString()}
-              <br />
-              {new Date(feedback.DateTime).toLocaleTimeString()}
-            </div>
-            <div className="timeline-middle">
-              <i className="fas fa-circle-check text-blue-500"></i>
-            </div>
-            <div className="timeline-end timeline-box rounded hover:bg-gray-200 transition duration-300">
-              <p className="text-sm">{feedback.FeedbackDescription}</p>
-            </div>
-            <hr />
-          </li>
-        ))
-      ) : (
-        <p className="text-gray-400 text-sm">No feedback available.</p>
-      )}
-    </ul>
-  </div>
+    <div className="p-2 w-full flex flex-col gap-4 max-h-60 overflow-y-scroll">
+  {feedbacks.length > 0 ? (
+    feedbacks.map((feedback, index) => (
+      <div key={index} className={`chat ${feedback.SenderId === user.UserId ? 'chat-end' : 'chat-start'}`}>
+        <div className="chat-image avatar">
+          <div className="w-10 rounded-full">
+            <img
+              alt="User Avatar"
+              src={feedback.SenderProfileImageUrl}
+            />
+          </div>
+        </div>
+        <div className="chat-header">
+          {feedback.SenderName}
+          <time className="text-xs opacity-50 ml-1">
+            {new Date(feedback.DateTime).toLocaleTimeString()}
+          </time>
+        </div>
+        <div className="chat-bubble">{feedback.FeedbackDescription}</div>
+        <div className="chat-footer opacity-50">{new Date(feedback.DateTime).toLocaleDateString()}</div>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-400 text-sm">No feedback available.</p>
+  )}
+</div>
   
 
   );

@@ -79,11 +79,13 @@ function ReviewDocuments() {
 
 
   const handleViewDocument = async (row) => {
-    await addDocumentLog(user.UserId, row.DocumentId, "Pending Document Viewed");
+    await addDocumentLog(user.UserId, row.DocumentId, `${activeTab} Document Viewed`);
     navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
   const handleApproveDocument = async (document) => {
+    setIsfeedbackform(true);
+    setExtraComponent(null);
     setDocumentToApprove(document);
     setDocumentToReturn([]);
     setAlertHeading("Approve Document");
@@ -105,7 +107,7 @@ function ReviewDocuments() {
     );
     if (response) {
       if (feedback) {
-        await addFeedback(documentToApprove.DocumentId, feedback, documentToApprove.ReceiverId);
+        await addFeedback(documentToApprove.DocumentId, feedback, documentToApprove.CreatedByUserId);
         alert("Document approved with Feedback successfully");
       } else {
         alert("Document Approved without feedback!");
@@ -117,6 +119,8 @@ function ReviewDocuments() {
   };
 
   const handleReturnDocument = (document) => {
+    setIsfeedbackform(true);
+    setExtraComponent(null);
     setDocumentToReturn(document);
     setDocumentToApprove([]);
     setAlertHeading("Return Document");
@@ -140,7 +144,8 @@ function ReviewDocuments() {
       </>
     );
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
-    setAlertBtnText1("Ok");
+    setAlertBtnText1("");
+    setAlertBtnText2("Close");
     modalRef.current.click();
   }
 
@@ -151,7 +156,7 @@ function ReviewDocuments() {
     );
     if (response) {
       if (feedback) {
-        await addFeedback(documentToReturn.DocumentId, feedback, documentToReturn.ReceiverId);
+        await addFeedback(documentToReturn.DocumentId, feedback, documentToReturn.CreatedByUserId);
         alert("Document returned with Feedback successfully");
       } else {
         alert("Document Returned without feedback!");

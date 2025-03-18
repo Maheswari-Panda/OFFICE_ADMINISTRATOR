@@ -94,7 +94,7 @@ function ApprovedDocuments() {
       </>
     );
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
-    setAlertBtnText2("Cancel");
+    setAlertBtnText2("Close");
     modalRef.current.click();
     console.log("Clicked on view feedback");
   }

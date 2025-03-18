@@ -12,27 +12,15 @@ function CreateDocument() {
         <img src="https://upload.wikimedia.org/wikipedia/en/b/bf/Msu_baroda_logo.png" alt="MSU LOGO" width="130" height="130" style="margin-right: 20px;">
         <div>
           <h2 style="text-align: right;"><strong style="font-family: &quot;Times New Roman&quot;, Times, serif;">THE MAHARAJA SAYAJIRAO UNIVERSITY OF BARODA</strong></h2>
-          <h3 style="text-align: right;"><span style="font-family: &quot;Times New Roman&quot;, Times, serif;"><strong>COMPUTER CENTER<br></strong></span>Pratapgunj, Msu Main Campus<br>Vadodara - 39001 (India)<br>Telephone No.&nbsp;0265-2795518</h3>
+          <h3 style="text-align: right;"><span style="font-family: &quot;Times New Roman&quot;, Times, serif;"><strong>COMPUTER CENTRE<br></strong></span>Pratapgunj, Msu Main Campus<br>Vadodara - 39001 (India)<br>Telephone No.&nbsp;0265-2795518</h3>
         </div>
       </div>
       <hr style="border: 1px solid #000;">
       <p style="text-align: justify; line-height: 1.6; margin-top: 20px;">
-        Dear Maheswari Panda, </p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;">We are pleased to offer you the opportunity to join <strong><em>Msu Computer Center</em></strong> as an Intern in the Web Application Management Department for a period of four months, from <em>16th January 2025</em> to <em>25th April 2025</em>. This internship is designed to provide you with hands-on experience and exposure to real-world projects that align with your academic background and career aspirations. </p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;">As an intern, your primary responsibilities will include assisting with projects, conducting research, collaborating with teams, etc. You will be working closely with our experienced professionals, who will guide and mentor you throughout the internship to enhance your learning and skill development. </p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;">The internship will be unpaid. You are expected to dedicate <em>8-9 hours</em> per week and adhere to the company's work schedule. Additionally, you must comply with all company policies, maintain confidentiality, and actively participate in assigned tasks and training sessions. </p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;">At the end of the internship, you will receive an Internship Completion Certificate, along with valuable insights and feedback that will help you in your professional journey. Outstanding interns may also be considered for future employment opportunities with <strong><em>Msu Computer Center</em></strong>. </p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;">Please review the attached document outlining further details regarding the terms and conditions of your internship. If you accept this offer, kindly sign and return a copy of this letter by&nbsp;<strong><em>12th January 2025</em></strong>. Should you have any questions, feel free to reach out to us. </p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;">We are excited to welcome you to our team and look forward to a productive and enriching internship experience together!</p><p style="text-align: justify; line-height: 1.6; margin-top: 20px;"><br></p><hr><p><em style="font-family: &quot;Times New Roman&quot;, Times, serif; background-color: rgb(255, 255, 255); font-size: 14px; color: rgb(183, 183, 183);">DIGITALY SIGNED BY MSU COPUTER CENTER</em><br></p>
+        Start Writing here...
+      </p>
     </div>
 `);
-{/* <div style="padding: 20px; margin: 20px; width: auto; max-width: 100%;">
-<div style="display: flex; align-items: center; justify-content:space-around; margin-bottom: 20px;">
-  <img src="https://upload.wikimedia.org/wikipedia/en/b/bf/Msu_baroda_logo.png" alt="MSU LOGO" width="130" height="130" style="margin-right: 20px;">
-  <div>
-    <h2 style="text-align: right;"><strong style="font-family: &quot;Times New Roman&quot;, Times, serif;">THE MAHARAJA SAYAJIRAO UNIVERSITY OF BARODA</strong></h2>
-    <h3 style="text-align: right;"><span style="font-family: &quot;Times New Roman&quot;, Times, serif;"><strong>COMPUTER CENTER<br></strong></span>Pratapgunj, Msu Main Campus<br>Vadodara - 39001 (India)<br>Telephone No.&nbsp;0265-2795518</h3>
-  </div>
-</div>
-<hr style="border: 1px solid #000;">
-<p style="text-align: justify; line-height: 1.6; margin-top: 20px;">
-  Start writing your document here...
-</p>
-</div>   */}
   
   const navigate = useNavigate();
   const {uploadDocument}=useContext(DocumentContext);

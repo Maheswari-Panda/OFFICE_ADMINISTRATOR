@@ -426,6 +426,27 @@ const DocumentState = (props) => {
       }
     };
 
+    const resendDocumentForApproval = async (documentId,action) => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axios.post(
+          `${host}/api/document/resend_for_approval/${documentId}`,
+          {action},
+          { 
+            headers: {
+              accessToken: `${accessToken}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Error resending document for approval:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
     const addFeedback = async (documentId,feedbackDescription,receiverId) => {
       try {
         const accessToken = localStorage.getItem("accessToken");
@@ -562,7 +583,8 @@ const DocumentState = (props) => {
         dispatchDocument,
         updateDocument,
         getAttachedDocument,
-        updateAttachedDocument
+        updateAttachedDocument,
+        resendDocumentForApproval
       }}
     >
       {props.children}

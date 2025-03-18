@@ -50,8 +50,7 @@ function DocumentDetails({ document }) {
         const attachedDoc = await Promise.all([
           getAttachedDocument(document.DocumentId),
         ]);
-        console.log(attachedDoc[0].AttachedDocumentPath);
-        if (attachedDoc[0] !== undefined) {
+        if (attachedDoc && attachedDoc[0] !== undefined) {
           setAttachedDocumentPath(attachedDoc[0].AttachedDocumentPath);
         } else {
           setAttachedDocumentPath(null);

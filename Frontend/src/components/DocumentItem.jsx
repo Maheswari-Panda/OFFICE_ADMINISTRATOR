@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import DocumentPreview from "./DocumentPreview";
 import { useNavigate } from "react-router-dom";
 import DocumentContext from "../context/document/documentContext";
+import userContext from "../context/user/userContext";
 
 function DocumentItem(props) {
+  const {user} = useContext(userContext);
   const {document,onSelect,handleDeleteModal,handleFeedbackModal,handleDownload} = props;
   const {getDocumentLogsByDocumentId}=useContext(DocumentContext);
   const navigate = useNavigate();
@@ -65,11 +67,11 @@ function DocumentItem(props) {
                 <div tabIndex={0} role="button" className="cursor-pointer"><i className="fa-solid fa-ellipsis-vertical"></i></div>
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                   <li className="text-black" onClick={handleRowClick}><a> <i className="fas fa-eye text-blue-500"></i> View Details</a></li>
-                  <li className="text-black"><a> <i className="fas fa-edit text-blue-500"></i> Edit</a></li>
-                  <li className="text-black" onClick={handleDocumentLogView}><div> <i className="fas fa-file text-blue-500"></i> View Logs</div></li>
+                  {/* <li className="text-black"><a> <i className="fas fa-edit text-blue-500"></i> Edit</a></li> */}
                   <li className="text-black" onClick={()=>handleFeedbackModal(document)}><a> <i className="fas fa-comments text-blue-500"></i> Feedbacks</a></li>
+                  <li className="text-black" onClick={handleDocumentLogView}><div> <i className="fas fa-file text-blue-500"></i> View Logs</div></li>
                   <li className="text-black" onClick={()=>handleDownload(document)}><a><i className="fa-solid fa-download text-blue-500"></i>Download</a></li>
-                  <li className="text-black" onClick={()=>handleDeleteModal(document)}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>
+                  {user.Role.toLowerCase()!=="user" && <li className="text-black" onClick={()=>handleDeleteModal(document)}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>}
                 </ul>
               </div>
             </div>
