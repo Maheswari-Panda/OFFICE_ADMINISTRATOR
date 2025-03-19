@@ -422,4 +422,24 @@ router.post("/dispatch/:documentId", fetchUser, async (req, res) => {
   }
 });
 
+// Get all documents
+router.post("/get_next_outward_document_serial_number/:officeId", async (req, res) => {
+  try {
+    const offieId = req.params.officeId;
+    const response =
+      await documentModel.getNextUpcomingOutwardDocumentSerialNumber(
+        offieId
+      ); // Call the getAllDocuments model function
+    res.status(200).json(response); // Return the list of documents
+  } catch (err) {
+    res
+      .status(500)
+      .json({
+        error:
+          "An error occurred while fetching next upcoming outward document serial number for given office Id",
+        details: err.message,
+      });
+  }
+});
+
 module.exports = router;

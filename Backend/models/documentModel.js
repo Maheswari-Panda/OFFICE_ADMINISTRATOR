@@ -290,3 +290,17 @@ exports.getCompleteDocumentReport = async (startDate,endDate) => {
         throw err;
     }
 };
+
+exports.getNextUpcomingOutwardDocumentSerialNumber = async (officeId) => {
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('OfficeId', sql.SmallInt, officeId)
+            .execute('GetNextUpcomingOutwardDocumentSerialNumber');
+
+        return result.recordset;
+    } catch (err) {
+        console.error('Error getting next upcoming document serial number:', err);
+        throw err;
+    }
+};

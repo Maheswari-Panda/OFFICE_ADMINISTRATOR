@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const config = require('./config/db');
 require('dotenv').config({ path: '../Backend/.env.local' });
@@ -11,6 +12,7 @@ app.use(cors(
 ));
 app.use(express.json());
 const path = require('path');
+app.use(bodyParser.json({ limit: '10mb' }));
 
 app.use('/api/user',require('./routes/user'))
 app.use('/api/office',require('./routes/office'))
@@ -22,6 +24,7 @@ app.use('/api/userLog',require('./routes/userLog'))
 app.use('/api/report',require('./routes/report'))
 app.use('/api/documentLog',require('./routes/documentLog'))
 app.use('/api/feedback',require('./routes/feedback'))
+app.use('/api/generatePdf',require('./routes/generatePdf'))
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

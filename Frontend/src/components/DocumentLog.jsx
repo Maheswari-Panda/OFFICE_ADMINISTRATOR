@@ -11,7 +11,24 @@ function DocumentLog() {
   const columns = [
     {
       name: "Srno.",
-      selector: (row, index ) => index + 1,
+      selector: (row,index ) => index + 1 || row,
+      sortable: true,
+      width: "80px"
+    },
+    {
+      name: "I/O",
+      selector: (row) => (row.IsInward===false?"Inward":"Outward"),
+      sortable: true,
+      width:"100px",
+    },
+    {
+      name: "Documnet No.",
+      selector: (row ) => row?.DocumentSerialNumber || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Documnet Name",
+      selector: (row ) => row?.DocumentName || "N/A",
       sortable: true,
     },
     {

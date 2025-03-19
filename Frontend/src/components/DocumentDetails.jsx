@@ -16,7 +16,7 @@ import userContext from "../context/user/userContext";
 
 function DocumentDetails({ document }) {
   const location = useLocation();
-  document = document === undefined ? location.state.document : document;
+  document = (document === undefined ? location.state.document : document);
 
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);

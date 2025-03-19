@@ -1,0 +1,11 @@
+.jodit-wysiwyg {
+    width: 793px !important;
+    min-height: 1122px !important;
+    max-height: 1122px !important;
+    overflow:initial;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    background: white !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1) !important;
+    box-sizing: border-box !important;
+}
