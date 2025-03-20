@@ -6,6 +6,7 @@ import userContext from "../context/user/userContext";
 import ModalAlert from "./ModalAlert";
 import Feedback from "./feedback";
 import SearchBox from "./SearchBox";
+import Spinner from "./Spinner";
 
 function ReviewDocuments() {
   const {
@@ -35,6 +36,8 @@ function ReviewDocuments() {
   const [documentToReturn, setDocumentToReturn] = useState([]);
   const [isfeedbackform,setIsfeedbackform] = useState(true);
 
+  const [loading,setLoading] = useState(true);
+
   useEffect(() => {
     const fetchDocuments = async () => {
       const statusMap = {
@@ -49,6 +52,9 @@ function ReviewDocuments() {
       if (docs) {
         setFilteredDocuments(docs);
         setFilteredData(docs);
+        setTimeout(()=>{ 
+        setLoading(false);
+        },500);
       }
     };
   
@@ -101,20 +107,57 @@ function ReviewDocuments() {
   };
 
   const onClickApproveDocument = async (feedback) => {
+    setLoading(true);
     const response = await approveDocument(
       documentToApprove.DocumentId,
       "Document Approved"
     );
     if (response) {
+      setLoading(false);
       if (feedback) {
         await addFeedback(documentToApprove.DocumentId, feedback, documentToApprove.CreatedByUserId);
-        alert("Document approved with Feedback successfully");
+        setIsfeedbackform(false);
+        setExtraComponent(null);
+        setAlertHeading("Document Approved");
+        setAlertDescription(
+          <>
+            Document <span className="font-bold">{document.DocumentName} </span> has been approved with feeddback successfully!.
+          </>
+        );
+        setAlertBtnText1("");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+        // alert("Document approved with Feedback successfully");
       } else {
-        alert("Document Approved without feedback!");
+        setIsfeedbackform(false);
+        setExtraComponent(null);
+        setAlertHeading("Document Approved");
+        setAlertDescription(
+          <>
+            Document <span className="font-bold">{document.DocumentName} </span> has been approved without feeddback successfully!.
+          </>
+        );
+        setAlertBtnText1("");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+        // alert("Document Approved without feedback!");
       }
       getAllDocuments();
     } else {
-      alert("Error approving document");
+      
+      setLoading(false);
+        setIsfeedbackform(false);
+        setExtraComponent(null);
+        setAlertHeading("Error Approving Document!");
+        setAlertDescription(
+          <>
+            Document <span className="font-bold">{document.DocumentName} </span> occurs some error while approving!.
+          </>
+        );
+        setAlertBtnText1("");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+      // alert("Error approving document");
     }
   };
 
@@ -150,20 +193,56 @@ function ReviewDocuments() {
   }
 
   const onClickReturnDocument = async (feedback) => {
+    setLoading(true);
     const response = await returnDocument(
       documentToReturn.DocumentId,
       "Document Returned"
     );
     if (response) {
+      setLoading(false);
       if (feedback) {
         await addFeedback(documentToReturn.DocumentId, feedback, documentToReturn.CreatedByUserId);
-        alert("Document returned with Feedback successfully");
+        setIsfeedbackform(false);
+        setExtraComponent(null);
+        setAlertHeading("Document Returned");
+        setAlertDescription(
+          <>
+            Document <span className="font-bold">{document.DocumentName} </span> has been returned with feeddback successfully!.
+          </>
+        );
+        setAlertBtnText1("");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+        // alert("Document returned with Feedback successfully");
       } else {
-        alert("Document Returned without feedback!");
+        setIsfeedbackform(false);
+        setExtraComponent(null);
+        setAlertHeading("Document Returned");
+        setAlertDescription(
+          <>
+            Document <span className="font-bold">{document.DocumentName} </span> has been returned without feeddback successfully!.
+          </>
+        );
+        setAlertBtnText1("");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+        // alert("Document Returned without feedback!");
       }
       getAllDocuments();
     } else {
-      alert("Error in Returning Document");
+      setLoading(false);
+      setIsfeedbackform(false);
+        setExtraComponent(null);
+        setAlertHeading("Error Returning Document");
+        setAlertDescription(
+          <>
+            Document <span className="font-bold">{document.DocumentName} </span> occurs some errors while returning the document!.
+          </>
+        );
+        setAlertBtnText1("");
+        setAlertBtnText2("Ok");
+        modalRef.current.click();
+      // alert("Error in Returning Document");
     }
   };
 
@@ -247,6 +326,9 @@ function ReviewDocuments() {
 
   return (
     <div className="min-h-screen bg-blue-100 p-4 w-full">
+      {loading && <Spinner/>}
+       {!loading && 
+       <>
        <div className="flex justify-between items-center p-2">
         <h2 className="text-blue-500 text-2xl font-bold mb-4">Review Documents</h2>
         {/* Reusable Search Box */}
@@ -274,7 +356,8 @@ function ReviewDocuments() {
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <DataTable columns={columns} data={filteredData} pagination highlightOnHover />
       </div>
-
+      </>
+    }
       {/* Modal Alert */}
       <ModalAlert
         modalRef={modalRef}

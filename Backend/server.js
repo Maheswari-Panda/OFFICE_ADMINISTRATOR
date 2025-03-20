@@ -25,6 +25,7 @@ app.use('/api/report',require('./routes/report'))
 app.use('/api/documentLog',require('./routes/documentLog'))
 app.use('/api/feedback',require('./routes/feedback'))
 app.use('/api/generatePdf',require('./routes/generatePdf'))
+app.use('/api/digitalSign',require('./routes/digitalSign'))
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

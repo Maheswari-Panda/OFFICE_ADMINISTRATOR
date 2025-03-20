@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import DataTable from "react-data-table-component";
 import SearchBox from "./SearchBox";
+import userContext from "../context/user/userContext";
+import DocumentContext from "../context/document/documentContext";
+import { useNavigate } from "react-router-dom";
 
 const DocumentActivity = ({documentLogs}) => {
     // console.log(documentLogs);
+    const navigate = useNavigate();
+    const {user} = useContext(userContext);
+    const {addDocumentLog} = useContext(DocumentContext);
     const [searchText, setSearchText] = useState("");
     const [filteredData, setFilteredData] = useState(documentLogs);
+
+    const handleViewDocument = async (row) => {
+      await addDocumentLog(user.UserId, row.DocumentId, `Document Viewed`);
+      navigate("/dashboard/reviewDocument", { state: { document: row } });
+    };
   
     // Handle Search
     const handleSearch = (event) => {
@@ -43,8 +54,13 @@ const DocumentActivity = ({documentLogs}) => {
     },
     {
       name: "Document Name",
-      selector: (row) => (row.DocumentName),
+      selector: (row) => row.DocumentName,
       sortable: true,
+      cell: (row) => (
+        <span onClick={() => handleViewDocument(row)} className="hover:underline cursor-pointer">
+          {row.DocumentName}
+        </span>
+      )
     },
     {
       name: "User Name",

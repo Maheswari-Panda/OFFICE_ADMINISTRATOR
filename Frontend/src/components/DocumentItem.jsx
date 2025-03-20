@@ -22,7 +22,7 @@ function DocumentItem(props) {
 
 
   return (
-    <div className='lg:w-1/5 md:w-1/2 p-2'>
+    <div className='lg:w-1/5 md:w-1/2 max-sm:w-full p-2'>
       <div className='shadow-md border-2 border-gray-200 bg-white rounded-lg  hover:shadow-lg hover:border-blue-500 transition duration-300 group'>
         <div className='block relative h-32 rounded-t-lg overflow-hidden cursor-pointer' onClick={() => onSelect(document)}>
           {/* Badge */}

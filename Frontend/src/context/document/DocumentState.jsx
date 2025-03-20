@@ -385,7 +385,7 @@ const DocumentState = (props) => {
       const response = await axios.get(
         `${host}/api/documentLog/get_by_office/${officeId}`
       );
-      console.log(response);
+      // console.log(response);
       // Return the document log details
       return response.data;
     } catch (error) {

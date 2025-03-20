@@ -190,6 +190,12 @@ function DocumentContent() {
         width: "80px"
       },
       {
+        name: "DSRNo.",
+        selector: (row) => row?.DocumentSerialNumber || "N/A",
+        sortable: true,
+        width:"150px",
+      },
+      {
         name: "Inward/Outward",
         selector: (row) => (
           <span>
@@ -228,11 +234,6 @@ function DocumentContent() {
       {
         name: "Type",
         selector: (row) => row?.DocumentTypeName || "N/A",
-        sortable: true,
-      },
-      {
-        name: "Letter Srno",
-        selector: (row) => row?.LetterSerialNumber || "N/A",
         sortable: true,
       },
       {

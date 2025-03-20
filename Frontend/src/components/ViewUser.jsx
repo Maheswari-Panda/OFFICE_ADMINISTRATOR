@@ -6,6 +6,7 @@ import YearlyCalendar from "./YearlyCalander";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserActivity from "./UserActivity";
 import Spinner from "./Spinner";
+import ModalAlert from "./ModalAlert";
 
 function ViewUser() {
   const location= useLocation();
@@ -19,7 +20,13 @@ function ViewUser() {
   const [isOldImage, setIsOldImage] = useState(true);
   
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
+  const [alertHeading,setAlertHeading]=useState("");
+  const [alertDescription,setAlertDescription]=useState("");
+  const [alertBtnText2,setAlertBtnText2] = useState("Ok");
+  const modalRef=useRef();
+  
   
   const [userLogs,setUserLogs]=useState([]);
   const {getUserLogs}=context;
@@ -69,6 +76,7 @@ function ViewUser() {
       office: Yup.string().required("Office is required"),
     }),
     onSubmit: async (values) => {
+      setIsUpdatingUser(true);
       setIsEditing(false);
       try {
         let uploadedImageUrl = imageUrl;
@@ -105,14 +113,26 @@ function ViewUser() {
         // console.log(response);
         // console.log(uploadedImageUrl);
         if(response){
-          alert("User updated successfully!");
+          setIsUpdatingUser(false);
+          setAlertHeading("User Info Updated");
+          setAlertDescription("User Info updated successfully!");
+          modalRef.current.click();
+          // alert("User updated successfully!");
         }
         else{
-          alert("Null Response while upadating user");
+          setIsUpdatingUser(false);
+          setAlertHeading("Error Updating User Info");
+          setAlertDescription("Null Response while upadating user!");
+          modalRef.current.click();
+          // alert("Null Response while upadating user");
         }
       } catch (error) {
+        setIsUpdatingUser(false);
+        setAlertHeading("Error Updating User Info");
+        setAlertDescription("Error updating user: "+ error);
+        modalRef.current.click();
         console.error("Error updating user:", error);
-        alert("Error updating user");
+        // alert("Error updating user");
       }
     },
   });
@@ -133,7 +153,8 @@ function ViewUser() {
       </button>
       {/* Profile Card */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
-        <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
+        {isUpdatingUser && <Spinner/>}
+        {!isUpdatingUser && <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -337,6 +358,7 @@ function ViewUser() {
             </div>
           </form>
         </div>
+      }
 
         <div className="p-2 border-2 rounded-md border-dashed border-gray-300 w-1/2 h-auto">
           {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
@@ -345,6 +367,13 @@ function ViewUser() {
       <div className="flex">
           <YearlyCalendar userLog={userLogs} />
       </div>
+
+      <ModalAlert
+        modalRef={modalRef}
+        heading={alertHeading}
+        description={alertDescription}
+        btnText2={alertBtnText2}
+      />
     </div>
   );
 }

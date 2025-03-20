@@ -5,6 +5,7 @@ import userContext from "../context/user/userContext";
 import YearlyCalendar from "./YearlyCalander";
 import UserActivity from "./UserActivity";
 import Spinner from "./Spinner";
+import ModalAlert from "./ModalAlert";
 
 function UserProfile() {
 
@@ -16,7 +17,13 @@ function UserProfile() {
   const [isOldImage, setIsOldImage] = useState(true);
   
   const [isLoading, setIsLoading] = useState(true);
+  const [isProfileUpdating,setIsProfileUpdating] = useState(false);
 
+  
+    const [alertHeading,setAlertHeading]=useState("");
+    const [alertDescription,setAlertDescription]=useState("");
+    const [alertBtnText2,setAlertBtnText2] = useState("Ok");
+    const modalRef=useRef();
   
   const [userLogs,setUserLogs]=useState([]);
   const {getUserLogs}=context;
@@ -64,6 +71,7 @@ function UserProfile() {
       office: Yup.string().required("Office is required"),
     }),
     onSubmit: async (values) => {
+      setIsProfileUpdating(true);
       setIsEditing(false);
       try {
         let uploadedImageUrl = imageUrl;
@@ -100,14 +108,26 @@ function UserProfile() {
         // console.log(response);
         // console.log(uploadedImageUrl);
         if(response){
-          alert("User updated successfully!");
+          setIsProfileUpdating(false);
+          setAlertHeading("Profile Updated");
+          setAlertDescription("Your Profile has been updated successfully!");
+          modalRef.current.click();
+          // alert("Profile updated successfully!");
         }
         else{
-          alert("Null Response while upadating user");
+          setIsProfileUpdating(false);
+          setAlertHeading("Error Updating Profile");
+          setAlertDescription("Null Response while upadating Profile!");
+          modalRef.current.click();
+          // alert("Null Response while upadating user");
         }
       } catch (error) {
+        setIsProfileUpdating(false);
+        setAlertHeading("Error Updating Profile Info");
+        setAlertDescription("Error updating profile: "+ error);
+        modalRef.current.click();
         console.error("Error updating user:", error);
-        alert("Error updating user");
+        // alert("Error updating user");
       }
     },
   });
@@ -116,7 +136,8 @@ function UserProfile() {
     <div className="w-full mx-auto bg-blue-100 p-4 items-start justify-center h-full">
       {/* Profile Card */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
-      <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
+      {isProfileUpdating && <Spinner/>}
+      {!isProfileUpdating && <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -318,6 +339,7 @@ function UserProfile() {
             </div>
           </form>
         </div>
+      }
 
         <div className=" border-2 rounded-md border-dashed border-gray-300 w-1/2 lg:h-165">
         {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
@@ -326,6 +348,13 @@ function UserProfile() {
       <div className="flex">
           <YearlyCalendar userLog={userLogs} />
         </div>
+
+      <ModalAlert
+        modalRef={modalRef}
+        heading={alertHeading}
+        description={alertDescription}
+        btnText2={alertBtnText2}
+      />
     </div>
   );
 }

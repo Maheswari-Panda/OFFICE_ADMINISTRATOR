@@ -9,38 +9,43 @@ import SearchBox from "./SearchBox";
 
 function AllUsers() {
   const navigate = useNavigate();
-  const {user, users, getAllUsers, deleteUser,getUsersByOfficeId } = useContext(userContext);
+  const {user,users, getAllUsers, deleteUser,getUsersByOfficeId } = useContext(userContext);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const deleteRef = useRef();
-
+  
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  
+  // Fetch users on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        if(user.Role==="Admin" || user.Role==="admin"){
-          await Promise.all([getUsersByOfficeId(user.OfficeId)]);
-        }
-        else{
-          await Promise.all([getAllUsers()]);
+        if (user.Role === "Admin" || user.Role === "admin") {
+          await getUsersByOfficeId(user.OfficeId);
+        } else {
+          await getAllUsers();
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
-        setTimeout(()=>{
+        setTimeout(() => {
           setLoading(false);
-        },100)
+        }, 100);
       }
     };
-
+  
     fetchData();
   }, []);
-
   
-  const [searchText, setSearchText] = useState("");
-  const [filteredData, setFilteredData] = useState(users);
-
+  // 👇 Listen to users update and sync with filteredData
+  useEffect(() => {
+    setFilteredData(users);
+  }, [users]);
+  
+  
   // Handle Search
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();

@@ -22,7 +22,7 @@ const UserActivity = ({ userLogs }) => {
 
   // Define table columns
   const columns = [
-    { name: "Srno.", selector: (row, index) => row?.LogTableId, sortable: true, width: "80px" },
+    { name: "Srno.", selector: (row, index) => index + 1 || row?.LogTableId, sortable: true, width: "80px" },
     { name: "Username", selector: (row) => row.UserName, sortable: true },
     {
       name: "Date & Time",

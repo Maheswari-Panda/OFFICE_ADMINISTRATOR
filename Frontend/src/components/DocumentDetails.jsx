@@ -280,6 +280,27 @@ function DocumentDetails({ document }) {
             )}
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Document Serial Number
+            </label>
+            <input
+              type="text"
+              name="DocumentSerialNumber"
+              id="documentSerialNumber"
+              className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
+              value={document.DocumentSerialNumber}
+              readOnly
+            />
+
+            {formik.errors.LetterSerialNumber &&
+              formik.touched.LetterSerialNumber && (
+                <div className="text-red-500 text-xs mt-1">
+                  {formik.errors.LetterSerialNumber}
+                </div>
+              )}
+          </div>
+
           <div
             hidden={
               user.Role.toLowerCase() !== "user" ||

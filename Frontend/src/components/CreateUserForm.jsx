@@ -100,7 +100,7 @@ function CreateUserForm() {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-blue-100 w-full">
-      <div className="bg-white m-2 p-8 rounded-2xl shadow-md w-1/2">
+      <div className="bg-white m-2 p-8 rounded-2xl shadow-md lg:w-1/2">
         <h2 className="text-xl font-semibold text-start text-blue-500 mb-6">
           Create User {user.Role === "SuperAdmin" && " / Admin"}
         </h2>

@@ -5,9 +5,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import DocumentContext from "../context/document/documentContext";
 import Button from "./Button";
+import userContext from "../context/user/userContext";
 
 const ReportGenerator = () => {
   const { fetchPdfReport, fetchExcelReport } = useContext(DocumentContext); // Using the context for report fetch functions
+  const {user} = useContext(userContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [reportType, setReportType] = useState("date");

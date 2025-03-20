@@ -7,6 +7,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import DocumentViewer from "./DocumentViewer";
+import ModalAlert from "./ModalAlert";
+import Spinner from "./Spinner";
 export default function AddDocument() {
   const location = useLocation();
   const documentUrl = location.state?.documentUrl || "";
@@ -24,6 +26,12 @@ export default function AddDocument() {
   const [isLatter,setIsLatter]=useState(0); 
   const signedInUserOfficeId = user.OfficeId; // Replace with actual signed-in user's office ID
   const inputRef = useRef();
+
+  
+  const [alertHeading,setAlertHeading]=useState("");
+  const [alertDiscription,setAlertDiscription]=useState("");
+  const modalRef=useRef();
+  const [loading, setLoading] = useState(false);
 
   const getOfficeCode = (officeName) => {
     if (!officeName) return ""; // Handle cases where officeName might be empty
@@ -82,6 +90,7 @@ export default function AddDocument() {
       ReceiverId: Yup.string().required("ReceiverId is required"),
     }),
     onSubmit: async (values) =>{
+      setLoading(true);
       console.log("clicked on submit");
       console.log(values);
       try {
@@ -108,23 +117,55 @@ export default function AddDocument() {
             const AttachedDocumentResponse = await addAttachedDocument(response.message,values.AttachedDocumentPath);
             console.log(AttachedDocumentResponse);
             if (response != null && AttachedDocumentResponse!==null) {
-              alert("Document added successfully!");
-              navigate("/dashboard/content");
+              setLoading(false);
+              setTimeout(() => {
+                setAlertHeading("Document added");
+                setAlertDiscription("You can view the added document in dashboard or pending review section");
+                modalRef.current.click();
+                setTimeout(() => {
+                  navigate("/dashboard/content");
+                }, 2000);
+              }, 0);
+              // alert("Document added successfully!");
+              // navigate("/dashboard/content");
             } else {
-              alert("error in document adding");
+              setLoading(false);
+              setAlertHeading("Error Adding Document with attached Document!");
+              setAlertDiscription("Error in document adding. Please Try again with correct inputs.");
+              modalRef.current.click();
+              // alert("error in document adding");
             }
           }
           if (response != null) {
               console.log(response);
-              alert("Document added successfully!");
-              navigate("/dashboard/content");
+              setLoading(false);
+
+              setTimeout(() => {
+                setAlertHeading("Document added");
+                setAlertDiscription("You can view the added document in dashboard or pending review section");
+                modalRef.current.click();
+                setTimeout(() => {
+                  navigate("/dashboard/content");
+                }, 2000);
+              }, 0);
+              
+              // alert("Document added successfully!");
+              // navigate("/dashboard/content");
             } else {
-              alert("error in document adding");
+              setLoading(false);
+              setAlertHeading("Error Adding Document!");
+              setAlertDiscription("Error in document adding. Please Try again with correct inputs.");
+              modalRef.current.click();
+              // alert("error in document adding");
             }
         }
       } catch (error) {
+        setLoading(false);
+        setAlertHeading("Error Adding Document!");
+        setAlertDiscription("Error in document adding. Please Try again with correct inputs."+error);
+        modalRef.current.click();
         console.error("Error adding  user:", error);
-        alert("Error adding Document");
+        // alert("Error adding Document");
       }
     },
   });
@@ -193,9 +234,13 @@ const filteredUsersForReceiver = users.filter(user =>
     setFile(event.dataTransfer.files[0]);
     // console.log(event.dataTransfer.files[0]);
   };
+
+
   return (
+    <>
     <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-2 w-full">
-      <form
+    {loading && <Spinner/>}
+    {!loading && <form
         className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full"
         onSubmit={(e) => {
           e.preventDefault();
@@ -408,7 +453,7 @@ const filteredUsersForReceiver = users.filter(user =>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Letter Number {isLatter===1 && <span className="text-blue-500">*</span>}
+              Inward Document Number {!isInward && <span className="text-blue-500">*</span>}
             </label>
             <input
               type="text"
@@ -418,7 +463,7 @@ const filteredUsersForReceiver = users.filter(user =>
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.LetterSerialNumber}
-              disabled={!isLatter}
+              disabled={isInward}
             />
             {formik.errors.LetterSerialNumber &&
               formik.touched.LetterSerialNumber && (
@@ -610,7 +655,9 @@ const filteredUsersForReceiver = users.filter(user =>
             {/* <Button color="blue" text="Save Document" /> */}
           </div>
         </div>
-      </form>
+      </form>}
+      <ModalAlert modalRef={modalRef} heading={alertHeading} description={alertDiscription} btnText2="Ok"/>
     </div>
+    </>
   );
 }

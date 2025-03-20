@@ -152,6 +152,26 @@ function CreateDocument() {
       alert("Failed to generate PDF");
     }
   };
+
+  const downloadSignedPDF = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/digitalSign/sign-pdf');
+      if (!response.ok) throw new Error('Network response was not ok');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'signed-document.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading signed PDF:', error);
+    }
+  }
+  
   
 
   return (
@@ -164,6 +184,11 @@ function CreateDocument() {
             onChange={(newContent) => setContent(newContent)}
           />
           <div className="flex justify-end">
+          {/* <Button
+              text="SignPdf"
+              color="blue"
+              onClick={downloadSignedPDF}
+            /> */}
             <Button
               text="GeneratePdf"
               color="blue"

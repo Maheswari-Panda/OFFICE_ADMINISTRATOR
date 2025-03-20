@@ -10,7 +10,7 @@ function Dashboard() {
       <div className="flex">
         <Sidebar/>
       </div>
-      {/* <Footer/> */}
+      <Footer/>
     </>
   );
 }

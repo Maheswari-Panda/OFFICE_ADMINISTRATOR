@@ -1,13 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import DocumentContext from "../context/document/documentContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import userContext from "../context/user/userContext";
 
 function DocumentLog() {
+  const navigate = useNavigate();
+    const {user} = useContext(userContext);
+    const {addDocumentLog} = useContext(DocumentContext);
+
     const location= useLocation();
     const documentLogs = location.state?.documentLog;
     
   
+    const handleViewDocument = async (row) => {
+      await addDocumentLog(user.UserId, row.DocumentId, `Document Viewed`);
+      navigate("/dashboard/reviewDocument", { state: { document: row } });
+    };
+
   const columns = [
     {
       name: "Srno.",
@@ -27,9 +37,14 @@ function DocumentLog() {
       sortable: true,
     },
     {
-      name: "Documnet Name",
-      selector: (row ) => row?.DocumentName || "N/A",
+      name: "Document Name",
+      selector: (row) => row.DocumentName,
       sortable: true,
+      cell: (row) => (
+        <span onClick={() => handleViewDocument(row)} className="hover:underline cursor-pointer">
+          {row.DocumentName}
+        </span>
+      )
     },
     {
       name: "Username",

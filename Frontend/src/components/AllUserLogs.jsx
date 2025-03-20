@@ -35,8 +35,8 @@ function AllUserLogs() {
 
   // console.log(userLogs);
   return (
-    <div className="flex bg-blue-100 w-full p-3 h-screen">
-        <div className="flex items-start rounded-md bg-white p-3 w-full">
+    <div className="flex bg-blue-100 w-full p-3 h-screen overflow-scroll">
+        <div className="flex items-start rounded-md bg-white p-3 w-full overflow-scroll">
             {isLoading ? <Spinner/>:<UserActivity userLogs={userLogs}/>}
         </div>
     </div>
