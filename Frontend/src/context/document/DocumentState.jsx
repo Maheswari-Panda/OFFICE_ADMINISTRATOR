@@ -553,6 +553,22 @@ const DocumentState = (props) => {
     }
   };
 
+  const signDocumentPDF = async (documentUrl) => {
+    try {
+      const response = await axios.get(`${host}/api/digitalSign/sign-pdf`, {
+        params: { documentUrl }
+      });
+      console.log(response);
+      if (response.data.success) {
+        return response.data;
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Error signing PDF:', error);
+    }
+  }  
+  
+  
   return (
     <DocumentContext.Provider
       value={{
@@ -592,6 +608,7 @@ const DocumentState = (props) => {
         updateAttachedDocument,
         resendDocumentForApproval,
         getNextUpcomingOutwardDocumentSerialNumber,
+        signDocumentPDF,
       }}
     >
       {props.children}

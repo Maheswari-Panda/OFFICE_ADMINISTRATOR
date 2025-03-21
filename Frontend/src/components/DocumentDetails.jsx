@@ -13,15 +13,24 @@ import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import DocumentViewer from "./DocumentViewer";
 import userContext from "../context/user/userContext";
+import Spinner from "./Spinner";
 
 function DocumentDetails({ document }) {
   const location = useLocation();
-  document = (document === undefined ? location.state.document : document);
+  const [doc, setDoc] = useState(document || location.state?.document);
+
+useEffect(() => {
+  if (!document && location.state?.document) {
+    setDoc(location.state.document);
+  }
+}, [location.state, document]);
 
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
   const { user } = useContext(userContext);
   const signedInUserOfficeId = user.OfficeId;
+
+  const [loading,setLoading]=useState(false);
 
   const [editMode, setEditMode] = useState(false);
 
@@ -48,7 +57,7 @@ function DocumentDetails({ document }) {
     const fetchData = async () => {
       try {
         const attachedDoc = await Promise.all([
-          getAttachedDocument(document.DocumentId),
+          getAttachedDocument(doc.DocumentId),
         ]);
         if (attachedDoc && attachedDoc[0] !== undefined) {
           setAttachedDocumentPath(attachedDoc[0].AttachedDocumentPath);
@@ -72,18 +81,18 @@ function DocumentDetails({ document }) {
 
   const formik = useFormik({
     initialValues: {
-      IsInward: document.IsInward,
-      DocumentName: document.DocumentName,
-      DocumentTypeId: document.DocumentTypeId,
-      LetterSerialNumber: document.LetterSerialNumber,
+      IsInward: doc.IsInward,
+      DocumentName: doc.DocumentName,
+      DocumentTypeId: doc.DocumentTypeId,
+      LetterSerialNumber: doc.LetterSerialNumber,
       InwardOutwardReferenceDocumentId:
-        document.InwardOutwardReferenceDocumentId,
-      EndUserId: document.EndUserId,
-      DocumentDescription: document.DocumentDescription,
-      DocumentPath: document.DocumentPath,
-      SenderId: document.SenderId,
-      ReceiverId: document.ReceiverId,
-      BillingInfo: document.BillingInfo,
+      doc.InwardOutwardReferenceDocumentId,
+      EndUserId: doc.EndUserId,
+      DocumentDescription: doc.DocumentDescription,
+      DocumentPath: doc.DocumentPath,
+      SenderId: doc.SenderId,
+      ReceiverId: doc.ReceiverId,
+      BillingInfo: doc.BillingInfo,
       AttachedDocumentPath: attachedDocumentPath,
     },
     validationSchema: Yup.object({
@@ -103,10 +112,11 @@ function DocumentDetails({ document }) {
       console.log("clicked on submit");
       console.log(values);
       try {
+        setLoading(true);
         if ((uploadState===1 && values.AttachedDocumentPath==="") || (values.AttachedDocumentPath!=="" && uploadState === 1 && attachedDocumentUploadState === 1)) {
           console.log(Number(values.IsInward));
           const response = await updateDocument(
-            document.DocumentId,
+            doc.DocumentId,
             values.IsInward,
             values.DocumentName,
             values.DocumentTypeId,
@@ -118,28 +128,33 @@ function DocumentDetails({ document }) {
             values.SenderId,
             values.ReceiverId,
             values.BillingInfo,
-            document.OfficeId
+            doc.OfficeId
           );
           console.log(response);
           console.log(response.message);
          
           if(values.AttachedDocumentPath!==""){
-            const AttachedDocumentResponse = await updateAttachedDocument(document.DocumentId,values.AttachedDocumentPath);
+            const AttachedDocumentResponse = await updateAttachedDocument(doc.DocumentId,values.AttachedDocumentPath);
             console.log(AttachedDocumentResponse);
             if (response !== null && AttachedDocumentResponse!==null) {
+              setLoading(false);
               alert("Document updated successfully!");
             } else {
+              setLoading(false);
               alert("error in updating document with attached document");
             }
           }
           if (response != null) {
+              setLoading(false);
               console.log(response);
               alert("Document updated successfully!");
             } else {
+              setLoading(false);
               alert("error in updating document without attached document");
             }
         }
       } catch (error) {
+        setLoading(false);
         console.error("Error updating document:", error);
         alert("Error updating Document");
       }
@@ -210,7 +225,9 @@ function DocumentDetails({ document }) {
     navigate("/dashboard/review");
   };
   return (
-    <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
+    <>
+    {loading && <Spinner/>}
+    {!loading && <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
       {
         <button
           onClick={handleBackClick}
@@ -222,12 +239,14 @@ function DocumentDetails({ document }) {
       <div
         className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
       >
-        {
+       {doc && doc.DocumentPath ? (
           <DocumentViewer
-            DocPath={document.DocumentPath}
+            DocPath={doc.DocumentPath}
             attachedDocPath={attachedDocumentPath}
           />
-        }
+        ) : (
+          <p>No document available</p>
+        )}
       </div>
 
       <form
@@ -289,7 +308,7 @@ function DocumentDetails({ document }) {
               name="DocumentSerialNumber"
               id="documentSerialNumber"
               className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              value={document.DocumentSerialNumber}
+              value={doc.DocumentSerialNumber}
               readOnly
             />
 
@@ -304,7 +323,7 @@ function DocumentDetails({ document }) {
           <div
             hidden={
               user.Role.toLowerCase() !== "user" ||
-              document.StatusName !== "Rejected"
+              doc.StatusName !== "Rejected"
             }
           >
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -656,7 +675,7 @@ function DocumentDetails({ document }) {
             user.Role === "Admin" ||
             user.Role === "SuperAdmin" ||
             (user.Role.toLowerCase() === "user" &&
-              document.StatusName === "Rejected")) && (
+              doc.StatusName === "Rejected")) && (
             <div className="flex justify-between mt-5 gap-2">
               <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-blue-200">
                 <i
@@ -683,6 +702,8 @@ function DocumentDetails({ document }) {
         </div>
       </form>
     </div>
+    }
+    </>
   );
 }
 

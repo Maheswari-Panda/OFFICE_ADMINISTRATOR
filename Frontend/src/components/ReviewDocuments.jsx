@@ -16,7 +16,8 @@ function ReviewDocuments() {
     approveDocument,
     addFeedback,
     returnDocument,
-    getDocumentsByStatusName
+    getDocumentsByStatusName,
+    signDocumentPDF
   } = useContext(DocumentContext);
   const { user } = useContext(userContext);
 
@@ -112,6 +113,8 @@ function ReviewDocuments() {
       documentToApprove.DocumentId,
       "Document Approved"
     );
+    const signResponse = await signDocumentPDF(documentToApprove.DocumentPath);
+    console.log(signResponse);
     if (response) {
       setLoading(false);
       if (feedback) {
@@ -245,6 +248,32 @@ function ReviewDocuments() {
       // alert("Error in Returning Document");
     }
   };
+
+  const downloadSignedPDF = async () => {
+    try {
+      const response = await signDocumentPDF('http://localhost:3000/uploads/Documents/1742383501770.pdf');
+     
+      if(response.success){
+        alert("Document Signed Successfully!");
+      }
+      else{
+        alert("Error signing Document");
+      }
+      
+      // const blob = await response.blob();
+      // const url = window.URL.createObjectURL(blob);
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.download = 'signed-document.pdf';
+      // document.body.appendChild(a);
+      // a.click();
+      // a.remove();
+      // window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading signed PDF:', error);
+    }
+  }
+  
 
   const columns = [
     {

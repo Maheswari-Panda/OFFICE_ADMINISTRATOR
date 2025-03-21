@@ -291,14 +291,14 @@ function DocumentContent() {
             >
               <i className="fas fa-download"></i>
             </button>
-            <button
+            {user.Role.toLowerCase() !=="user" && <button
             hidden={user.Role.toLowerCase()==="user"}
             title="delete document"
               className="p-1 text-red-500 hover:text-red-700"
               onClick={() => handleDeleteModal(row)}
             >
               <i className="fas fa-trash"></i>
-            </button>
+            </button>}
           </div>
         ),
       },

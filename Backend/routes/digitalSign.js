@@ -1,18 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { PDFDocument } = require('pdf-lib');
+const { PDFDocument } = require('pdf-lib'); // <-- You missed this
+const path = require('path');
+const fs = require('fs');
 
 router.get('/sign-pdf', async (req, res) => {
   try {
     const fetch = (await import('node-fetch')).default;
 
-    const pdfUrl = 'http://localhost:3000/uploads/Documents/1742383501770.pdf';
-    const signatureImageUrl = 'https://upload.wikimedia.org/wikipedia/en/b/bf/Msu_baroda_logo.png';
+    const pdfUrl = req.query.documentUrl;
 
+    if (!pdfUrl) {
+      return res.status(400).json({ error: 'Document URL is required' });
+    }
 
     const pdfResponse = await fetch(pdfUrl);
     const pdfBytes = await pdfResponse.arrayBuffer();
 
+    const signatureImageUrl = 'http://localhost:3000/uploads/Documents/1742543239308.png';
     const sigResponse = await fetch(signatureImageUrl);
     const signatureBytes = await sigResponse.arrayBuffer();
 
@@ -24,12 +29,15 @@ router.get('/sign-pdf', async (req, res) => {
 
     const signedPdfBytes = await pdfDoc.save();
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="signed-document.pdf"');
-    res.send(Buffer.from(signedPdfBytes));
+    // Overwrite the existing file
+    const filePath = path.join(__dirname, '../../Backend/uploads/Documents/', path.basename(pdfUrl));
+
+    fs.writeFileSync(filePath, Buffer.from(signedPdfBytes));
+
+    res.status(200).json({ success: true, message: 'Document signed successfully' });
   } catch (err) {
     console.error('Error signing PDF:', err);
-    res.status(500).send('Error generating signed PDF');
+    res.status(500).json({ error: 'Error generating signed PDF' });
   }
 });
 
