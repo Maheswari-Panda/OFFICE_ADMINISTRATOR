@@ -6,12 +6,15 @@ import userContext from '../context/user/userContext';
 import SearchBox from './SearchBox';
 import ModalAlert from './ModalAlert';
 import Feedback from './feedback';
+import Spinner from "./Spinner";
 
 function PendingDocuments() {
   const {user} = useContext(userContext);
   const { documents,getPendingDocumentsForUserByUserId,addDocumentLog } = useContext(DocumentContext); // Get documents from the context
   const [pendingDocuments, setPendingDocuments] = useState([]);
   const navigate = useNavigate();
+
+  const [loading,setLoading] = useState(true);
 
   const modalRef = useRef();
       
@@ -28,6 +31,9 @@ function PendingDocuments() {
   useEffect(() => {
       setPendingDocuments(documents); // Reset filtered documents on initial render
       setFilteredData(documents);
+      setTimeout(()=>{
+        setLoading(false);
+      },1000);
     }, [documents]);
 
   
@@ -135,6 +141,7 @@ function PendingDocuments() {
   ];
 
   return (
+    <>
     <div className="min-h-screen bg-blue-100 p-4 w-full">
       <div className="flex justify-between items-center p-2">
       <h2 className="text-blue-500 text-2xl font-bold mb-4">Pending Documents</h2>
@@ -142,7 +149,8 @@ function PendingDocuments() {
         <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Documents..." />
      </div>
 
-      <div className="overflow-x-scroll bg-white rounded-lg shadow-md">
+    {loading && <Spinner/>}
+    {!loading && <div className="overflow-x-scroll bg-white rounded-lg shadow-md">
         <DataTable
           columns={columns} // Columns for the table
           data={filteredData} // Data for the table
@@ -150,6 +158,7 @@ function PendingDocuments() {
           pagination
         />
       </div>
+}
       <ModalAlert
         modalRef={modalRef}
         heading={alertHeading}
@@ -158,6 +167,8 @@ function PendingDocuments() {
         extraComponent={extraComponent}
       />
     </div>
+    
+    </>
   );
 }
 

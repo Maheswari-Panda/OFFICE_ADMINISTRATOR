@@ -141,13 +141,10 @@ function DocumentContent() {
     setViewType(viewType === "grid" ? "list" : "grid");
   };
 
-  const [selectedDocument, setSelectedDocument] = useState(null);
-
-  
   const handleRowClick = async (row) => {
-    console.log("Row clicked:", row);
-    setSelectedDocument(row);
-    await addDocumentLog(user.UserId,row.DocumentId,"Document Viewed");
+    console.log("Handle Review Document : ",row);
+    await addDocumentLog(user.UserId, row.DocumentId, "Document Viewed");
+    navigate("/dashboard/reviewDocument", { state: { document: row } });
   };
 
   const handleDocumentLogView = async(row) =>{
@@ -159,7 +156,7 @@ function DocumentContent() {
     setAlertHeading("Are you Sure you want to delete this document?");
     setAlertDescription(<span>Once you delete this <b>{document.DocumentName} </b> then you cannot retrive it.</span>);
     setExtraComponent(null);
-    setAlertBtnText1("Cencel");
+    setAlertBtnText1("Cancel");
     setAlertBtnText2("Delete");
     modalRef.current.click();
   };
@@ -173,13 +170,25 @@ function DocumentContent() {
     );
     setExtraComponent(<Feedback documentId={document.DocumentId}/>);
     setAlertBtnText1("");
-    setAlertBtnText2("Cencel");
+    setAlertBtnText2("Cancel");
     modalRef.current.click();
   }
 
-  const handleDownload = (document) => {
-    console.log("Downloading...",document);
+  const handleDownload = async (doc) => {
+    if (!doc?.DocumentPath) {
+      console.error("No document path provided.");
+      return;
+    }
+    await addDocumentLog(user.UserId,doc.DocumentId,"Document Downloaded");
+    const link = window.document.createElement("a"); // Ensure global document object is used
+    link.href = doc.DocumentPath;
+    link.target = "_blank"; // Optional: Opens in a new tab
+    link.download = doc.DocumentPath.split("/").pop(); // Extract filename from URL
+    window.document.body.appendChild(link);
+    link.click();
+    window.document.body.removeChild(link);
   };
+  
 
   const columns = useMemo(
     () => [
@@ -291,14 +300,14 @@ function DocumentContent() {
             >
               <i className="fas fa-download"></i>
             </button>
-            {user.Role.toLowerCase() !=="user" && <button
+            {/* {user.Role.toLowerCase() !=="user" && <button
             hidden={user.Role.toLowerCase()==="user"}
             title="delete document"
               className="p-1 text-red-500 hover:text-red-700"
               onClick={() => handleDeleteModal(row)}
             >
               <i className="fas fa-trash"></i>
-            </button>}
+            </button>} */}
           </div>
         ),
       },
@@ -311,7 +320,7 @@ function DocumentContent() {
       {isLoading && <Spinner />}
       {!isLoading && (
         <section className="text-gray-600 body-font w-full">
-          {selectedDocument === null && (
+          
             <div className="container px-5 py-10 sm:py-5 mx-auto">
               <SearchBar onSearch={handleSearch} />
 
@@ -442,20 +451,9 @@ function DocumentContent() {
                 )}
               </div>
             </div>
-          )}
+          
 
-          {selectedDocument && (
-            <div className="w-full h-full bg-white z-50 flex items-center justify-center">
-              <button
-                className="absolute top-4 right-4 text-xl rounded-full bg-blue-100 h-10 w-10 hover:bg-blue-300"
-                onClick={() => setSelectedDocument(null)}
-              >
-                <i className="fa-solid fa-xmark text-blue-500"></i>
-              </button>
-              <DocumentDetails document={selectedDocument} />
-            </div>
-          )}
-
+          
       <ModalAlert
         modalRef={modalRef}
         heading={alertHeading}

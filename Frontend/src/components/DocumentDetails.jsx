@@ -17,13 +17,8 @@ import Spinner from "./Spinner";
 
 function DocumentDetails({ document }) {
   const location = useLocation();
-  const [doc, setDoc] = useState(document || location.state?.document);
-
-useEffect(() => {
-  if (!document && location.state?.document) {
-    setDoc(location.state.document);
-  }
-}, [location.state, document]);
+  document = document || location.state?.document;
+  // console.log(document.DocumentPath);
 
   const navigate = useNavigate();
   const documentContext = useContext(DocumentContext);
@@ -57,7 +52,7 @@ useEffect(() => {
     const fetchData = async () => {
       try {
         const attachedDoc = await Promise.all([
-          getAttachedDocument(doc.DocumentId),
+          getAttachedDocument(document.DocumentId),
         ]);
         if (attachedDoc && attachedDoc[0] !== undefined) {
           setAttachedDocumentPath(attachedDoc[0].AttachedDocumentPath);
@@ -81,18 +76,18 @@ useEffect(() => {
 
   const formik = useFormik({
     initialValues: {
-      IsInward: doc.IsInward,
-      DocumentName: doc.DocumentName,
-      DocumentTypeId: doc.DocumentTypeId,
-      LetterSerialNumber: doc.LetterSerialNumber,
+      IsInward: document.IsInward,
+      DocumentName: document.DocumentName,
+      DocumentTypeId: document.DocumentTypeId,
+      LetterSerialNumber: document.LetterSerialNumber,
       InwardOutwardReferenceDocumentId:
-      doc.InwardOutwardReferenceDocumentId,
-      EndUserId: doc.EndUserId,
-      DocumentDescription: doc.DocumentDescription,
-      DocumentPath: doc.DocumentPath,
-      SenderId: doc.SenderId,
-      ReceiverId: doc.ReceiverId,
-      BillingInfo: doc.BillingInfo,
+      document.InwardOutwardReferenceDocumentId,
+      EndUserId: document.EndUserId,
+      DocumentDescription: document.DocumentDescription,
+      DocumentPath: document.DocumentPath,
+      SenderId: document.SenderId,
+      ReceiverId: document.ReceiverId,
+      BillingInfo: document.BillingInfo,
       AttachedDocumentPath: attachedDocumentPath,
     },
     validationSchema: Yup.object({
@@ -116,7 +111,7 @@ useEffect(() => {
         if ((uploadState===1 && values.AttachedDocumentPath==="") || (values.AttachedDocumentPath!=="" && uploadState === 1 && attachedDocumentUploadState === 1)) {
           console.log(Number(values.IsInward));
           const response = await updateDocument(
-            doc.DocumentId,
+            document.DocumentId,
             values.IsInward,
             values.DocumentName,
             values.DocumentTypeId,
@@ -128,13 +123,13 @@ useEffect(() => {
             values.SenderId,
             values.ReceiverId,
             values.BillingInfo,
-            doc.OfficeId
+            document.OfficeId
           );
           console.log(response);
           console.log(response.message);
          
           if(values.AttachedDocumentPath!==""){
-            const AttachedDocumentResponse = await updateAttachedDocument(doc.DocumentId,values.AttachedDocumentPath);
+            const AttachedDocumentResponse = await updateAttachedDocument(document.DocumentId,values.AttachedDocumentPath);
             console.log(AttachedDocumentResponse);
             if (response !== null && AttachedDocumentResponse!==null) {
               setLoading(false);
@@ -222,7 +217,12 @@ useEffect(() => {
     }
   };
   const handleBackClick = () => {
-    navigate("/dashboard/review");
+    if(user.Role.toLowerCase() ==="user"){
+      navigate(-1);
+    }
+    else{
+      navigate(-1);
+    }
   };
   return (
     <>
@@ -239,9 +239,9 @@ useEffect(() => {
       <div
         className={`flex-1 border-2 border-dashed rounded-lg p-4 flex items-center justify-center cursor-pointer bg-white border-gray-300`}
       >
-       {doc && doc.DocumentPath ? (
+       {document && document.DocumentPath ? (
           <DocumentViewer
-            DocPath={doc.DocumentPath}
+            DocPath={document.DocumentPath}
             attachedDocPath={attachedDocumentPath}
           />
         ) : (
@@ -308,7 +308,7 @@ useEffect(() => {
               name="DocumentSerialNumber"
               id="documentSerialNumber"
               className="input-sm w-full rounded-md border border-gray-300 bg-gray-50 p-2 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 hover:border-blue-400 transition"
-              value={doc.DocumentSerialNumber}
+              value={document.DocumentSerialNumber}
               readOnly
             />
 
@@ -323,7 +323,7 @@ useEffect(() => {
           <div
             hidden={
               user.Role.toLowerCase() !== "user" ||
-              doc.StatusName !== "Rejected"
+              document.StatusName !== "Rejected"
             }
           >
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -675,7 +675,7 @@ useEffect(() => {
             user.Role === "Admin" ||
             user.Role === "SuperAdmin" ||
             (user.Role.toLowerCase() === "user" &&
-              doc.StatusName === "Rejected")) && (
+              document.StatusName === "Rejected")) && (
             <div className="flex justify-between mt-5 gap-2">
               <div className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-blue-200">
                 <i

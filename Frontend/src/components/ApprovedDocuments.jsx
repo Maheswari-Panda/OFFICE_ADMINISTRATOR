@@ -6,6 +6,7 @@ import userContext from '../context/user/userContext';
 import ModalAlert from './ModalAlert';
 import Feedback from './feedback';
 import SearchBox from './SearchBox';
+import Spinner from './Spinner';
 
 function ApprovedDocuments() {
   const {user} = useContext(userContext);
@@ -13,6 +14,7 @@ function ApprovedDocuments() {
   const [approvedDocuments, setApprovedDocuments] = useState([]);
   const navigate = useNavigate();
 
+  const [loading,setLoading] = useState(true);
   
     const modalRef = useRef();
     
@@ -28,6 +30,9 @@ function ApprovedDocuments() {
   useEffect(() => {
       setApprovedDocuments(documents); // Reset filtered documents on initial render
       setFilteredData(documents);
+      setTimeout(()=>{
+        setLoading(false);
+      },1000);
     }, [documents]);
 
     const [searchText, setSearchText] = useState("");
@@ -174,14 +179,15 @@ function ApprovedDocuments() {
         {/* Reusable Search Box */}
         <SearchBox searchText={searchText} handleSearch={handleSearch} placeholder="Search Documents..." />
      </div>
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+     {loading && <Spinner/>}
+      {!loading && <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <DataTable
           columns={columns} // Columns for the table
           data={filteredData} // Data for the table
           highlightOnHover
           pagination
         />
-      </div>
+      </div>}
       <ModalAlert
         modalRef={modalRef}
         heading={alertHeading}

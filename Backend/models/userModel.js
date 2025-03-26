@@ -163,3 +163,18 @@ exports.generateResetPasswordLink= (data)=>{
     const resetPasswordLink= jwt.sign(data, JWT_PASSWORD_SECRET_KEY,{expiresIn: JWT_RESET_PASSWORD_LINK_EXPIRE_TIME});
     return resetPasswordLink;
 }
+
+// Function to update user details by UserId
+exports.updateAdminSignature = async (userId, signatureImageUrl) => {
+    const pool = await db.getPool();
+    try {
+        const result = await pool.request()
+            .input('UserId', sql.Int, userId)
+            .input('SignatureImageUrl', sql.NVarChar(255), signatureImageUrl)
+            .execute('UpdateAdminSignature'); 
+        return result.recordset;
+    } catch (err) {
+        console.error('Error executing UpdateUserSignature:', err);
+        throw err;
+    }
+};

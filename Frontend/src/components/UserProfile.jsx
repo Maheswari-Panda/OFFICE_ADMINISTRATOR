@@ -11,7 +11,7 @@ function UserProfile() {
 
   const iRef = useRef();
   const context = useContext(userContext);
-  const { user,updateUser, uploadProfileImage } = context;
+  const { user,updateUser, uploadProfileImage,uploadSignatureImage,setUser } = context;
   const [isEditing, setIsEditing] = useState(false);
   const [imageUrl, setImageUrl] = useState(user.ProfileImageUrl);
   const [isOldImage, setIsOldImage] = useState(true);
@@ -131,6 +131,43 @@ function UserProfile() {
       }
     },
   });
+
+  const handleSignatureUpload = async (event) => {
+    const file = event.currentTarget.files[0];
+    console.log(file);
+
+
+    if (!file) {
+        alert("Please select a file.");
+        return;
+    }
+
+    if (file.type !== "image/png") {
+        alert("Please upload a valid PNG image.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("signature", file);
+    console.log(formData);
+
+    try {
+        const response = await uploadSignatureImage(formData);  // Using uploadSignatureImage function
+        console.log(response);
+        if (response && response.imageUrl) {
+            alert("Signature uploaded successfully!");
+            // Update user state with the new signature URL
+            setUser(prevUser => ({ ...prevUser, SignatureImageUrl: response.imageUrl }));
+        } else {
+            alert("Failed to upload signature.");
+        }
+    } catch (error) {
+        console.error("Upload error:", error);
+        alert("Error uploading signature. Please try again.");
+    }
+};
+
+  
 
   return (
     <div className="w-full mx-auto bg-blue-100 p-4 items-start justify-center h-full">
@@ -337,6 +374,24 @@ function UserProfile() {
                 </button>
               </div>
             </div>
+            {user.Role.toLowerCase() === "admin" && (
+                <>
+            <div className="flex items-center justify-between mt-5">
+                  {user?.SignatureImageUrl && user?.SignatureImageUrl !== "NULL" ? (
+                    <img src={user.SignatureImageUrl} alt="Signature" className="h-20 w-50 border border-gray-500" />
+                  ) : (
+                    <span className="text-gray-500">No signature uploaded</span>
+                  )}
+
+                  <label className="text-sm hover:text-blue-500 cursor-pointer flex items-center">
+                    <i className="fa-solid fa-edit text-blue-500 mx-2"></i>
+                    <span>{!user?.SignatureImageUrl || user?.SignatureImageUrl === "NULL" ? "Upload Signature" : "Change Signature"}</span>
+                    <input type="file" accept="image/png" className="hidden" onChange={handleSignatureUpload} />
+                  </label>
+            </div>
+                </>
+            )}
+
           </form>
         </div>
       }

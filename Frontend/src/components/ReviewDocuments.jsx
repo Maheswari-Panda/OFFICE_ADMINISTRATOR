@@ -103,7 +103,7 @@ function ReviewDocuments() {
       </>
     );
     setAlertBtnText1("Cancel");
-    setAlertBtnText2("Approve");
+    setAlertBtnText2("Sign & Approve");
     modalRef.current.click();
   };
 
@@ -113,7 +113,7 @@ function ReviewDocuments() {
       documentToApprove.DocumentId,
       "Document Approved"
     );
-    const signResponse = await signDocumentPDF(documentToApprove.DocumentPath);
+    const signResponse = await signDocumentPDF(documentToApprove.DocumentPath,user.SignatureImageUrl);
     console.log(signResponse);
     if (response) {
       setLoading(false);

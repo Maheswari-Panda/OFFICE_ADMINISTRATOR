@@ -71,7 +71,7 @@ function DocumentItem(props) {
                   <li className="text-black" onClick={()=>handleFeedbackModal(document)}><a> <i className="fas fa-comments text-blue-500"></i> Feedbacks</a></li>
                   <li className="text-black" onClick={handleDocumentLogView}><div> <i className="fas fa-file text-blue-500"></i> View Logs</div></li>
                   <li className="text-black" onClick={()=>handleDownload(document)}><a><i className="fa-solid fa-download text-blue-500"></i>Download</a></li>
-                  {user.Role.toLowerCase()!=="user" && <li className="text-black" onClick={()=>handleDeleteModal(document)}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>}
+                  {/* {user.Role.toLowerCase()!=="user" && <li className="text-black" onClick={()=>handleDeleteModal(document)}><a> <i className="fas fa-trash text-blue-500"></i> Delete</a></li>} */}
                 </ul>
               </div>
             </div>

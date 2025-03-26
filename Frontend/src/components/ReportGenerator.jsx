@@ -6,10 +6,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import DocumentContext from "../context/document/documentContext";
 import Button from "./Button";
 import userContext from "../context/user/userContext";
+import DocumentViewer from "./DocumentViewer";
 
 const ReportGenerator = () => {
   const { fetchPdfReport, fetchExcelReport } = useContext(DocumentContext); // Using the context for report fetch functions
-  const {user} = useContext(userContext);
+  const {user,addUserLog} = useContext(userContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [reportType, setReportType] = useState("date");
@@ -22,6 +23,7 @@ const ReportGenerator = () => {
 
       const pdfUrl = await fetchPdfReport(startDate,endDate);
       if (pdfUrl) {
+        await addUserLog(user.UserId,"Report Generated");
         const a = document.createElement("a");
         a.href = pdfUrl;
         a.download = "Documents_Report.pdf"; // Set your file name here
@@ -43,6 +45,8 @@ const ReportGenerator = () => {
 
       const excelUrl = await fetchExcelReport(startDate,endDate);
       if (excelUrl) {
+        
+        await addUserLog(user.UserId,"Report Generated");
         const a = document.createElement("a");
         a.href = excelUrl;
         a.download = "Documents_Report.xlsx"; // Set your file name here
@@ -83,11 +87,11 @@ const ReportGenerator = () => {
   });
 
   return (
-    <div className="report-generator p-3 w-full">
+    <div className="report-generator p-3 w-full bg-blue-100 h-screen">
       <h1 className="text-blue-500 font-bold text-2xl">Generate Report</h1>
 
       <div className="flex justify-center items-center">
-        <form onSubmit={formik.handleSubmit} className="m-4">
+        <form onSubmit={formik.handleSubmit} className="m-4 bg-white p-5 rounded-md">
             <div className="mb-4">
               <label className="block text-gray-700">Select Date Range:</label>
               <div className="flex gap-2">
@@ -96,14 +100,16 @@ const ReportGenerator = () => {
                   onChange={(date) => formik.setFieldValue("startDate", date)}
                   className="input input-bordered w-full"
                   dateFormat="dd-MM-yyyy"
-                  placeholderText="-- dd-mm-yyyy --"
+                  placeholderText="-- from date --"
+                  required
                 />
                 <DatePicker
                   selected={formik.values.endDate}
                   onChange={(date) => formik.setFieldValue("endDate", date)}
                   className="input input-bordered w-full"
                   dateFormat="dd-MM-yyyy"
-                  placeholderText="-- dd-mm-yyyy --"
+                  placeholderText="-- to date --"
+                  required
                 />
               </div>
               {formik.errors.endDate && formik.touched.endDate && (

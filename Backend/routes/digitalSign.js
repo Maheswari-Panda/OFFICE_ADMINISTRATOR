@@ -8,7 +8,8 @@ router.get('/sign-pdf', async (req, res) => {
   try {
     const fetch = (await import('node-fetch')).default;
 
-    const pdfUrl = req.query.documentUrl;
+    const {pdfUrl,signatureImageUrl} = req.query;
+    // const signatureImageUrl = 'http://localhost:3000/uploads/Documents/1742543239308.png';
 
     if (!pdfUrl) {
       return res.status(400).json({ error: 'Document URL is required' });
@@ -17,7 +18,6 @@ router.get('/sign-pdf', async (req, res) => {
     const pdfResponse = await fetch(pdfUrl);
     const pdfBytes = await pdfResponse.arrayBuffer();
 
-    const signatureImageUrl = 'http://localhost:3000/uploads/Documents/1742543239308.png';
     const sigResponse = await fetch(signatureImageUrl);
     const signatureBytes = await sigResponse.arrayBuffer();
 

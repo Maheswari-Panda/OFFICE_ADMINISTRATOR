@@ -69,7 +69,7 @@ const DocumentActivity = ({documentLogs}) => {
     },
     {
       name: "Date & Time",
-      selector: (row) => new Date(row.DateTime).toLocaleDateString() +" "+ new Date(row.DateTime).toLocaleTimeString(),
+      selector: (row) => new Date(row.DateTime).toLocaleDateString() +" "+ row.DateTime.slice(11, 19),
       sortable: true,
     },
     {

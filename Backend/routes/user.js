@@ -13,6 +13,7 @@ const path = require('path');
 
 const {sendEmail,sendEmailForForgetPassword} = require('../models/sendEmail'); 
 const {addUserLog} = require('../models/userLogModel');
+const { hostname } = require('os');
 
 const storage = multer.diskStorage({
     destination: './uploads/UserProfiles', // Folder to store uploaded files
@@ -23,6 +24,16 @@ const storage = multer.diskStorage({
   
   
 const upload = multer({ storage });
+
+const storageForSignature = multer.diskStorage({
+    destination: './uploads/Signatures', // Folder to store uploaded files
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Rename file
+    },
+});
+
+  
+const uploadSign = multer({ storage : storageForSignature });
 
 // Route 1 : to create a new user : POST "/api/user/create" .No login required
 router.post('/create', [
@@ -72,14 +83,14 @@ router.post('/create', [
 
         // it's working whenever an user being created the mail will be sent to the user
         
-        // const username = email; // Using email as username
-        // const userPassword = password; // Default password
-        // const loginLink = "http://localhost:5173"; // Adjust based on your frontend
+        const username = email; // Using email as username
+        const userPassword = password; // Default password
+        const loginLink = "http://localhost:5173"; // Adjust based on your frontend
 
-        // // Send email after user is created
-        // await sendEmail(email, username, userPassword, loginLink);
+        // Send email after user is created
+        await sendEmail(email, username, userPassword, loginLink);
 
-        // console.log('User created successfully, email sent!');
+        console.log('User created successfully, email sent!');
             
             res.status(201).json({ accessToken});
     } catch (err) {
@@ -208,13 +219,16 @@ router.put('/update/:userId', [
 
 
 // Route 4: to Delete user details by : PUT '/api/user/delete/:userId' . Login required
-router.delete('/delete/:userId', async (req, res) => {
+router.delete('/delete/:userId',fetchUser,authorizeRole("Admin","admin","SuperAdmin"), async (req, res) => {
     try {
             // Get the logged-in user id from the token
             const userId = req.params.userId;
+            const loggedInUserId = req.user.userId;
             const response = await userModel.deleteUser(userId);
             console.log(response);
             if(response==1){
+                
+                const result = await addUserLog(loggedInUserId,'Deleted User');
                 console.log("inside the response",response);
                 res.status(200).json({message:response });
             }
@@ -277,6 +291,31 @@ router.post('/upload', upload.single('profileImg'), (req, res) => {
     res.json({ imageUrl: `/uploads/UserProfiles/${req.file.filename}` }); // Send image URL back
   });
 
+// API to Upload Signature Image
+router.post("/upload-signature",fetchUser, uploadSign.single("signature"), async (req, res) => {
+    try {
+      const userId = req.user.userId; // Get the user ID from fetchuser
+  
+      if (!userId) {
+        return res.status(400).json({ message: "UserId is required" });
+      }
+  
+      // Store file path in database
+      const imageUrl = `http://localhost:3000/uploads/Signatures/${req.file.filename}`;
+  
+      const response = await userModel.updateAdminSignature(userId,imageUrl);
+      console.log(response);
+      if(response){
+        return res.status(200).json({ message: "Signature uploaded successfully", imageUrl });
+      }
+      else {
+        return res.status(500).json({ message: "Failed to update signature in database" });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Error uploading signature" });
+    }
+  });
 
 router.post('/forgetpassword',[body("email").isEmail()],async (req, res) => {
     try {

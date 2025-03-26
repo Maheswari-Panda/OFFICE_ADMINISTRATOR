@@ -3,7 +3,7 @@ import DocumentContext from "../context/document/documentContext";
 import userContext from "../context/user/userContext";
 
 const Feedback = ({ documentId }) => {
-  const { getFeedBacksByDocumentId } = useContext(DocumentContext);
+  const { getFeedBacksByDocumentId} = useContext(DocumentContext);
   const {user} = useContext(userContext);
   const [feedbacks, setFeedbacks] = useState([]);
 

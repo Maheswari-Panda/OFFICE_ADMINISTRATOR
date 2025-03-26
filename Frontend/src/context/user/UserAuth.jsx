@@ -373,6 +373,38 @@ console.log(response);
     }
   }
 
+  const addUserLog = async (userId, action) => {
+    try {
+      const response = await axios.post(`${host}/api/userLog/add`, {
+        userId,
+        action,
+      });
+      const json = await response.data;
+      console.log(json);
+      return response.data;
+    } catch (error) {
+      console.log("error in adding user log", error);
+    }
+  };
+
+  const uploadSignatureImage = async (formData) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.post(`${host}/api/user/upload-signature`, formData, {
+        headers: { 
+          "accessToken": `${accessToken}`,
+          "Content-Type": "multipart/form-data" ,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error Uploading user signature",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -395,7 +427,9 @@ console.log(response);
         deleteUser,
         getUsersByOfficeId,
         getAllUserLogsByOfficeId,
-        getAllAdminLogs
+        getAllAdminLogs,
+        addUserLog,
+        uploadSignatureImage
       }}
     >
       {children}

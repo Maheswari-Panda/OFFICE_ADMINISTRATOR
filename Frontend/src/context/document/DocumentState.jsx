@@ -360,7 +360,7 @@ const DocumentState = (props) => {
       console.log(json);
       return response.data;
     } catch (error) {
-      console.log("error in edding attached document", error);
+      console.log("error in adding Document Log", error);
     }
   };
 
@@ -553,11 +553,12 @@ const DocumentState = (props) => {
     }
   };
 
-  const signDocumentPDF = async (documentUrl) => {
+  const signDocumentPDF = async (documentUrl,signatureUrl) => {
     try {
       const response = await axios.get(`${host}/api/digitalSign/sign-pdf`, {
-        params: { documentUrl }
+        params: { pdfUrl: documentUrl, signatureImageUrl: signatureUrl }, // ✅ Use params for GET request
       });
+  
       console.log(response);
       if (response.data.success) {
         return response.data;
