@@ -442,4 +442,44 @@ router.post("/get_next_outward_document_serial_number/:officeId", async (req, re
   }
 });
 
+router.post("/get_document_counts/:officeId", async (req, res) => {
+  try {
+    const offieId = req.params.officeId;
+    const response =
+      await documentModel.getDocumentCounts(
+        offieId
+      ); // Call the getAllDocuments model function
+      // console.log(response);
+    res.status(200).json(response); // Return the list of documents
+  } catch (err) {
+    res
+      .status(500)
+      .json({
+        error:
+          "An error occurred while fetching the document counts for given office Id",
+        details: err.message,
+      });
+  }
+});
+
+router.post("/get_documentlog_counts/:officeId", async (req, res) => {
+  try {
+    const offieId = req.params.officeId;
+    const response =
+      await documentModel.getMonthlyDocumentLogCounts(
+        offieId
+      ); // Call the getAllDocuments model function
+      // console.log(response);
+    res.status(200).json(response); // Return the list of documents
+  } catch (err) {
+    res
+      .status(500)
+      .json({
+        error:
+          "An error occurred while fetching the monthly document log counts for given office Id",
+        details: err.message,
+      });
+  }
+});
+
 module.exports = router;

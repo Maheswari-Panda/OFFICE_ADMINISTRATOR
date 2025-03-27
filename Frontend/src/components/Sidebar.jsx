@@ -22,6 +22,7 @@ import AddOfficeForm from "./AddOfficeForm";
 import DocumentLog from "./DocumentLog";
 import ReturnedDocuments from "./ReturnedDocuments";
 import AllAdminLogs from "./AllAdminLogs";
+import Analytics from "./Analytics";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -82,6 +83,7 @@ function Sidebar() {
               element={<UserActivity userLogs={userLogs} />}
             />
             <Route path="alldocumentlogs" element={<AllDocumentLogs />} />
+            <Route path="analytics" element={<Analytics/>} />
             <Route path="report" element={<ReportGenerator />} />
             <Route path="/" element={<Navigate to="content" />} />
           </Routes>
@@ -139,6 +141,15 @@ function Sidebar() {
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
                       <i className="fa-solid fa-folder-open"></i> Document Logs
+                  </label>
+                </li>
+                </Link>
+
+                
+                <Link to="/dashboard/analytics">
+                <li>
+                  <label htmlFor="my-drawer-2" className="cursor-pointer">
+                  <i className="fa-solid fa-arrow-trend-up"></i> Analytics
                   </label>
                 </li>
                 </Link>

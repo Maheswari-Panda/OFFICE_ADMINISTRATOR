@@ -291,6 +291,34 @@ exports.getCompleteDocumentReport = async (startDate,endDate) => {
     }
 };
 
+exports.getDocumentCounts = async (officeId) => {
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('OfficeId', sql.SmallInt, officeId)
+            .execute('GetDocumentCounts');
+
+        return result.recordsets; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all document counts:', err);
+        throw err;
+    }
+};
+
+exports.getMonthlyDocumentLogCounts = async (officeId) => {
+    try {
+        const pool = await db.getPool();
+        const result = await pool.request()
+            .input('OfficeId', sql.SmallInt, officeId)
+            .execute('GetMonthlyDocumentLogCounts');
+
+        return result.recordsets; // Return all documents
+    } catch (err) {
+        console.error('Error fetching all monthly document log counts:', err);
+        throw err;
+    }
+};
+
 exports.getNextUpcomingOutwardDocumentSerialNumber = async (officeId) => {
     try {
         const pool = await db.getPool();

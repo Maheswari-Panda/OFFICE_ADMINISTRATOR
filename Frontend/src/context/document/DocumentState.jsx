@@ -553,6 +553,36 @@ const DocumentState = (props) => {
     }
   };
 
+  const getDocumentCounts = async (officeId) => {
+    try {
+      const response = await axios.post(
+        `${host}/api/document/get_document_counts/${officeId}`
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error getting the document counts for given officeId : ",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const getMonthlyDocumentLogCounts = async (officeId) => {
+    try {
+      const response = await axios.post(
+        `${host}/api/document/get_documentlog_counts/${officeId}`
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error getting the monthly document log counts for given officeId : ",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   const signDocumentPDF = async (documentUrl,signatureUrl) => {
     try {
       const response = await axios.get(`${host}/api/digitalSign/sign-pdf`, {
@@ -610,6 +640,8 @@ const DocumentState = (props) => {
         resendDocumentForApproval,
         getNextUpcomingOutwardDocumentSerialNumber,
         signDocumentPDF,
+        getDocumentCounts,
+        getMonthlyDocumentLogCounts
       }}
     >
       {props.children}
