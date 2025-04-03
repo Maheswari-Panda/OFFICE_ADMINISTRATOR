@@ -46,6 +46,19 @@ exports.getAllOfficeDetails=async()=>{
       }
 }
 
+exports.getAllOfficeDocumentDetails=async()=>{
+    try {
+        const pool = await db.getPool();  // Get the pool from the db connection
+        const result = await pool.request()
+          .execute('GetAllOfficeDocumentDetails');  // Execute the stored procedure to fetch all offices
+    
+        return result.recordsets;  // Return the list of offices
+      } catch (err) {
+        console.error('Error getting office document details:', err);
+        throw err;  // Re-throw error for handling at a higher level
+      }
+}
+
 // Model for deleting an office
 exports.deleteOffice = async (officeId) => {
     try {

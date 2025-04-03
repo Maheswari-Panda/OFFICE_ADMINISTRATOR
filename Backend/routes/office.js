@@ -69,6 +69,19 @@ router.get('/getall', async (req, res) => {
     }
 });
 
+router.get('/getallofficedocumentdetails', async (req, res) => {
+    try {
+        const allOfficeDocumentDetails = await officeModel.getAllOfficeDocumentDetails();
+        res.status(200).json(allOfficeDocumentDetails);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Failed to get all office document details',
+            error: error.message
+        });
+    }
+});
+
 // Route to delete office
 router.delete('/delete/:officeId', async (req, res) => {
     try {

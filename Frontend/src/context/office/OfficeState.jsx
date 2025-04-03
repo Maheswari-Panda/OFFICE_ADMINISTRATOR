@@ -18,6 +18,18 @@ function OfficeState(props) {
     }
   };
 
+  const getAllOfficesDocumentDetails = async () => {
+    try {
+      const response = await axios.get(`${host}/api/office/getallofficedocumentdetails`);
+      const json = await response.data;
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log("error getting all offices document details", error);
+    }
+  };
+
+
   const getOfficeById = async (officeId) => {
     try {
       const response = await axios.get(`${host}/api/office/get/${officeId}`);
@@ -67,7 +79,7 @@ function OfficeState(props) {
 
   return (
     <OfficeContext.Provider
-      value={{ offices,setOffices, getAllOffices, office, getOfficeById, addOffice,updateOffice,deleteOffice }}
+      value={{ offices,setOffices, getAllOffices, office, getOfficeById, addOffice,updateOffice,deleteOffice ,getAllOfficesDocumentDetails}}
     >
       {props.children}
     </OfficeContext.Provider>

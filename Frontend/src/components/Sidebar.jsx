@@ -23,6 +23,7 @@ import DocumentLog from "./DocumentLog";
 import ReturnedDocuments from "./ReturnedDocuments";
 import AllAdminLogs from "./AllAdminLogs";
 import Analytics from "./Analytics";
+import SuperAdminDashboard from "./SuperAdminDashboard";
 
 function Sidebar() {
   const context = useContext(userContext);
@@ -85,7 +86,9 @@ function Sidebar() {
             <Route path="alldocumentlogs" element={<AllDocumentLogs />} />
             <Route path="analytics" element={<Analytics/>} />
             <Route path="report" element={<ReportGenerator />} />
-            <Route path="/" element={<Navigate to="content" />} />
+            <Route path="superAdminDashboard" element={<SuperAdminDashboard/>} />
+            {user.Role !== "SuperAdmin" && <Route path="/" element={<Navigate to="content" />} />}
+            {user.Role === "SuperAdmin" && <Route path="/" element={<Navigate to="superAdminDashboard" />} />}
           </Routes>
 
           {/* Page Content */}
@@ -100,7 +103,8 @@ function Sidebar() {
           ></label>
           <ul className="menu bg-white text-base-content min-h-full lg:w-full p-4 border-r border-gray-300 md:w-1/3">
             {/* Button to add document */}
-            <Link to="/dashboard/addDocument">
+            
+              <Link to="/dashboard/addDocument">
               <Button
                 iconTag={<i className="fa-solid fa-plus mx-2"></i>}
                 color="blue"
@@ -119,10 +123,18 @@ function Sidebar() {
             </Link>
 
             {/* Sidebar Links */}
-            <Link to="/dashboard/content">
+          {user.Role === "SuperAdmin" &&  <Link to="/dashboard/superAdminDashboard">
             <li className="w-full">
               <label htmlFor="my-drawer-2" className="cursor-pointer">
                   <i className="fa-solid fa-gauge"></i> Dashboard
+              </label>
+            </li>
+            </Link>}
+
+            <Link to="/dashboard/content">
+            <li className="w-full">
+              <label htmlFor="my-drawer-2" className="cursor-pointer">
+                <i className="fa-solid fa-folder"></i> All Documents
               </label>
             </li>
             </Link>
@@ -132,7 +144,7 @@ function Sidebar() {
               <Link to="/dashboard/review">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
-                      <i className="fa-solid fa-folder"></i> Review Documents
+                  <i className="fa-solid fa-folder-minus"></i> Review Documents
                   </label>
                 </li>
                 </Link>
@@ -144,15 +156,14 @@ function Sidebar() {
                   </label>
                 </li>
                 </Link>
-
                 
-                <Link to="/dashboard/analytics">
+                {user.Role !== "SuperAdmin" && <Link to="/dashboard/analytics">
                 <li>
                   <label htmlFor="my-drawer-2" className="cursor-pointer">
                   <i className="fa-solid fa-arrow-trend-up"></i> Analytics
                   </label>
                 </li>
-                </Link>
+                </Link>}
 
                 <Link to="/dashboard/createUser">
                 <li>

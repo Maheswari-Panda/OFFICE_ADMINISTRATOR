@@ -47,19 +47,21 @@ function Analytics() {
 
   return (
     <div className='items-start bg-blue-100 w-full h-screen overflow-scroll'>
-       <div className='flex flex-wrap items-center justify-around bg-white rounded-md m-2'>
-            <div className='text-center w-auto'>
-                <DocumentLogChart data={monthlyDocumentLogCounts} />
-                <p className="text-black text-center">Monthly Document Log Counts</p>
+       <div className='flex flex-wrap items-center justify-around bg-white rounded-lg shadow-md m-2'>
+            <div className="bg-white p-4 ">
+              <p className="text-black text-center mt-2 font-semibold">📊 Monthly Document Log Counts</p>
+              <DocumentLogChart data={monthlyDocumentLogCounts} />
             </div>
-            <div>
+
+            <div className="bg-white p-4 mt-6">
+              <p className="text-black text-center mt-2 font-semibold">📑 Document Counts by Status</p>
                 <DocumentPieChart documentCounts={documentData}/>
-                <p className="text-black text-center mb-10">Document Counts by Status</p>
             </div>
        </div>
-       <div className='bg-white rounded-md border-2 border-dashed border-gray-300 m-2 p-2'>
-            <DocumentAvailabilityChart monthlyDocumentCounts={monthlyDocumentCounts}/>
-       </div>
+       <div className="bg-white p-4 rounded-lg shadow-md m-2">
+        <p className="text-black text-center mt-2 font-semibold">📈 Document Availability</p>
+        <DocumentAvailabilityChart monthlyDocumentCounts={monthlyDocumentCounts} />
+      </div>
     </div>
   )
 }
