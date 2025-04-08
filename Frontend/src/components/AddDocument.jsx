@@ -491,7 +491,7 @@ const filteredUsersForReceiver = users.filter(user =>
                   value={document.DocumentId}
                   key={`${document.DocumentId}-${index}`}
                 >
-                  {document.DocumentName}
+                  {document.IsInward===false?'Inward':'Outward'} - {document.DocumentName}
                 </option>
               ))}
             </select>

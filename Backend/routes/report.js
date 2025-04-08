@@ -18,7 +18,7 @@ router.get("/excel", async (req, res) => {
     console.log(endDate);
     const documents = await documentModel.getCompleteDocumentReport(startDate,endDate);
 
-    if (!documents || documents.length === 0) {
+    if (!documents[0] || documents[0].length === 0) {
       return res.status(404).json({ error: "No documents found" });
     }
 
@@ -29,7 +29,7 @@ router.get("/excel", async (req, res) => {
         { header: "Srno.", key: "DocumentId", width: 10 },
         { header: "Type", key: "IsInward", width: 10 },
         { header: "DateTime", key: "DispatchedDateTime", width: 20 },
-        { header: "Letter Serial", key: "LetterSerialNumber", width: 20 },
+        { header: "Document Srno", key: "DocumentSerialNumber", width: 20 },
         { header: "Document Name", key: "DocumentName", width: 30 },
         { header: "Sender", key: "SenderName", width: 15 },
         { header: "Receiver", key: "ReceiverName", width: 15 },
@@ -38,12 +38,12 @@ router.get("/excel", async (req, res) => {
       ];
       
       // Add rows to the worksheet
-      documents.forEach((row) => {
+      documents[0].forEach((row) => {
         worksheet.addRow({
           DocumentId: row.DocumentId,
           IsInward: row.IsInward ? "Inward" : "Outward", // Inward/Outward mapping
           DispatchedDateTime: new Date(row.DispatchedDateTime).toLocaleString(), // Date formatting
-          LetterSerialNumber: row.LetterSerialNumber,
+          DocumentSerialNumber: row.DocumentSerialNumber,
           DocumentName: row.DocumentName,
           SenderName: row.SenderName,
           ReceiverName: row.ReceiverName,
@@ -71,180 +71,170 @@ router.get("/excel", async (req, res) => {
 });
 
 router.get("/pdf", async (req, res) => {
-    try {
-      let { startDate, endDate } = req.query;
-      startDate = new Date(startDate).toISOString().split('T')[0];
-      endDate = new Date(endDate).toISOString().split('T')[0];
-      
-      console.log(startDate);
-      console.log(endDate);
-      const documents = await documentModel.getCompleteDocumentReport(startDate,endDate);
-  
-      if (!documents || documents.length === 0) {
-        return res.status(404).json({ error: "No documents found" });
-      }
-  
-      // Define the file path for the PDF report
-      const filePath = path.join(__dirname, "../exports/Documents_Report.pdf");
-  
-      // Ensure the directory exists
-      const dir = path.dirname(filePath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-  
-      // Create a new PDF document
-      const doc = new PDFDocument({ size: 'A4', margin: 40 });
-      const stream = fs.createWriteStream(filePath);
-      doc.pipe(stream);
-  
-      // Add a border around the entire page
-      doc.rect(30, 30, 540, 780).stroke(); // Left, top, width, height
-  
-      // Add title
-      doc.fontSize(20).text("Documents Report", { align: "center" });
-      doc.moveDown(1);
-      doc.fontSize(15).text(`Report Generated for date from: ${new Date(startDate).toLocaleDateString()} | to : ${new Date(endDate).toLocaleDateString()}`, { align: "center" });
-      doc.moveDown(1);
-  
-      // Add introductory paragraph with a professional tone
-      doc.fontSize(11).text(
-        "This comprehensive report provides an in-depth analysis of all documents managed and processed during the specified reporting period. It aims to provide a clear overview of the document types, their respective statuses, and key figures that reflect the current operational status. It highlights any pending actions or concerns and offers a detailed summary for review and necessary follow-up.",
-        { align: 'justify' }
-      );
-      doc.moveDown(2);
-  
-      // Add paragraph with counts of different document types
-      const circulars = documents.filter(doc => doc.DocumentTypeName === 'Circular' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
-      const notices = documents.filter(doc => doc.DocumentTypeName === 'Notice' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
-      const latters = documents.filter(doc => doc.DocumentTypeName === 'Latter' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
-      const bills = documents.filter(doc => doc.DocumentTypeName === 'Bill' && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
-      const inward = documents.filter(doc => doc.IsInward).length;
-      const outward = documents.filter(doc => !doc.IsInward && (doc.StatusName==="Dispatched" || doc.StatusName==="Received")).length;
-      const pending = documents.filter(doc => doc.StatusName === 'Pending Review').length;
-      const approved = documents.filter(doc => doc.StatusName === 'Approved').length;
-      const returned = documents.filter(doc => doc.StatusName === 'Rejected').length;
-  
-      doc.fontSize(10);
-      
-      doc.text(`Document Counts for dispatched or recieved Documents : `);
-      doc.text(`Total Circulars: ${circulars}`);
-      doc.text(`Total Notices: ${notices}`);
-      doc.text(`Total Latters: ${latters}`);
-      doc.text(`Total Bills: ${bills}`);
-      
-      doc.moveDown(0.5);
+  try {
+    let { startDate, endDate } = req.query;
+    startDate = new Date(startDate).toISOString().split('T')[0];
+    endDate = new Date(endDate).toISOString().split('T')[0];
 
-      doc.text(`Document Type Counts for dispatched or recieved Documents : `);
-      doc.text(`Total Inward Documents: ${inward}`);
-      doc.text(`Total Outward Documents: ${outward}`);
+    const documents = await documentModel.getCompleteDocumentReport(startDate, endDate);
+    // console.log(documents);
 
-      
-      doc.moveDown(0.5);
-      
-      doc.text(`Document Status Counts : `);
-      doc.text(`Pending Documents: ${pending}`);
-      doc.text(`Approved Documents: ${approved}`);
-      doc.text(`Rejected Documents: ${returned}`);
-      doc.moveDown(1);
-  
-      // Add document details in a table format
-      doc.fontSize(12).text("Document Details", { underline: true });
-      doc.moveDown(0.5);
-  
-      // Table headers and setup
-      const headers = [
-        { text: "ID", width: 10 },
-        { text: "Type", width: 15 },
-        { text: "Date", width: 25 },
-        { text: "LA/Serial", width: 30 },
-        { text: "Name", width: 35 },
-        { text: "Sender", width: 46 },
-        { text: "Receiver", width: 53 },
-        { text: "Status", width: 56 },
-        { text: "Billing Info", width: 60 },
-      ];
-  
-      // Function to add table header and row data
-      const addTableHeader = () => {
-        const tableX = 40;
-        const tableY = doc.y;
-  
-        headers.forEach((header, index) => {
-          doc.fontSize(8).text(header.text, tableX + index * header.width + 5, tableY + 5);
-        });
-  
-        doc.moveDown(0.5); // Move to the next row after the headers
-      };
-  
-      const addTableRow = (row) => {
-        const tableX = 40;
-        const tableY = doc.y;
-        const rowData = [
-          row.DocumentId,
-          row.IsInward ? "Inward" : "Outward",
-          new Date(row.DispatchedDateTime).toLocaleDateString(),
-          row.LetterSerialNumber,
-          row.DocumentName,
-          row.SenderName,
-          row.ReceiverName,
-          row.StatusName,
-          row.BillingInfo
-        ];
-  
-        rowData.forEach((cell, index) => {
-          doc.fontSize(8).text(cell, tableX + index * headers[index].width + 5, tableY + 5);
-        });
-  
-        doc.moveDown(0.5); // Add space after the row
-      };
-  
-      // Draw table header
-      addTableHeader();
-  
-      // Add rows for each document, handling pagination
-      documents.forEach((row) => {
-        const spaceLeft = doc.page.height - doc.y - doc.page.margins.bottom;
-  
-        // If the content reaches near the bottom of the page, add a new page
-        if (spaceLeft < 20) { // If remaining space is less than 20, start a new page
-          doc.addPage();
-          addTableHeader(); // Redraw the header on the new page
-        }
-  
-        addTableRow(row);
-      });
-  
-      // Add a conclusion and signature section at the end
-      doc.moveDown(10);
-      doc.fontSize(11);
-      doc.x=40;
-      doc.text("Conclusion:", { bold: true });
-      doc.text("This report provides a comprehensive overview of the document management system within the organization. It analyzes document types, statuses, and key performance indicators. The data presented can be used to identify areas for improvement and enhance overall document processing efficiency.");
-      doc.moveDown(2);
-  
-      // Signature Section
-      doc.fontSize(10)
-      doc.text("Authorized Signature: ______________________", { align: "left" });
-      doc.text("Date: ______________________", { align: "left" });
-      doc.moveDown(2);
-  
-      // Finalize the PDF document
-      doc.end();
-  
-      // Wait for the file to be written before sending response
-      stream.on("finish", () => {
-        res.download(filePath, "Documents_Report.pdf", (err) => {
-          if (err) {
-            console.error("❌ Error downloading the file:", err);
-            res.status(500).json({ error: "Failed to download the PDF file" });
-          }
-        });
-      });
-  
-    } catch (err) {
-      console.error("❌ Error generating report:", err);
-      res.status(500).json({ error: "An error occurred while generating the report", details: err.message });
+    if (!documents[0] || documents[0].length === 0) {
+      return res.status(404).json({ error: "No documents found" });
     }
-  });
-  module.exports = router;
+
+    const filePath = path.join(__dirname, "../exports/Documents_Report.pdf");
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const doc = new PDFDocument({ size: 'A4', margin: 40 });
+    const stream = fs.createWriteStream(filePath);
+    doc.pipe(stream);
+
+    // ➕ Define a helper function to draw border
+    const drawPageBorder = () => {
+      doc.rect(30, 30, 540, 780).stroke(); // Border dimensions
+    };
+
+    // 📄 Draw initial page border
+    drawPageBorder();
+
+    // Title
+    doc.fontSize(20).text("Documents Report", { align: "center" });
+    doc.moveDown(1);
+    doc.fontSize(15).text(`Report Generated from: ${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`, { align: "center" });
+    doc.moveDown(1);
+
+    // Intro paragraph
+    doc.fontSize(11).text(
+      "This comprehensive report provides an in-depth analysis of all documents managed and processed during the specified reporting period. It aims to provide a clear overview of the document types, their respective statuses, and key figures that reflect the current operational status. It highlights any pending actions or concerns and offers a detailed summary for review and necessary follow-up.",
+      { align: 'justify' }
+    );
+    doc.moveDown(2);
+
+    // Count calculations
+    const circulars = documents[0].filter(doc => doc.DocumentTypeName === 'Circular' && (doc.StatusName === "Dispatched" || doc.StatusName === "Received")).length;
+    const notices = documents[0].filter(doc => doc.DocumentTypeName === 'Notice' && (doc.StatusName === "Dispatched" || doc.StatusName === "Received")).length;
+    const letters = documents[0].filter(doc => doc.DocumentTypeName === 'Letter' && (doc.StatusName === "Dispatched" || doc.StatusName === "Received")).length;
+    const bills = documents[0].filter(doc => doc.DocumentTypeName === 'Bill' && (doc.StatusName === "Dispatched" || doc.StatusName === "Received")).length;
+    const inward = documents[0].filter(doc => doc.IsInward).length;
+    const outward = documents[0].filter(doc => !doc.IsInward && (doc.StatusName === "Dispatched" || doc.StatusName === "Received")).length;
+    const pending = documents[0].filter(doc => doc.StatusName === 'Pending Review').length;
+    const approved = documents[0].filter(doc => doc.StatusName === 'Approved').length;
+    const returned = documents[0].filter(doc => doc.StatusName === 'Rejected').length;
+
+    doc.fontSize(10);
+    doc.text(`Document Counts for dispatched or received Documents:`);
+    doc.text(`Total Circulars: ${circulars}`);
+    doc.text(`Total Notices: ${notices}`);
+    doc.text(`Total Letters: ${letters}`);
+    doc.text(`Total Bills: ${bills}`);
+
+    doc.moveDown(0.5);
+    doc.text(`Document Type Counts for dispatched or received Documents:`);
+    doc.text(`Total Document Count: ${documents[1][0].TotalDocuments}`);
+    doc.text(`Total Inward Documents: ${inward}`);
+    doc.text(`Total Outward Documents: ${outward}`);
+
+    doc.moveDown(0.5);
+    doc.text(`Document Status Counts:`);
+    doc.text(`Pending Documents: ${pending}`);
+    doc.text(`Approved Documents: ${approved}`);
+    doc.text(`Rejected Documents: ${returned}`);
+    doc.moveDown(1);
+
+    // Table header
+    doc.fontSize(12).text("Document Details", { underline: true });
+    doc.moveDown(0.5);
+
+    const headers = [
+      { text: "ID", width: 10 },
+      { text: "Type", width: 15 },
+      { text: "Date", width: 25 },
+      { text: "Document SrNo", width: 30 },
+      { text: "Name", width: 45 },
+      { text: "Sender", width: 53 },
+      { text: "Receiver", width: 60 },
+      { text: "Status", width: 64 },
+    ];
+
+    const addTableHeader = () => {
+      const tableX = 40;
+      const tableY = doc.y;
+      headers.forEach((header, index) => {
+        doc.fontSize(8).text(header.text, tableX + index * header.width + 5, tableY + 5);
+      });
+      doc.moveDown(0.5);
+    };
+
+    let srno = 1;
+    const addTableRow = (row) => {
+      const tableX = 40;
+      const tableY = doc.y;
+      const rowData = [
+        srno++,
+        row.IsInward ? "Inward" : "Outward",
+        new Date(row.DispatchedDateTime).toLocaleDateString(),
+        row.DocumentSerialNumber,
+        (row.DocumentName || '').slice(0, 17),
+        row.SenderName,
+        row.ReceiverName,
+        row.StatusName,
+      ];
+
+      rowData.forEach((cell, index) => {
+        doc.fontSize(8).text(cell, tableX + index * headers[index].width + 5, tableY + 5);
+      });
+
+      doc.moveDown(0.5);
+    };
+
+    // Draw initial header
+    addTableHeader();
+
+    // Paginated rows
+    documents[0].forEach((row) => {
+      const spaceLeft = doc.page.height - doc.y - doc.page.margins.bottom;
+
+      if (spaceLeft < 20) {
+        doc.addPage();
+        drawPageBorder();      // 👉 Draw border on every new page
+        addTableHeader();      // Redraw header
+      }
+
+      addTableRow(row);
+    });
+
+    // Footer section
+    doc.moveDown(10);
+    doc.fontSize(11);
+    doc.x = 40;
+    doc.text("Conclusion:", { bold: true });
+    doc.text("This report provides a comprehensive overview of the document management system within the organization. It analyzes document types, statuses, and key performance indicators. The data presented can be used to identify areas for improvement and enhance overall document processing efficiency.");
+    doc.moveDown(2);
+
+    doc.fontSize(10);
+    doc.text("Authorized Signature: ______________________", { align: "left" });
+    doc.text("Date: ______________________", { align: "left" });
+    doc.moveDown(2);
+
+    doc.end();
+
+    stream.on("finish", () => {
+      res.download(filePath, "Documents_Report.pdf", (err) => {
+        if (err) {
+          console.error("❌ Error downloading the file:", err);
+          res.status(500).json({ error: "Failed to download the PDF file" });
+        }
+      });
+    });
+
+  } catch (err) {
+    console.error("❌ Error generating report:", err);
+    res.status(500).json({ error: "An error occurred while generating the report", details: err.message });
+  }
+});
+
+module.exports = router;

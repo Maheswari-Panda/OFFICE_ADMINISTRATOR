@@ -76,6 +76,7 @@ function DocumentContent() {
           document.SenderName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           document.ReceiverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           document.EndUserName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          document.DocumentSerialNumber.includes(searchTerm) ||
           new Date(document.DispatchedDateTime).toLocaleDateString().includes(searchTerm.toLowerCase()) ||
           documentName.includes(searchTerm.toLowerCase()) ||
           documentDescription.includes(searchTerm.toLowerCase())

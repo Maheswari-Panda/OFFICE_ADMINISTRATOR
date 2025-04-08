@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import OfficeContext from "../context/office/officeContext";
+import Spinner from './Spinner';
 
 const COLORS = ["#4CAF50", "#FFC107", "#F44336", "#FF54CC", "#0FDDCC", "#FFAA22"];
 
@@ -40,17 +41,19 @@ function SuperAdminDashboard() {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-      setLoading(false);
+      finally{
+        setTimeout(()=>{
+          setLoading(false);
+        },200);
+      }
     }
     fetchData();
   }, []);
 
-  if (loading) {
-    return <p className="text-center text-gray-600">Loading...</p>;
-  }
-
   return (
-    <div className="p-6 bg-blue-100 min-h-screen w-full">
+    <>
+    {loading && <Spinner/>}
+    {!loading && <div className="p-6 bg-blue-100 min-h-screen w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h1 className="text-2xl font-bold text-blue-600">📊 Super Admin Dashboard</h1>
@@ -150,6 +153,9 @@ function SuperAdminDashboard() {
         </div>
       </div>
     </div>
+}
+    </>
+          
   );
 }
 

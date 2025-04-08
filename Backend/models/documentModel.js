@@ -284,7 +284,7 @@ exports.getCompleteDocumentReport = async (startDate,endDate) => {
             .input('EndDate',sql.Date,endDate)
             .execute('GetCompleteDocumentReport');
 
-        return result.recordset; // Return all documents
+        return result.recordsets; // Return all documents
     } catch (err) {
         console.error('Error fetching all documents:', err);
         throw err;

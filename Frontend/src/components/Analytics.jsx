@@ -49,7 +49,7 @@ function Analytics() {
     <div className='items-start bg-blue-100 w-full h-screen overflow-scroll'>
        <div className='flex flex-wrap items-center justify-around bg-white rounded-lg shadow-md m-2'>
             <div className="bg-white p-4 ">
-              <p className="text-black text-center mt-2 font-semibold">📊 Monthly Document Log Counts</p>
+              {/* <p className="text-black text-center mt-2 font-semibold">📊 Monthly Document Log Counts</p> */}
               <DocumentLogChart data={monthlyDocumentLogCounts} />
             </div>
 

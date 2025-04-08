@@ -79,7 +79,7 @@ router.post('/create', [
             const accessToken = await userModel.generateAccessToken(data);
     
             // work on it it doesn't working for create user
-            // const result = await addUserLog(userId,'User Created');
+            const result = await addUserLog(userId,'User Created');
 
         // it's working whenever an user being created the mail will be sent to the user
         

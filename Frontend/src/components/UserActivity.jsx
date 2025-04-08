@@ -29,7 +29,7 @@ const UserActivity = ({ userLogs }) => {
       selector: (row) =>
         new Date(row.DateTime).toLocaleDateString() +
         " " +
-        new Date(row.DateTime).toLocaleTimeString(),
+        (row.DateTime).slice(11,19),
       sortable: true,
     },
     { name: "Action Performed", selector: (row) => row.ActionPerformed, sortable: true },

@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useContext, useEffect } from "react";
 import userContext from "../context/user/userContext";
 import { useState } from "react";
+import Footer from "../components/Footer";
 
 const ChangePassword = () => {
   const { token } = useParams(); // Get userId from URL
@@ -74,7 +75,27 @@ const ChangePassword = () => {
   return (
     <>
     {isValidToken &&
-    <div className="flex items-center justify-center min-h-screen bg-blue-500">
+    <div className="flex items-center justify-center h-screen bg-blue-500">
+      <div className="flex-col flex self-center p-6 sm:p-10 sm:max-w-5xl xl:max-w-2xl z-10">
+          <div className="self-start hidden lg:flex flex-col text-white">
+            <div className="flex items-start mb-3">
+              <img
+                src="../src/assets/msu_logo_white.png"
+                className="w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] mx-5"
+                alt="Logo"
+              />
+              <div>
+                <h1 className="mb-3 font-bold text-4xl sm:text-5xl">
+                  Office Administrator
+                </h1>
+                <p className="pr-3 text-sm sm:text-base">
+                  Get started with the office Administrator, which helps to
+                  manage the inward and outward documents easily.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-700 mb-4">Reset Your Password</h2>
         
@@ -137,7 +158,7 @@ const ChangePassword = () => {
     
 }
     
-    <div className="flex justify-center text-center bg-blue-500 border-t p-3 border-dashed border-white">
+        {/* <div className="flex justify-center text-center bg-blue-500 border-t p-3 border-dashed border-white">
           <img src="../src/assets/msu_logo_white.png" alt="Logo" className="h-12" />
           <div className="flex items-center px-3">
             <p className="text-sm text-white text-center">
@@ -145,7 +166,8 @@ const ChangePassword = () => {
                 <br />
                 Developed by <span className="hover:underline cursor-pointer">maheswaripanda3@gmail.com</span></p>
           </div>
-        </div>
+        </div> */}
+      {/* <Footer/> */}
     </>
   );
 };
