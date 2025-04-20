@@ -69,7 +69,7 @@ function AddOfficeForm() {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-blue-100 w-full">
-      {!loading ? <div className="bg-white m-2 p-8 rounded-2xl shadow-md w-1/2">
+      {!loading ? <div className="bg-white m-2 p-8 rounded-2xl shadow-md lg:w-1/2 sm:w-full">
         <h2 className="text-xl font-semibold text-start text-blue-500 mb-6">
           Add Office
         </h2>

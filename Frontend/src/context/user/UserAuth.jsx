@@ -365,7 +365,12 @@ console.log(response);
   
   const deleteUser = async(userId)=>{
     try {
-      const response = await axios.delete(`${host}/api/user/delete/${userId}`);
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.delete(`${host}/api/user/delete/${userId}`, {
+        headers: {
+          accessToken: `${accessToken}`,
+        },
+      });
       console.log(response);
       return response.data;
     } catch (error) {

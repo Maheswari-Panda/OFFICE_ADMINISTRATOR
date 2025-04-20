@@ -227,7 +227,7 @@ function DocumentDetails({ document }) {
   return (
     <>
     {loading && <Spinner/>}
-    {!loading && <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full">
+    {!loading && <div className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen p-4 w-full overflow-scroll">
       {
         <button
           onClick={handleBackClick}
@@ -250,7 +250,7 @@ function DocumentDetails({ document }) {
       </div>
 
       <form
-        className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen w-1/4"
+        className="flex flex-col md:flex-row gap-4 bg-blue-50 min-h-screen lg:w-1/4 md:w-1/3 sm:w-full"
         onSubmit={(e) => {
           e.preventDefault();
           console.log(formik.errors);

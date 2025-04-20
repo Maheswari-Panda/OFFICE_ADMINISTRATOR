@@ -174,7 +174,7 @@ function UserProfile() {
       {/* Profile Card */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
       {isProfileUpdating && <Spinner/>}
-      {!isProfileUpdating && <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
+      {!isProfileUpdating && <div className="p-5 border-2 rounded-md border-dashed border-gray-300 lg:w-1/2 sm:w-full">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -200,7 +200,7 @@ function UserProfile() {
           <form onSubmit={formik.handleSubmit}>
             <div className="space-y-4">
               {/* First Name */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap lg:flex-nowrap md:flex-nowrap">
                 <input
                   type="file"
                   id="profileImg"
@@ -396,7 +396,7 @@ function UserProfile() {
         </div>
       }
 
-        <div className=" border-2 rounded-md border-dashed border-gray-300 w-1/2 lg:h-165">
+        <div className=" border-2 rounded-md border-dashed border-gray-300 lg:w-1/2 lg:h-165 sm:w-full">
         {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
         </div>
       </div>

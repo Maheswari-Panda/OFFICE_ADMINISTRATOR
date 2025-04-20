@@ -17,6 +17,11 @@ function AllUsers() {
   
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+
+    const [alertHeading, setAlertHeading] = useState("Delete User");
+    const [alertDescription, setAlertDescription] = useState("Are sure you want to delete this user once it gets deleted the related data to this user will get deleted and you cannot retrive it!");
+    const [alertBtnText1, setAlertBtnText1] = useState("Cencel");
+    const [alertBtnText2, setAlertBtnText2] = useState("Delete");
   
   // Fetch users on mount
   useEffect(() => {
@@ -71,21 +76,28 @@ function AllUsers() {
     navigate("/dashboard/viewUser", { state: { user: row } });
   };
 
-  const handleDeleteModal = (row) => {
+  const handleDeleteModal = async (row) => {
     setSelectedUser(row);
     console.log("Clicked on Delete Modal", row);
     deleteRef.current.click();
   };
 
   const handelDeleteUser = async (userId) => {
-    // console.log(selectedUser);
+    console.log(userId);
     // console.log("INSIDE HANDLE DELETE USER",userId);
     const response = await deleteUser(userId);
-    // console.log(response);
+    console.log(response);
     if (response) {
-      alert("User Deleted Successfuully!");
+      setAlertHeading("User Deleted Successfully!");
+      setAlertDescription("User deleted successfuuly you can view updated user list!");
+      setAlertBtnText2(null);
+      setAlertBtnText1("Ok");
+      // alert("User Deleted Successfuully!");
     } else {
-      alert("Error Deleting User");
+      setAlertHeading("Error Deleting User!");
+      setAlertDescription("Some error occured please try again latter");
+      setAlertBtnText2(null);
+      setAlertBtnText1("Ok");
     }
   };
   const columns = useMemo(
@@ -185,9 +197,39 @@ function AllUsers() {
             )}
           </div>
           {/* Open the modal using document.getElementById('ID').showModal() method */}
-          <ModalAlert modalRef={deleteRef} heading="Delete User" description="Are sure you want to delete this user once it gets deleted the
-                related data to this user will get deleted and you cannot
-                retrive it!" btnText1="Cencel"  btnText2="Delete" onClickBtn={() =>handelDeleteUser(selectedUser.UserId)}/>
+          {/* <ModalAlert modalRef={deleteRef} heading={alertHeading} description={alertDescription} btnText1={alertBtnText1}  btnText2={alertBtnText2} onClickBtn={() =>handelDeleteUser(selectedUser.UserId)}/> */}
+      <div>
+      <button
+        className="btn"
+        onClick={() => document.getElementById("my_modal_1").showModal()}
+        ref={deleteRef}
+        hidden
+      >
+        open modal
+      </button>
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg text-blue-500">{alertHeading}</h3>
+          <p>{alertDescription}</p>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-1">
+              {alertBtnText1 && <button className="btn btn-sm bg-red-500 text-white hover:blue-600" >
+                {alertBtnText1}
+              </button>}
+              {alertBtnText2 && <button
+                type="button"
+                className="btn btn-sm bg-blue-500 text-white hover:red-600"
+                onClick={()=>
+                    handelDeleteUser(selectedUser.UserId)
+                  }
+              >
+                {alertBtnText2}
+              </button>}
+            </form>
+          </div>
+        </div>
+      </dialog>
+    </div>
         </div>
       )}
     </>

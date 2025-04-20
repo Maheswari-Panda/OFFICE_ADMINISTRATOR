@@ -76,6 +76,7 @@ router.post('/create', [
                     role:role,
                 }
             };
+            console.log(userId);
             const accessToken = await userModel.generateAccessToken(data);
     
             // work on it it doesn't working for create user

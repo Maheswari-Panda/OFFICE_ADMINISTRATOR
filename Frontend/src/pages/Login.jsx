@@ -67,6 +67,20 @@ function Login() {
       <div className="absolute bg-gradient-to-b from-blue-700 to-blue-700 opacity-75 inset-0 z-0"></div>
       <div className="min-h-screen flex flex-col sm:flex-row mx-0 justify-center">
         <div className="flex-col flex self-center p-6 sm:p-10 sm:max-w-5xl xl:max-w-2xl z-10">
+          <div className="self-start lg:hidden sm:flex flex-col text-white">
+            <div className="flex mb-3 items-center justify-center">
+              <img
+                src="src/assets/msu_logo_white.png"
+                className="w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] mx-5"
+                alt="Logo"
+              />
+              </div>
+              <h1 className="text-center font-bold text-2xl">Office Administrator</h1>
+              <p className="pr-3 text-sm text-center">
+                  Get started with the office Administrator, which helps to
+                  manage the inward and outward documents easily.
+                </p>
+          </div>
           <div className="self-start hidden lg:flex flex-col text-white">
             <div className="flex items-start mb-3">
               <img
@@ -140,7 +154,7 @@ function Login() {
                 </div>
 
                 {/* Captcha Section */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap">
                   <div className="flex items-center">
                     <label className="input input-bordered flex justify-between w-32 sm:w-40 bg-blue-100 items-center mx-1 rounded-md overflow-hidden">
                       <input

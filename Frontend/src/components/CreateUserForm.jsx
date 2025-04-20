@@ -76,7 +76,7 @@ function CreateUserForm() {
           uploadedImageUrl
         );
 
-        // console.log(response);
+        console.log(response);
         // alert("User created successfully!");
         if(response.accessToken){
           setAlertHeading("User Created")

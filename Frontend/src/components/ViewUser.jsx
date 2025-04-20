@@ -154,7 +154,7 @@ function ViewUser() {
       {/* Profile Card */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full h-full lg:flex lg:justify-center gap-2">
         {isUpdatingUser && <Spinner/>}
-        {!isUpdatingUser && <div className="p-5 border-2 rounded-md border-dashed border-gray-300 w-1/2">
+        {!isUpdatingUser && <div className="p-5 border-2 rounded-md border-dashed border-gray-300 lg:w-1/2 sm:w-full">
           {/* Profile Image */}
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -182,7 +182,7 @@ function ViewUser() {
           <form onSubmit={formik.handleSubmit}>
             <div className="space-y-4">
               {/* First Name */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap lg:flex-nowrap md:flex-nowrap">
                 <input
                   type="file"
                   id="profileImg"
@@ -360,7 +360,7 @@ function ViewUser() {
         </div>
       }
 
-        <div className="p-2 border-2 rounded-md border-dashed border-gray-300 w-1/2 h-auto">
+        <div className="p-2 border-2 rounded-md border-dashed border-gray-300 lg:w-1/2 sm:w-full h-auto">
           {isLoading ? (<Spinner/>):(<UserActivity userLogs={userLogs}/>)}
         </div>
       </div>
